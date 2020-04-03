@@ -7,9 +7,9 @@ spring:
     show-sql: true
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://192.168.99.100:5432/authorization-server
-    username: user
-    password: ce3a50ea7498d644b16ccac53cc1b51a
+    url: jdbc:postgresql://192.168.99.100:5432/account_service
+    username: acc_user
+    password: 8a0c0d42d07cd908b58543cc69ee7bf4
     sql-script-encoding: UTF-8
     initialization-mode: always
   mvc:
