@@ -1,4 +1,4 @@
-package com.blesk.authorizationserver.Values;
+package com.blesk.accountservice.Values;
 
 public class Messages {
 

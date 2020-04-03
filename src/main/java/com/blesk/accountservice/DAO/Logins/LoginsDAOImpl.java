@@ -1,7 +1,7 @@
-package com.blesk.authorizationserver.DAO.Logins;
+package com.blesk.accountservice.DAO.Logins;
 
-import com.blesk.authorizationserver.DAO.DAOImpl;
-import com.blesk.authorizationserver.Model.Logins;
+import com.blesk.accountservice.DAO.DAOImpl;
+import com.blesk.accountservice.Model.Logins;
 import org.springframework.stereotype.Repository;
 
 @Repository

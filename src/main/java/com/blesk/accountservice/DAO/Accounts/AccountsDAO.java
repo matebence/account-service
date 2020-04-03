@@ -1,7 +1,7 @@
-package com.blesk.authorizationserver.DAO.Accounts;
+package com.blesk.accountservice.DAO.Accounts;
 
-import com.blesk.authorizationserver.DAO.DAO;
-import com.blesk.authorizationserver.Model.Accounts;
+import com.blesk.accountservice.DAO.DAO;
+import com.blesk.accountservice.Model.Accounts;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,9 +1,9 @@
-package com.blesk.authorizationserver.Service.Preferences;
+package com.blesk.accountservice.Service.Preferences;
 
-import com.blesk.authorizationserver.DAO.Preferences.PreferencesDAOImpl;
-import com.blesk.authorizationserver.Exceptions.AuthorizationServerException;
-import com.blesk.authorizationserver.Model.Preferences.Preferences;
-import com.blesk.authorizationserver.Values.Messages;
+import com.blesk.accountservice.DAO.Preferences.PreferencesDAOImpl;
+import com.blesk.accountservice.Exceptions.AuthorizationServerException;
+import com.blesk.accountservice.Model.Preferences.Preferences;
+import com.blesk.accountservice.Values.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

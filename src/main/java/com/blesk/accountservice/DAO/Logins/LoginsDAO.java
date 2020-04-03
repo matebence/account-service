@@ -1,4 +1,4 @@
-package com.blesk.authorizationserver.DAO.Logins;
+package com.blesk.accountservice.DAO.Logins;
 
 public interface LoginsDAO {
 }

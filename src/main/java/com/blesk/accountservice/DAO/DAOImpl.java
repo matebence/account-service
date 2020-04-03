@@ -1,4 +1,4 @@
-package com.blesk.authorizationserver.DAO;
+package com.blesk.accountservice.DAO;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;

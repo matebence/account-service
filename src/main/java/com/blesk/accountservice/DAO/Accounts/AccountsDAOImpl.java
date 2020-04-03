@@ -1,8 +1,8 @@
-package com.blesk.authorizationserver.DAO.Accounts;
+package com.blesk.accountservice.DAO.Accounts;
 
-import com.blesk.authorizationserver.DAO.DAOImpl;
-import com.blesk.authorizationserver.Model.Accounts;
-import com.blesk.authorizationserver.Values.Criteria;
+import com.blesk.accountservice.DAO.DAOImpl;
+import com.blesk.accountservice.Model.Accounts;
+import com.blesk.accountservice.Values.Criteria;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 

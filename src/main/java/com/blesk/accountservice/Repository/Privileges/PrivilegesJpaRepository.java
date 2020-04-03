@@ -1,6 +1,6 @@
-package com.blesk.authorizationserver.Repository.Privileges;
+package com.blesk.accountservice.Repository.Privileges;
 
-import com.blesk.authorizationserver.Model.Privileges;
+import com.blesk.accountservice.Model.Privileges;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PrivilegesJpaRepository extends JpaRepository<Privileges, Long> {

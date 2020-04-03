@@ -1,6 +1,6 @@
-package com.blesk.authorizationserver.DAO.Preferences;
+package com.blesk.accountservice.DAO.Preferences;
 
-import com.blesk.authorizationserver.Model.Preferences.Preferences;
+import com.blesk.accountservice.Model.Preferences.Preferences;
 
 public interface PreferencesDAO {
 

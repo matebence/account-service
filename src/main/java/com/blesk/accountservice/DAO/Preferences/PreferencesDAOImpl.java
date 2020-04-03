@@ -1,7 +1,7 @@
-package com.blesk.authorizationserver.DAO.Preferences;
+package com.blesk.accountservice.DAO.Preferences;
 
-import com.blesk.authorizationserver.DAO.DAOImpl;
-import com.blesk.authorizationserver.Model.Preferences.Preferences;
+import com.blesk.accountservice.DAO.DAOImpl;
+import com.blesk.accountservice.Model.Preferences.Preferences;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 

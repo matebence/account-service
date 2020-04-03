@@ -1,6 +1,6 @@
-package com.blesk.authorizationserver.Service.Privileges;
+package com.blesk.accountservice.Service.Privileges;
 
-import com.blesk.authorizationserver.Model.Privileges;
+import com.blesk.accountservice.Model.Privileges;
 
 import java.util.List;
 

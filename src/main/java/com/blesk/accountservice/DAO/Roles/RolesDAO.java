@@ -1,7 +1,7 @@
-package com.blesk.authorizationserver.DAO.Roles;
+package com.blesk.accountservice.DAO.Roles;
 
-import com.blesk.authorizationserver.Model.Privileges;
-import com.blesk.authorizationserver.Model.Roles;
+import com.blesk.accountservice.Model.Privileges;
+import com.blesk.accountservice.Model.Roles;
 
 import java.util.ArrayList;
 import java.util.Set;

@@ -1,6 +1,6 @@
-package com.blesk.authorizationserver.DAO.Privileges;
+package com.blesk.accountservice.DAO.Privileges;
 
-import com.blesk.authorizationserver.Model.Privileges;
+import com.blesk.accountservice.Model.Privileges;
 
 public interface PrivilegesDAO {
 

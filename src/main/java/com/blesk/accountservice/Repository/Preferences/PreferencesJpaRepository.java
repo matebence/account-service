@@ -1,6 +1,6 @@
-package com.blesk.authorizationserver.Repository.Preferences;
+package com.blesk.accountservice.Repository.Preferences;
 
-import com.blesk.authorizationserver.Model.Preferences.Preferences;
+import com.blesk.accountservice.Model.Preferences.Preferences;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PreferencesJpaRepository extends JpaRepository<Preferences, Long> {

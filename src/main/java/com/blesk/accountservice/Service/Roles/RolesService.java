@@ -1,7 +1,7 @@
-package com.blesk.authorizationserver.Service.Roles;
+package com.blesk.accountservice.Service.Roles;
 
-import com.blesk.authorizationserver.Model.Privileges;
-import com.blesk.authorizationserver.Model.Roles;
+import com.blesk.accountservice.Model.Privileges;
+import com.blesk.accountservice.Model.Roles;
 
 import java.util.List;
 import java.util.Set;

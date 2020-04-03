@@ -1,10 +1,10 @@
-package com.blesk.authorizationserver.Service.Roles;
+package com.blesk.accountservice.Service.Roles;
 
-import com.blesk.authorizationserver.DAO.Roles.RolesDAOImpl;
-import com.blesk.authorizationserver.Exceptions.AuthorizationServerException;
-import com.blesk.authorizationserver.Model.Privileges;
-import com.blesk.authorizationserver.Model.Roles;
-import com.blesk.authorizationserver.Values.Messages;
+import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
+import com.blesk.accountservice.Exceptions.AuthorizationServerException;
+import com.blesk.accountservice.Model.Privileges;
+import com.blesk.accountservice.Model.Roles;
+import com.blesk.accountservice.Values.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

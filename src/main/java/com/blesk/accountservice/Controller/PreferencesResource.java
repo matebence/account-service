@@ -1,7 +1,7 @@
-package com.blesk.authorizationserver.Controller.ResourceControllers;
+package com.blesk.accountservice.Controller;
 
-import com.blesk.authorizationserver.Model.Preferences.Preferences;
-import com.blesk.authorizationserver.Service.Preferences.PreferencesServiceImpl;
+import com.blesk.accountservice.Model.Preferences.Preferences;
+import com.blesk.accountservice.Service.Preferences.PreferencesServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;

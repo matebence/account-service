@@ -1,22 +1,20 @@
-package com.blesk.authorizationserver.Service.Accounts;
+package com.blesk.accountservice.Service.Accounts;
 
-import com.blesk.authorizationserver.DAO.Accounts.AccountsDAOImpl;
-import com.blesk.authorizationserver.DAO.Roles.RolesDAOImpl;
-import com.blesk.authorizationserver.DTO.JwtResponse;
-import com.blesk.authorizationserver.Exceptions.AuthorizationServerException;
-import com.blesk.authorizationserver.Listeners.LoginAttemptService;
-import com.blesk.authorizationserver.Model.Accounts;
-import com.blesk.authorizationserver.Model.Privileges;
-import com.blesk.authorizationserver.Model.Roles;
-import com.blesk.authorizationserver.Values.Criteria;
-import com.blesk.authorizationserver.Values.Messages;
+import com.blesk.accountservice.DAO.Accounts.AccountsDAOImpl;
+import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
+import com.blesk.accountservice.DTO.JwtResponse;
+import com.blesk.accountservice.Exceptions.AuthorizationServerException;
+import com.blesk.accountservice.Listeners.LoginAttemptService;
+import com.blesk.accountservice.Model.Accounts;
+import com.blesk.accountservice.Model.Privileges;
+import com.blesk.accountservice.Model.Roles;
+import com.blesk.accountservice.Values.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;

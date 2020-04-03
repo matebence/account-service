@@ -1,6 +1,6 @@
-package com.blesk.authorizationserver.Service.Preferences;
+package com.blesk.accountservice.Service.Preferences;
 
-import com.blesk.authorizationserver.Model.Preferences.Preferences;
+import com.blesk.accountservice.Model.Preferences.Preferences;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
-package com.blesk.authorizationserver.Service.Accounts;
+package com.blesk.accountservice.Service.Accounts;
 
-import com.blesk.authorizationserver.Model.Accounts;
+import com.blesk.accountservice.Model.Accounts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
