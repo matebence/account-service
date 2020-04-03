@@ -1,8 +1,7 @@
 package com.blesk.accountservice.Model;
 
 import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
-import com.blesk.authorizationserver.Values.Messages;
-import org.springframework.security.core.GrantedAuthority;
+import com.blesk.accountservice.Values.Messages;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -71,9 +70,6 @@ public class Accounts implements Serializable {
 
     @Column(name = "deleted_at")
     private java.sql.Timestamp deletedAt;
-
-    @Transient
-    private Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
     public Accounts() {
     }
@@ -190,14 +186,6 @@ public class Accounts implements Serializable {
         this.deletedAt = deletedAt;
     }
 
-    public Collection<GrantedAuthority> getGrantedAuthorities() {
-        return grantedAuthorities;
-    }
-
-    public void setGrantedAuthorities(Collection<GrantedAuthority> grantedAuthorities) {
-        this.grantedAuthorities = grantedAuthorities;
-    }
-
     @PrePersist
     protected void prePersist() {
         this.balance = 0.00;
@@ -228,7 +216,6 @@ public class Accounts implements Serializable {
                 ", updatedAt=" + updatedAt +
                 ", deletedBy=" + deletedBy +
                 ", deletedAt=" + deletedAt +
-                ", grantedAuthorities=" + grantedAuthorities +
                 '}';
     }
 }

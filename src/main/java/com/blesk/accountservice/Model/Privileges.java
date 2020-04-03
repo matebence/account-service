@@ -1,6 +1,6 @@
 package com.blesk.accountservice.Model;
 
-import com.blesk.authorizationserver.Values.Messages;
+import com.blesk.accountservice.Values.Messages;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;

@@ -1,7 +1,7 @@
 package com.blesk.accountservice.Service.Roles;
 
 import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
-import com.blesk.accountservice.Exceptions.AuthorizationServerException;
+import com.blesk.accountservice.Exceptions.AccountServiceException;
 import com.blesk.accountservice.Model.Privileges;
 import com.blesk.accountservice.Model.Roles;
 import com.blesk.accountservice.Values.Messages;
@@ -24,7 +24,7 @@ public class RolesServiceImpl implements RolesService {
     @Override
     public Roles createRole(Roles roles) {
         if (this.roleDAO.save(roles).getRoleId() == null)
-            throw new AuthorizationServerException(Messages.CREATE_ROLE);
+            throw new AccountServiceException(Messages.CREATE_ROLE);
         return roles;
     }
 
@@ -32,16 +32,16 @@ public class RolesServiceImpl implements RolesService {
     public boolean deleteRole(Long roleId) {
         Roles roles = this.roleDAO.get(Roles.class, roleId);
         if(roles == null)
-            throw new AuthorizationServerException(Messages.DELETE_GET_ROLE);
+            throw new AccountServiceException(Messages.DELETE_GET_ROLE);
         if (!this.roleDAO.delete(roles))
-            throw new AuthorizationServerException(Messages.DELETE_ROLE);
+            throw new AccountServiceException(Messages.DELETE_ROLE);
         return true;
     }
 
     @Override
     public boolean updateRole(Roles roles) {
         if (!this.roleDAO.update(roles))
-            throw new AuthorizationServerException(Messages.UPDATE_ROLE);
+            throw new AccountServiceException(Messages.UPDATE_ROLE);
         return true;
     }
 
@@ -49,7 +49,7 @@ public class RolesServiceImpl implements RolesService {
     public Roles getRole(Long roleId) {
         Roles role = this.roleDAO.get(Roles.class, roleId);
         if(role == null)
-            throw new AuthorizationServerException(Messages.GET_ROLE);
+            throw new AccountServiceException(Messages.GET_ROLE);
         return role;
     }
 
@@ -57,7 +57,7 @@ public class RolesServiceImpl implements RolesService {
     public List<Roles> getAllRoles(int pageNumber, int pageSize) {
         List<Roles> roles = this.roleDAO.getAll(Roles.class, pageNumber, pageSize);
         if(roles == null)
-            throw new AuthorizationServerException(Messages.GET_ALL_ROLES);
+            throw new AccountServiceException(Messages.GET_ALL_ROLES);
         return roles;
     }
 
@@ -65,7 +65,7 @@ public class RolesServiceImpl implements RolesService {
     public Roles getRoleByName(String roleName) {
         Roles role = this.roleDAO.getRoleByName(roleName);
         if(role == null)
-            throw new AuthorizationServerException(Messages.GET_ROLE_BY_NAME);
+            throw new AccountServiceException(Messages.GET_ROLE_BY_NAME);
         return role;
     }
 
@@ -73,7 +73,7 @@ public class RolesServiceImpl implements RolesService {
     public Set<Privileges> getRolePrivileges(String roleName) {
         Set<Privileges> privileges = this.roleDAO.getPrivilegesAssignedToRole(roleName);
         if (privileges.isEmpty())
-            throw new AuthorizationServerException(String.format(Messages.GET_ROLE_PRIVILEGES, roleName));
+            throw new AccountServiceException(String.format(Messages.GET_ROLE_PRIVILEGES, roleName));
         return privileges;
     }
 }

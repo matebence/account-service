@@ -1,6 +1,6 @@
 package com.blesk.accountservice.Model.Preferences;
 
-import com.blesk.authorizationserver.Values.Messages;
+import com.blesk.accountservice.Values.Messages;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
