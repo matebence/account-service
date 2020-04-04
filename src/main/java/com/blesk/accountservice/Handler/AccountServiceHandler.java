@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class AuthorizationExceptionHandler {
+public class AccountServiceHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public final ResponseEntity<ErrorMessage> handleTypeMismatchException() {
