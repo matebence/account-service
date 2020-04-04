@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Exceptions.Handler;
+package com.blesk.accountservice.Handler;
 
 import com.blesk.accountservice.DTO.ErrorMessage;
 import com.blesk.accountservice.Exceptions.AccountServiceException;

@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Controller;
+package com.blesk.accountservice.Controller.Resources;
 
 import com.blesk.accountservice.Model.Preferences.Preferences;
 import com.blesk.accountservice.Service.Preferences.PreferencesServiceImpl;

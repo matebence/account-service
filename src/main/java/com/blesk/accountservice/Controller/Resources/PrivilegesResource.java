@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Controller;
+package com.blesk.accountservice.Controller.Resources;
 
 import com.blesk.accountservice.Model.Privileges;
 import com.blesk.accountservice.Service.Privileges.PrivilegesServiceImpl;

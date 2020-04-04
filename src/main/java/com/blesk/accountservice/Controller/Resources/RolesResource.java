@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Controller;
+package com.blesk.accountservice.Controller.Resources;
 
 import com.blesk.accountservice.Model.Roles;
 import com.blesk.accountservice.Service.Roles.RolesServiceImpl;

@@ -38,11 +38,6 @@ public class Accounts implements Serializable {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @PositiveOrZero(message = Messages.ACCOUNTS_BALANCE_POSITIVE)
-    @Max(value = 10000, message = Messages.ACCOUNTS_BALANCE_MAX)
-    @Column(name = "balance", nullable = false)
-    private Double balance;
-
     @Column(name = "is_activated", nullable = false)
     private Boolean isActivated;
 
@@ -114,14 +109,6 @@ public class Accounts implements Serializable {
         this.password = password;
     }
 
-    public Double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(Double balance) {
-        this.balance = balance;
-    }
-
     public Boolean getActivated() {
         return isActivated;
     }
@@ -188,7 +175,6 @@ public class Accounts implements Serializable {
 
     @PrePersist
     protected void prePersist() {
-        this.balance = 0.00;
         this.isActivated = false;
         this.isDeleted = false;
         this.createdAt = new Timestamp(System.currentTimeMillis());
@@ -207,7 +193,6 @@ public class Accounts implements Serializable {
                 ", roles=" + roles +
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
-                ", balance=" + balance +
                 ", isActivated=" + isActivated +
                 ", isDeleted=" + isDeleted +
                 ", createdBy=" + createdBy +

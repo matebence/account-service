@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Controller;
+package com.blesk.accountservice.Controller.Resources;
 
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Service.Accounts.AccountsServiceImpl;
