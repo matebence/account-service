@@ -5,7 +5,7 @@ import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
 import com.blesk.accountservice.Exceptions.AccountServiceException;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Roles;
-import com.blesk.accountservice.Values.Criteria;
+import com.blesk.accountservice.Values.Keys;
 import com.blesk.accountservice.Values.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +25,27 @@ public class AccountsServiceImpl implements AccountsService {
         this.roleDAO = roleDAO;
     }
 
+    private boolean checkForAllowedRoles(Set<Roles> roles, String[] allowedRoles) {
+        Iterator<Roles> it = roles.iterator();
+        while (it.hasNext()) {
+            Roles role = it.next();
+            for (String allowedRole : allowedRoles) {
+                if (role.getName().equals(allowedRole)) {
+                    it.remove();
+                }
+            }
+        }
+        return roles.isEmpty();
+    }
+
     @Override
-    public Accounts createAccount(Accounts accounts, ArrayList<String> roles) {
-        Set<Roles> assignedRoles = this.roleDAO.getListOfRoles(roles);
+    public Accounts createAccount(Accounts accounts, String[] allowedRoles) {
+        if (accounts.getRoles().size() > 5)
+            throw new AccountServiceException(Messages.ACCOUNT_NEW_ERROR);
+        Set<Roles> roles = new HashSet<>(accounts.getRoles());
+        if (!checkForAllowedRoles(roles, allowedRoles))
+            throw new AccountServiceException(Messages.ACCOUNT_NEW_ERROR);
+        Set<Roles> assignedRoles = this.roleDAO.getListOfRoles(accounts.getRoles());
         if (assignedRoles.isEmpty())
             throw new AccountServiceException(Messages.CREATE_GET_ACCOUNT);
         accounts.setRoles(assignedRoles);
@@ -82,13 +100,22 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Override
+    public Accounts findAccountByEmail(String email) {
+        Accounts accounts = this.accountDAO.findAccountByEmail(email);
+        if (accounts == null)
+            throw new AccountServiceException(Messages.FIND_ACCOUNT_BY_EMAIL);
+
+        return accounts;
+    }
+
+    @Override
     public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria) {
-        if (criteria.get(Criteria.PAGINATION) == null)
+        if (criteria.get(Keys.PAGINATION) == null)
             throw new NullPointerException(Messages.PAGINATION_EXCEPTION);
 
-        Map<String, Object> accounts = this.accountDAO.searchBy(criteria, Integer.parseInt(criteria.get(Criteria.PAGINATION).get(Criteria.PAGE_NUMBER)));
+        Map<String, Object> accounts = this.accountDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
 
-        if (accounts.isEmpty())
+        if (accounts == null || accounts.isEmpty())
             throw new AccountServiceException(Messages.SEARCH_FOR_ACCOUNT);
 
         return accounts;

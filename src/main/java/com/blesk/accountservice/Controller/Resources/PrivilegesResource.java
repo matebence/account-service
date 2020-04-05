@@ -47,7 +47,7 @@ public class PrivilegesResource {
 
         EntityModel<Privileges> EntityModel = new EntityModel<Privileges>(privileges);
         EntityModel.add(linkTo(methodOn(this.getClass()).retrievePrivileges(privilegeId)).withSelfRel());
-        EntityModel.add(linkTo(methodOn(this.getClass()).retrieveAllPrivileges(0 ,10)).withRel("all-privileges"));
+        EntityModel.add(linkTo(methodOn(this.getClass()).retrieveAllPrivileges(0, 10)).withRel("all-privileges"));
 
         return EntityModel;
     }

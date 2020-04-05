@@ -10,7 +10,8 @@ public class Messages {
     public static final String AUTH_REQUIRED_EXCEPTION = "Prístup odmietnutý";
     public static final String SQL_EXCEPTION = "Operácia sa neuskutočnila";
     public static final String EXCEPTION = "Nastala neočakávaná chyba";
-    public static final String PAGINATION_EXCEPTION = "Stránkovanie nie je nastavené";
+    public static final String PAGINATION_EXCEPTION = "Požiadavku sa nepodarilo spracv";
+    public static final String INDEX_NOT_FOUND_EXCEPTION = "Požiadavku sa nepodarilo spracovať";
 
     public static final String CREATE_ROLE = "Vytvorenie roli sa nepodarilo";
     public static final String DELETE_GET_ROLE = "Ľutujeme, ale rola neexistuje";
@@ -29,6 +30,12 @@ public class Messages {
     public static final String GET_ALL_PREFERENCES = "Nenašiel sa žiadné preferencie";
     public static final String GET_PREFERENCE_BY_NAME = "Ľutujeme, preferencia neexistuje";
 
+    public static final String CREATE_PASSWORD_TOKEN = "Vytvorenie kľúču pre zabudnuté heslo sa nepodarilo";
+    public static final String DELETE_GET_PASSWORD_TOKEN = "Ľutujeme, ale kľúču pre zabudnuté heslo neexistuje";
+    public static final String DELETE_PASSWORD_TOKEN = "Odstránenie kľúču pre zabudnuté heslo sa nepodarilo";
+    public static final String UPDATE_PASSWORD_TOKEN = "Kľúč pre zabudnuté heslo sa nepodarilo aktualizovať";
+    public static final String GET_PASSWORD_TOKEN = "Ľutujeme, kľúču pre zabudnuté heslo neexistuje";
+
     public static final String CREATE_PRIVILEGE = "Vytvorenie práva sa nepodarilo";
     public static final String DELETE_GET_PRIVILEGE = "Ľutujeme, ale právo neexistuje";
     public static final String DELETE_PRIVILEGE = "Odstránenie práva sa nepodarilo";
@@ -45,21 +52,39 @@ public class Messages {
     public static final String GET_ACCOUNT = "Ľutujeme, účet neexistuje";
     public static final String GET_ALL_ACCOUNTS = "Nenašiel sa žiadný účet";
     public static final String GET_ACCOUNT_INFORMATION = "Ľutujeme, účet neexistuje";
+    public static final String FIND_ACCOUNT_BY_EMAIL = "Ľutujeme, emailová adresa neexistuje";
     public static final String GET_ROLES_TO_ACCOUNT = "Ľutujeme, chyba účtu";
     public static final String SEARCH_FOR_ACCOUNT = "Kritériám nevyhoveli žiadné záznamy";
 
     public static final String ENTITY_IDS = "Nesprávny formát identifikačného čísla";
-    public static final String ENTITY_CREATOR_ID = "Identifikačné číslo vytvárajúcého používatela nebol nastavení";
-    public static final String ACCOUNTS_USER_NAME_NULL = "Nezadali ste používatelské meno";
-    public static final String ACCOUNTS_USER_NAME_LENGHT = "Používatelské meno je príliž krátké alebo dlhé";
-    public static final String ACCOUNTS_PASSWORD = "Nezadali ste heslo";
+    public static final String ENTITY_CREATOR_ID = "Identifikačné číslo vytvárajúcého používateľa nebol nastavení";
 
-    public static final String PRIVILEGES_NOT_NULL = "Nezadali ste názov práva";
+    public static final String ACCOUNTS_USER_NAME_NULL = "Nezadali ste používateľské meno";
+    public static final String ACCOUNTS_USER_NAME_LENGHT = "Používateľské meno je príliž krátké alebo dlhé";
+    public static final String ACCOUNTS_PASSWORD_NULL = "Nezadali ste heslo";
+    public static final String ACCOUNTS_EMAIL_NULL = "Nezadali ste emailovú adresu";
+    public static final String ACCOUNTS_EMAIL_LENGHT = "Emailová adresa je príliž krátka alebo dlhá";
+    public static final String ACCOUNTS_EMAIL = "Nesprávný formát emailovej adresy";
+
+    public static final String PRIVILEGES_NULL = "Nezadali ste názov práva";
     public static final String PRIVILEGES_SIZE = "Názov práva je príliž krátké alebo dlhé";
 
-    public static final String ROLES_NOT_NULL = "Nezadali ste meno role";
+    public static final String ROLES_NULL = "Nezadali ste meno role";
     public static final String ROLES_SIZE = "Meno roli je príliž krátké alebo dlhé";
 
-    public static final String PREFERENCES_NOT_NULL = "Nezadali ste názov preferencie";
+    public static final String PREFERENCES_NULL = "Nezadali ste názov preferencie";
     public static final String PREFERENCES_SIZE = "Názov preferencie je príliž krátké alebo dlhé";
+
+    public static final String PASSWORDS_TOKEN_NULL = "Nebol vygenerovaný token pre obnoveniu hesla";
+    public static final String PASSWORDS_DATE_NULL = "Nebol nastavený dátum splatnosti pre token na obnoveniu hesla";
+    public static final String PASSWORDS_DATE_VALID = "Nesprávný formát dátumu";
+
+    public static final String LOGIN_TIMESTAMP_NULL = "Pri prihlasovaní nebol zaznamenaný dátum";
+    public static final String LOGIN_IP_ADDRESS_NULL = "Pri prihlasovaní nebola zaznamenaná IP adresa";
+
+    public static final String ACCOUNT_SIGN_IN_VERIFY = "Používateľské údaje odoslané na spracovanie";
+    public static final String ACCOUNT_SIGN_IN_ERROR = "Používateľské údaje sa nepodarilo poslať na spracovanie";
+    public static final String ACCOUNT_FORGET_PASSWORD = "Postup obnovenia hesla Vám bol zaslaný na uvedenú emailovú adresu";
+    public static final String ACCOUNT_NEW_PUBLIC = "Účet bol vytvorený, na emailovú sme Vám poslali aktivačný odkaz";
+    public static final String ACCOUNT_NEW_ERROR = "Vytvorenie účtu sa nepodarilo";
 }

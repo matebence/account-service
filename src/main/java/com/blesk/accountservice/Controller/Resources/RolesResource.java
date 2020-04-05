@@ -47,7 +47,7 @@ public class RolesResource {
 
         EntityModel<Roles> EntityModel = new EntityModel<Roles>(roles);
         EntityModel.add(linkTo(methodOn(this.getClass()).retrieveRoles(roleId)).withSelfRel());
-        EntityModel.add(linkTo(methodOn(this.getClass()).retrieveAllRoles(0,10)).withRel("all-roles"));
+        EntityModel.add(linkTo(methodOn(this.getClass()).retrieveAllRoles(0, 10)).withRel("all-roles"));
 
         return EntityModel;
     }

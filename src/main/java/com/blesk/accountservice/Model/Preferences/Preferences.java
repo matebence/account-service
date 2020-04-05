@@ -5,12 +5,13 @@ import com.blesk.accountservice.Values.Messages;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "preferences")
+@Entity(name = "Preferences")
 @Table(name = "preferences")
-public class Preferences {
+public class Preferences implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,9 +21,9 @@ public class Preferences {
     @OneToMany(cascade = CascadeType.MERGE, mappedBy = "accounts")
     private Set<AccountPreferenceItems> accountPreferenceItems = new HashSet<>();
 
-    @NotNull(message = Messages.PREFERENCES_NOT_NULL)
+    @NotNull(message = Messages.PREFERENCES_NULL)
     @Size(min = 3, max = 255, message = Messages.PREFERENCES_SIZE)
-    @Column(name = "name", nullable=false, unique = true)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     public Preferences() {
@@ -50,14 +51,5 @@ public class Preferences {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "Preferences{" +
-                "preferenceId=" + preferenceId +
-                ", accountPreferenceItems=" + accountPreferenceItems +
-                ", name='" + name + '\'' +
-                '}';
     }
 }

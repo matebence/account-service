@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "roles")
+@Entity(name = "Roles")
 @Table(name = "roles")
 public class Roles implements Serializable {
 
@@ -22,32 +22,32 @@ public class Roles implements Serializable {
     private Long roleId;
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    @JoinTable(name="role_privilege_items", joinColumns=@JoinColumn(name="role_id"),
-            inverseJoinColumns=@JoinColumn(name="privilege_id"))
+    @JoinTable(name = "role_privilege_items", joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "privilege_id"))
     private Set<Privileges> privileges = new HashSet<Privileges>();
 
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.MERGE, mappedBy = "roles")
     private Set<Accounts> accounts = new HashSet<Accounts>();
 
-    @NotNull(message = Messages.ROLES_NOT_NULL)
+    @NotNull(message = Messages.ROLES_NULL)
     @Size(min = 3, max = 255, message = Messages.ROLES_SIZE)
-    @Column(name = "name", nullable=false, unique = true)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "is_deleted", nullable=false)
+    @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
     @NotNull(message = Messages.ENTITY_CREATOR_ID)
     @Positive(message = Messages.ENTITY_IDS)
-    @Column(name = "created_by", nullable=false)
+    @Column(name = "created_by", nullable = false)
     private Long createdBy;
 
-    @Column(name = "created_at", updatable=false, nullable=false)
+    @Column(name = "created_at", updatable = false, nullable = false)
     private java.sql.Timestamp createdAt;
 
     @Positive(message = Messages.ENTITY_IDS)
-    @Column(name = "updated_by", updatable=false)
+    @Column(name = "updated_by", updatable = false)
     private Long updatedBy;
 
     @Column(name = "updated_at")
@@ -160,22 +160,5 @@ public class Roles implements Serializable {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
-    }
-
-    @Override
-    public String toString() {
-        return "Roles{" +
-                "roleId=" + roleId +
-                ", privileges=" + privileges +
-                ", accounts=" + accounts +
-                ", name='" + name + '\'' +
-                ", isDeleted=" + isDeleted +
-                ", createdBy=" + createdBy +
-                ", createdAt=" + createdAt +
-                ", updatedBy=" + updatedBy +
-                ", updatedAt=" + updatedAt +
-                ", deletedBy=" + deletedBy +
-                ", deletedAt=" + deletedAt +
-                '}';
     }
 }

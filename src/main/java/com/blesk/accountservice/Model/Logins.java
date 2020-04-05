@@ -1,14 +1,16 @@
 package com.blesk.accountservice.Model;
 
+import com.blesk.accountservice.Values.Messages;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-@Entity(name = "logins")
+@Entity(name = "Logins")
 @Table(name = "logins")
 public class Logins implements Serializable {
 
@@ -20,16 +22,15 @@ public class Logins implements Serializable {
     @JsonIgnore
     @OneToOne(cascade = CascadeType.MERGE, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name="account_id", nullable = false)
+    @JoinColumn(name = "account_id", nullable = false)
     private Accounts account;
 
-    @Column(name = "no_trys", nullable=false)
-    private Integer noTrys;
-
-    @Column(name = "last_login", nullable=false)
+    @NotNull(message = Messages.LOGIN_TIMESTAMP_NULL)
+    @Column(name = "last_login", nullable = false)
     private java.sql.Timestamp lastLogin;
 
-    @Column(name = "ip_address", nullable=false)
+    @NotNull(message = Messages.LOGIN_IP_ADDRESS_NULL)
+    @Column(name = "ip_address", nullable = false)
     private String ipAddress;
 
     public Logins() {
@@ -51,14 +52,6 @@ public class Logins implements Serializable {
         this.account = account;
     }
 
-    public Integer getNoTrys() {
-        return noTrys;
-    }
-
-    public void setNoTrys(Integer noTrys) {
-        this.noTrys = noTrys;
-    }
-
     public Timestamp getLastLogin() {
         return lastLogin;
     }
@@ -75,24 +68,8 @@ public class Logins implements Serializable {
         this.ipAddress = ipAddress;
     }
 
-    @PrePersist
-    protected void prePersist() {
-        this.noTrys = 0;
-    }
-
     @PreUpdate
     protected void preUpdate() {
         this.lastLogin = new Timestamp(System.currentTimeMillis());
-    }
-
-    @Override
-    public String toString() {
-        return "Logins{" +
-                "loginId=" + loginId +
-                ", account=" + account +
-                ", noTrys=" + noTrys +
-                ", lastLogin=" + lastLogin +
-                ", ipAddress='" + ipAddress + '\'' +
-                '}';
     }
 }

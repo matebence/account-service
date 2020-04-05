@@ -63,8 +63,8 @@ public class AccountsResource {
 
     @PostMapping("/accounts")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> createAccounts(@Valid @RequestBody Accounts accounts, @RequestBody ArrayList<String> roles) {
-        Accounts account = this.accountsService.createAccount(accounts, roles);
+    public ResponseEntity<Object> createAccounts(@Valid @RequestBody Accounts accounts) {
+        Accounts account = this.accountsService.createAccount(accounts, new String[]{"SYSTEM_ROLE", "ADMIN_ROLE", "MANAGER_ROLE", "CLIENT_ROLE", "COURIER_ROLE"});
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{preferenceId}")
                 .buildAndExpand(account.getAccountId()).toUri();

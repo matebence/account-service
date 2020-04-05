@@ -47,7 +47,7 @@ public class PreferencesResource {
 
         EntityModel<Preferences> EntityModel = new EntityModel<Preferences>(preferences);
         EntityModel.add(linkTo(methodOn(this.getClass()).retrievePreferences(preferenceId)).withSelfRel());
-        EntityModel.add(linkTo(methodOn(this.getClass()).retrieveAllPreferences(0 ,10)).withRel("all-preferences"));
+        EntityModel.add(linkTo(methodOn(this.getClass()).retrieveAllPreferences(0, 10)).withRel("all-preferences"));
 
         return EntityModel;
     }

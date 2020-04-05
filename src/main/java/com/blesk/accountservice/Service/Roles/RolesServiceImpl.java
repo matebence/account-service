@@ -17,7 +17,7 @@ public class RolesServiceImpl implements RolesService {
     private RolesDAOImpl roleDAO;
 
     @Autowired
-    public RolesServiceImpl(RolesDAOImpl roleDAO){
+    public RolesServiceImpl(RolesDAOImpl roleDAO) {
         this.roleDAO = roleDAO;
     }
 
@@ -31,7 +31,7 @@ public class RolesServiceImpl implements RolesService {
     @Override
     public boolean deleteRole(Long roleId) {
         Roles roles = this.roleDAO.get(Roles.class, roleId);
-        if(roles == null)
+        if (roles == null)
             throw new AccountServiceException(Messages.DELETE_GET_ROLE);
         if (!this.roleDAO.delete(roles))
             throw new AccountServiceException(Messages.DELETE_ROLE);
@@ -48,7 +48,7 @@ public class RolesServiceImpl implements RolesService {
     @Override
     public Roles getRole(Long roleId) {
         Roles role = this.roleDAO.get(Roles.class, roleId);
-        if(role == null)
+        if (role == null)
             throw new AccountServiceException(Messages.GET_ROLE);
         return role;
     }
@@ -56,7 +56,7 @@ public class RolesServiceImpl implements RolesService {
     @Override
     public List<Roles> getAllRoles(int pageNumber, int pageSize) {
         List<Roles> roles = this.roleDAO.getAll(Roles.class, pageNumber, pageSize);
-        if(roles == null)
+        if (roles == null)
             throw new AccountServiceException(Messages.GET_ALL_ROLES);
         return roles;
     }
@@ -64,7 +64,7 @@ public class RolesServiceImpl implements RolesService {
     @Override
     public Roles getRoleByName(String roleName) {
         Roles role = this.roleDAO.getRoleByName(roleName);
-        if(role == null)
+        if (role == null)
             throw new AccountServiceException(Messages.GET_ROLE_BY_NAME);
         return role;
     }

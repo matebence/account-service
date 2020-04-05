@@ -2,14 +2,13 @@ package com.blesk.accountservice.Service.Accounts;
 
 import com.blesk.accountservice.Model.Accounts;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public interface AccountsService {
 
-    Accounts createAccount(Accounts accounts, ArrayList<String> names);
+    Accounts createAccount(Accounts accounts, String[] allowedRoles);
 
     boolean deleteAccount(Long accountId);
 
@@ -20,6 +19,8 @@ public interface AccountsService {
     List<Accounts> getAllAccounts(int pageNumber, int pageSize);
 
     Accounts getAccountInformations(String userName);
+
+    Accounts findAccountByEmail(String email);
 
     Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria);
 }

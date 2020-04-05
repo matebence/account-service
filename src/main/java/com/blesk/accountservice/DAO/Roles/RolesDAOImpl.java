@@ -7,6 +7,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class RolesDAOImpl extends DAOImpl<Roles> implements RolesDAO {
     private EntityManager entityManager;
 
     @Override
-    public Set<Roles> getListOfRoles(ArrayList<String> names) {
+    public Set<Roles> getListOfRoles(Set<Roles> roles) {
         Session session = this.entityManager.unwrap(Session.class);
 
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -32,12 +33,17 @@ public class RolesDAOImpl extends DAOImpl<Roles> implements RolesDAO {
 
         CriteriaQuery select = criteriaQuery.select(root);
 
-        for(String name : names){
-            predicates.add(criteriaBuilder.equal(root.get("name"), name.toUpperCase()));
+        for (Roles role : roles) {
+            predicates.add(criteriaBuilder.equal(root.get("name"), role.getName().toUpperCase()));
         }
 
-        select.where(predicates.toArray(new Predicate[]{}));
-        return new HashSet<Roles>(this.entityManager.createQuery(select).getResultList());
+        select.where(criteriaBuilder.or(predicates.toArray(new Predicate[]{})));
+
+        try {
+            return new HashSet<Roles>(this.entityManager.createQuery(select).getResultList());
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     @Override
@@ -46,8 +52,13 @@ public class RolesDAOImpl extends DAOImpl<Roles> implements RolesDAO {
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Roles> criteriaQuery = criteriaBuilder.createQuery(Roles.class);
         Root<Roles> root = criteriaQuery.from(Roles.class);
-        return this.entityManager.createQuery(criteriaQuery
-                .where(criteriaBuilder.equal(root.get("name"), name))).getSingleResult();
+
+        try {
+            return this.entityManager.createQuery(criteriaQuery
+                    .where(criteriaBuilder.equal(root.get("name"), name))).getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     @Override

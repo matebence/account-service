@@ -10,5 +10,7 @@ public interface AccountsDAO extends DAO<Accounts> {
 
     Accounts getAccountInformations(String userName);
 
+    Accounts findAccountByEmail(String email);
+
     Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias, int pageNumber);
 }

@@ -31,12 +31,4 @@ public class AccountPreferenceItemsId implements Serializable {
     public void setAccountId(Long accountId) {
         this.accountId = accountId;
     }
-
-    @Override
-    public String toString() {
-        return "AccountPreferenceItemsId{" +
-                "preferenceId=" + preferenceId +
-                ", accountId=" + accountId +
-                '}';
-    }
 }

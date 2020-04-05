@@ -2,11 +2,12 @@ package com.blesk.accountservice.DAO.Accounts;
 
 import com.blesk.accountservice.DAO.DAOImpl;
 import com.blesk.accountservice.Model.Accounts;
-import com.blesk.accountservice.Values.Criteria;
+import com.blesk.accountservice.Values.Keys;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
@@ -26,8 +27,26 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Accounts> criteriaQuery = criteriaBuilder.createQuery(Accounts.class);
         Root<Accounts> root = criteriaQuery.from(Accounts.class);
-        return this.entityManager.createQuery(criteriaQuery
-                .where(criteriaBuilder.equal(root.get("userName"), userName))).getSingleResult();
+        try {
+            return this.entityManager.createQuery(criteriaQuery
+                    .where(criteriaBuilder.equal(root.get("userName"), userName))).getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public Accounts findAccountByEmail(String email) {
+        Session session = this.entityManager.unwrap(Session.class);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Accounts> criteriaQuery = criteriaBuilder.createQuery(Accounts.class);
+        Root<Accounts> root = criteriaQuery.from(Accounts.class);
+        try {
+            return this.entityManager.createQuery(criteriaQuery
+                    .where(criteriaBuilder.equal(root.get("email"), email))).getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     @Override
@@ -42,10 +61,10 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
         List<Predicate> predicates = new ArrayList<Predicate>();
         CriteriaQuery<Accounts> select = criteriaQuery.select(root);
 
-        if (criterias.get(Criteria.ORDER_BY) != null) {
+        if (criterias.get(Keys.ORDER_BY) != null) {
             List<Order> orderList = new ArrayList();
 
-            for (Object o : criterias.get(Criteria.ORDER_BY).entrySet()) {
+            for (Object o : criterias.get(Keys.ORDER_BY).entrySet()) {
                 Map.Entry pair = (Map.Entry) o;
                 if (pair.getValue().toString().toLowerCase().equals("asc")) {
                     orderList.add(criteriaBuilder.asc(root.get(pair.getKey().toString())));
@@ -56,16 +75,16 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
             select.orderBy(orderList);
         }
 
-        if (criterias.get(Criteria.SEARCH) != null) {
-            for (Object o : criterias.get(Criteria.SEARCH).entrySet()) {
+        if (criterias.get(Keys.SEARCH) != null) {
+            for (Object o : criterias.get(Keys.SEARCH).entrySet()) {
                 Map.Entry pair = (Map.Entry) o;
-                predicates.add(criteriaBuilder.like(root.get(pair.getKey().toString()), "%"+pair.getValue().toString()+"%"));
+                predicates.add(criteriaBuilder.like(root.get(pair.getKey().toString()), "%" + pair.getValue().toString() + "%"));
             }
             select.where(predicates.toArray(new Predicate[]{}));
         }
 
         TypedQuery<Accounts> typedQuery = this.entityManager.createQuery(select);
-        if (criterias.get(Criteria.PAGINATION) != null) {
+        if (criterias.get(Keys.PAGINATION) != null) {
             typedQuery.setFirstResult(pageNumber);
             typedQuery.setMaxResults(PAGE_SIZE);
 
@@ -80,13 +99,13 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
             } else if ((pageNumber == 0) && (pageNumber < (Math.floor(total / PAGE_SIZE)))) {
                 map.put("hasPrev", false);
                 map.put("hasNext", true);
-            } else if ((pageNumber > 0) && (pageNumber == Math.floor(total/PAGE_SIZE))) {
+            } else if ((pageNumber > 0) && (pageNumber == Math.floor(total / PAGE_SIZE))) {
                 map.put("hasPrev", true);
                 map.put("hasNext", false);
-            } else if((pageNumber == 0) && (pageNumber == Math.floor(total/PAGE_SIZE))){
+            } else if ((pageNumber == 0) && (pageNumber == Math.floor(total / PAGE_SIZE))) {
                 map.put("hasPrev", false);
                 map.put("hasNext", false);
-            }else{
+            } else {
                 return Collections.<String, Object>emptyMap();
             }
 
@@ -94,8 +113,12 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
             return map;
         }
 
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("results", typedQuery.getResultList());
-        return map;
+        try {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("results", typedQuery.getResultList());
+            return map;
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 }

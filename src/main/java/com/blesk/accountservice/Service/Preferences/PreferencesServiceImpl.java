@@ -15,7 +15,7 @@ public class PreferencesServiceImpl implements PreferencesService {
     private PreferencesDAOImpl preferencesDAO;
 
     @Autowired
-    public PreferencesServiceImpl(PreferencesDAOImpl preferencesDAO){
+    public PreferencesServiceImpl(PreferencesDAOImpl preferencesDAO) {
         this.preferencesDAO = preferencesDAO;
     }
 
@@ -29,7 +29,7 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Override
     public boolean deletePreference(Long preferenceId) {
         Preferences preferences = this.preferencesDAO.get(Preferences.class, preferenceId);
-        if(preferences == null)
+        if (preferences == null)
             throw new AccountServiceException(Messages.DELETE_GET_PREFERENCE);
         if (!this.preferencesDAO.delete(preferences))
             throw new AccountServiceException(Messages.DELETE_PREFEREBCE);
@@ -46,7 +46,7 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Override
     public Preferences getPreference(Long preferenceId) {
         Preferences preference = this.preferencesDAO.get(Preferences.class, preferenceId);
-        if(preference == null)
+        if (preference == null)
             throw new AccountServiceException(Messages.GET_PREFERENCE);
         return preference;
     }
@@ -54,7 +54,7 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Override
     public List<Preferences> getAllPreferences(int pageNumber, int pageSize) {
         List<Preferences> preferences = this.preferencesDAO.getAll(Preferences.class, pageNumber, pageSize);
-        if(preferences == null)
+        if (preferences == null)
             throw new AccountServiceException(Messages.GET_ALL_PREFERENCES);
         return preferences;
     }
@@ -62,7 +62,7 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Override
     public Preferences getPreferenceByName(String preferenceName) {
         Preferences preference = this.preferencesDAO.getPreferenceByName(preferenceName);
-        if(preference == null)
+        if (preference == null)
             throw new AccountServiceException(Messages.GET_PREFERENCE_BY_NAME);
         return preference;
     }

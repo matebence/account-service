@@ -15,7 +15,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     private PrivilegesDAOImpl privilegeDAO;
 
     @Autowired
-    public PrivilegesServiceImpl(PrivilegesDAOImpl privilegeDAO){
+    public PrivilegesServiceImpl(PrivilegesDAOImpl privilegeDAO) {
         this.privilegeDAO = privilegeDAO;
     }
 
@@ -29,7 +29,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Override
     public boolean deletePrivilege(Long privilegeId) {
         Privileges privileges = this.privilegeDAO.get(Privileges.class, privilegeId);
-        if(privileges == null)
+        if (privileges == null)
             throw new AccountServiceException(Messages.DELETE_GET_PRIVILEGE);
         if (!this.privilegeDAO.delete(privileges))
             throw new AccountServiceException(Messages.DELETE_PRIVILEGE);
@@ -46,7 +46,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Override
     public Privileges getPrivilege(Long privilegeId) {
         Privileges privilege = this.privilegeDAO.get(Privileges.class, privilegeId);
-        if(privilege == null)
+        if (privilege == null)
             throw new AccountServiceException(Messages.GET_PRIVILEGE);
         return privilege;
     }
@@ -54,7 +54,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Override
     public List<Privileges> getAllPrivileges(int pageNumber, int pageSize) {
         List<Privileges> privileges = this.privilegeDAO.getAll(Privileges.class, pageNumber, pageSize);
-        if(privileges == null)
+        if (privileges == null)
             throw new AccountServiceException(Messages.GET_ALL_PRIVILEGES);
         return privileges;
     }
@@ -62,7 +62,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Override
     public Privileges getPrivilegeByName(String privilegeName) {
         Privileges privilege = this.privilegeDAO.getPrivilegeByName(privilegeName);
-        if(privilege == null)
+        if (privilege == null)
             throw new AccountServiceException(Messages.GET_PRIVILEGE_BY_NAME);
         return privilege;
     }

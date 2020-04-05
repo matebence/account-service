@@ -1,6 +1,6 @@
 package com.blesk.accountservice.Handler;
 
-import com.blesk.accountservice.DTO.ErrorMessage;
+import com.blesk.accountservice.DTO.ResponseMessage;
 import com.blesk.accountservice.Values.Messages;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,7 +16,7 @@ public class OAuth2EntryPointHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        ErrorMessage errorObj = new ErrorMessage(new Timestamp(System.currentTimeMillis()).toString(), Messages.AUTH_REQUIRED_EXCEPTION);
+        ResponseMessage errorObj = new ResponseMessage(new Timestamp(System.currentTimeMillis()).toString(), Messages.AUTH_REQUIRED_EXCEPTION, true);
 
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

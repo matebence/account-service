@@ -13,11 +13,9 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>account-service</name>
     <description>Account service for Blesk microservis application</description>
-
     <properties>
         <java.version>1.8</java.version>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -41,7 +39,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
             <version>2.2.6.RELEASE</version>
         </dependency>
         <dependency>
@@ -76,7 +74,6 @@
             </exclusions>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -85,5 +82,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

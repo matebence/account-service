@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.*;
 
-@Entity(name = "accounts")
+@Entity(name = "Accounts")
 @Table(name = "accounts")
 public class Accounts implements Serializable {
 
@@ -21,8 +21,11 @@ public class Accounts implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "account")
     private Logins login;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "account")
+    private Passwords passwords;
+
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    @JoinTable(name = "account_role_items", joinColumns = @JoinColumn(name = "user_id"),
+    @JoinTable(name = "account_role_items", joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Roles> roles = new HashSet<>();
 
@@ -34,7 +37,13 @@ public class Accounts implements Serializable {
     @Column(name = "user_name", nullable = false, unique = true)
     private String userName;
 
-    @NotNull(message = Messages.ACCOUNTS_PASSWORD)
+    @NotNull(message = Messages.ACCOUNTS_EMAIL_NULL)
+    @Email(message = Messages.ACCOUNTS_EMAIL)
+    @Size(min = 5, max = 255, message = Messages.ACCOUNTS_EMAIL_LENGHT)
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    @NotNull(message = Messages.ACCOUNTS_PASSWORD_NULL)
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -85,12 +94,28 @@ public class Accounts implements Serializable {
         this.login = login;
     }
 
+    public Passwords getPasswords() {
+        return passwords;
+    }
+
+    public void setPasswords(Passwords passwords) {
+        this.passwords = passwords;
+    }
+
     public Set<Roles> getRoles() {
         return roles;
     }
 
     public void setRoles(Set<Roles> roles) {
         this.roles = roles;
+    }
+
+    public Set<AccountPreferenceItems> getAccountPreferenceItems() {
+        return accountPreferenceItems;
+    }
+
+    public void setAccountPreferenceItems(Set<AccountPreferenceItems> accountPreferenceItems) {
+        this.accountPreferenceItems = accountPreferenceItems;
     }
 
     public String getUserName() {
@@ -107,6 +132,14 @@ public class Accounts implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Boolean getActivated() {
@@ -183,24 +216,5 @@ public class Accounts implements Serializable {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
-    }
-
-    @Override
-    public String toString() {
-        return "Accounts{" +
-                "accountId=" + accountId +
-                ", login=" + login +
-                ", roles=" + roles +
-                ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                ", isActivated=" + isActivated +
-                ", isDeleted=" + isDeleted +
-                ", createdBy=" + createdBy +
-                ", createdAt=" + createdAt +
-                ", updatedBy=" + updatedBy +
-                ", updatedAt=" + updatedAt +
-                ", deletedBy=" + deletedBy +
-                ", deletedAt=" + deletedAt +
-                '}';
     }
 }

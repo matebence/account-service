@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "privileges")
+@Entity(name = "Privileges")
 @Table(name = "privileges")
 public class Privileges implements Serializable {
 
@@ -25,24 +25,24 @@ public class Privileges implements Serializable {
     @ManyToMany(cascade = CascadeType.MERGE, mappedBy = "privileges", fetch = FetchType.LAZY)
     private Set<Roles> roles = new HashSet<Roles>();
 
-    @NotNull(message = Messages.PRIVILEGES_NOT_NULL)
+    @NotNull(message = Messages.PRIVILEGES_NULL)
     @Size(min = 3, max = 255, message = Messages.PRIVILEGES_SIZE)
-    @Column(name = "name", nullable=false, unique = true)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "is_deleted", nullable=false)
+    @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
     @NotNull(message = Messages.ENTITY_CREATOR_ID)
     @Positive(message = Messages.ENTITY_IDS)
-    @Column(name = "created_by", nullable=false)
+    @Column(name = "created_by", nullable = false)
     private Long createdBy;
 
-    @Column(name = "created_at", updatable=false, nullable=false)
+    @Column(name = "created_at", updatable = false, nullable = false)
     private java.sql.Timestamp createdAt;
 
     @Positive(message = Messages.ENTITY_IDS)
-    @Column(name = "updated_by", updatable=false)
+    @Column(name = "updated_by", updatable = false)
     private Long updatedBy;
 
     @Column(name = "updated_at")
@@ -147,21 +147,5 @@ public class Privileges implements Serializable {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
-    }
-
-    @Override
-    public String toString() {
-        return "Privileges{" +
-                "privilegeId=" + privilegeId +
-                ", roles=" + roles +
-                ", name='" + name + '\'' +
-                ", isDeleted=" + isDeleted +
-                ", createdBy=" + createdBy +
-                ", createdAt=" + createdAt +
-                ", updatedBy=" + updatedBy +
-                ", updatedAt=" + updatedAt +
-                ", deletedBy=" + deletedBy +
-                ", deletedAt=" + deletedAt +
-                '}';
     }
 }

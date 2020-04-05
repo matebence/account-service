@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -25,7 +26,11 @@ public class PreferencesDAOImpl extends DAOImpl<Preferences> implements Preferen
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Preferences> criteriaQuery = criteriaBuilder.createQuery(Preferences.class);
         Root<Preferences> root = criteriaQuery.from(Preferences.class);
-        return this.entityManager.createQuery(criteriaQuery
-                .where(criteriaBuilder.equal(root.get("name"), name))).getSingleResult();
+        try {
+            return this.entityManager.createQuery(criteriaQuery
+                    .where(criteriaBuilder.equal(root.get("name"), name))).getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 }
