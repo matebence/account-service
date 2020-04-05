@@ -1,6 +1,6 @@
-package com.blesk.accountservice.DTO;
+package com.blesk.accountservice.POJO;
 
-public class ErrorMessage {
+public class ResponseMessage {
 
     private String timestamp;
 
@@ -8,13 +8,13 @@ public class ErrorMessage {
 
     private boolean error;
 
-    public ErrorMessage() {
+    public ResponseMessage() {
     }
 
-    public ErrorMessage(String timestamp, String message) {
+    public ResponseMessage(String timestamp, String message, boolean error) {
         this.timestamp = timestamp;
         this.message = message;
-        this.error = true;
+        this.error = error;
     }
 
     public String getTimestamp() {
@@ -43,7 +43,7 @@ public class ErrorMessage {
 
     @Override
     public String toString() {
-        return "ErrorMessage{" +
+        return "ResponseMessage{" +
                 "timestamp=" + timestamp +
                 ", message='" + message + '\'' +
                 ", error=" + error +
