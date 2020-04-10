@@ -40,7 +40,7 @@ public class RolesDAOImpl extends DAOImpl<Roles> implements RolesDAO {
         select.where(criteriaBuilder.or(predicates.toArray(new Predicate[]{})));
 
         try {
-            return new HashSet<Roles>(this.entityManager.createQuery(select).getResultList());
+            return new HashSet<Roles>((List<Roles>)this.entityManager.createQuery(select).getResultList());
         } catch (NoResultException ex) {
             return null;
         }

@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Controller.Resources;
+package com.blesk.accountservice.Controller;
 
 import com.blesk.accountservice.Model.Roles;
 import com.blesk.accountservice.Service.Roles.RolesServiceImpl;
@@ -7,6 +7,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -28,6 +29,7 @@ public class RolesResource {
         this.rolesService = rolesService;
     }
 
+    @PreAuthorize("hasRole('VIEW_ALL_ROLES')")
     @GetMapping("/roles/page/{pageNumber}/limit/{pageSize}")
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
     public CollectionModel<List<Roles>> retrieveAllRoles(@PathVariable int pageNumber, @PathVariable int pageSize) {
@@ -40,6 +42,7 @@ public class RolesResource {
         return collectionModel;
     }
 
+    @PreAuthorize("hasRole('VIEW_ROLES')")
     @GetMapping("/roles/{roleId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Roles> retrieveRoles(@PathVariable long roleId) {
@@ -52,12 +55,14 @@ public class RolesResource {
         return EntityModel;
     }
 
+    @PreAuthorize("hasRole('DELETE_ROLES')")
     @DeleteMapping("/roles/{roleId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteRoles(@PathVariable long roleId) {
         this.rolesService.deleteRole(roleId);
     }
 
+    @PreAuthorize("hasRole('CREATE_ROLES')")
     @PostMapping("/roles")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> createRoles(@Valid @RequestBody Roles roles) {
@@ -69,6 +74,7 @@ public class RolesResource {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasRole('UPDATE_ROLES')")
     @PutMapping("/roles/{roleId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updateRoles(@Valid @RequestBody Roles roles, @PathVariable long roleId) {

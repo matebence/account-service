@@ -18,7 +18,7 @@ public class ResponseMessage {
     }
 
     public String getTimestamp() {
-        return timestamp;
+        return this.timestamp;
     }
 
     public void setTimestamp(String timestamp) {
@@ -26,7 +26,7 @@ public class ResponseMessage {
     }
 
     public String getMessage() {
-        return message;
+        return this.message;
     }
 
     public void setMessage(String message) {
@@ -34,7 +34,7 @@ public class ResponseMessage {
     }
 
     public boolean isError() {
-        return error;
+        return this.error;
     }
 
     public void setError(boolean error) {

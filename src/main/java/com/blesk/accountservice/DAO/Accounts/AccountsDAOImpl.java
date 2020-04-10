@@ -2,7 +2,7 @@ package com.blesk.accountservice.DAO.Accounts;
 
 import com.blesk.accountservice.DAO.DAOImpl;
 import com.blesk.accountservice.Model.Accounts;
-import com.blesk.accountservice.Values.Keys;
+import com.blesk.accountservice.Value.Keys;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 

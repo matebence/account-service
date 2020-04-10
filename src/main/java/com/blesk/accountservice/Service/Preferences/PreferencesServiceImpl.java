@@ -1,9 +1,9 @@
 package com.blesk.accountservice.Service.Preferences;
 
 import com.blesk.accountservice.DAO.Preferences.PreferencesDAOImpl;
-import com.blesk.accountservice.Exceptions.AccountServiceException;
+import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Preferences.Preferences;
-import com.blesk.accountservice.Values.Messages;
+import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

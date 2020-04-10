@@ -1,7 +1,7 @@
 package com.blesk.accountservice.Model;
 
 import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
-import com.blesk.accountservice.Values.Messages;
+import com.blesk.accountservice.Value.Messages;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -47,6 +47,9 @@ public class Accounts implements Serializable {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Transient
+    private String confirmPassword;
+
     @Column(name = "is_activated", nullable = false)
     private Boolean isActivated;
 
@@ -79,7 +82,7 @@ public class Accounts implements Serializable {
     }
 
     public Long getAccountId() {
-        return accountId;
+        return this.accountId;
     }
 
     public void setAccountId(Long accountId) {
@@ -87,7 +90,7 @@ public class Accounts implements Serializable {
     }
 
     public Logins getLogin() {
-        return login;
+        return this.login;
     }
 
     public void setLogin(Logins login) {
@@ -95,7 +98,7 @@ public class Accounts implements Serializable {
     }
 
     public Passwords getPasswords() {
-        return passwords;
+        return this.passwords;
     }
 
     public void setPasswords(Passwords passwords) {
@@ -103,7 +106,7 @@ public class Accounts implements Serializable {
     }
 
     public Set<Roles> getRoles() {
-        return roles;
+        return this.roles;
     }
 
     public void setRoles(Set<Roles> roles) {
@@ -111,7 +114,7 @@ public class Accounts implements Serializable {
     }
 
     public Set<AccountPreferenceItems> getAccountPreferenceItems() {
-        return accountPreferenceItems;
+        return this.accountPreferenceItems;
     }
 
     public void setAccountPreferenceItems(Set<AccountPreferenceItems> accountPreferenceItems) {
@@ -119,31 +122,39 @@ public class Accounts implements Serializable {
     }
 
     public String getUserName() {
-        return userName;
+        return this.userName;
     }
 
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getConfirmPassword() {
+        return this.confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
     public Boolean getActivated() {
-        return isActivated;
+        return this.isActivated;
     }
 
     public void setActivated(Boolean activated) {
@@ -151,7 +162,7 @@ public class Accounts implements Serializable {
     }
 
     public Boolean getDeleted() {
-        return isDeleted;
+        return this.isDeleted;
     }
 
     public void setDeleted(Boolean deleted) {
@@ -159,7 +170,7 @@ public class Accounts implements Serializable {
     }
 
     public Long getCreatedBy() {
-        return createdBy;
+        return this.createdBy;
     }
 
     public void setCreatedBy(Long createdBy) {
@@ -167,7 +178,7 @@ public class Accounts implements Serializable {
     }
 
     public Timestamp getCreatedAt() {
-        return createdAt;
+        return this.createdAt;
     }
 
     public void setCreatedAt(Timestamp createdAt) {
@@ -175,7 +186,7 @@ public class Accounts implements Serializable {
     }
 
     public Long getUpdatedBy() {
-        return updatedBy;
+        return this.updatedBy;
     }
 
     public void setUpdatedBy(Long updatedBy) {
@@ -183,7 +194,7 @@ public class Accounts implements Serializable {
     }
 
     public Timestamp getUpdatedAt() {
-        return updatedAt;
+        return this.updatedAt;
     }
 
     public void setUpdatedAt(Timestamp updatedAt) {
@@ -191,7 +202,7 @@ public class Accounts implements Serializable {
     }
 
     public Long getDeletedBy() {
-        return deletedBy;
+        return this.deletedBy;
     }
 
     public void setDeletedBy(Long deletedBy) {
@@ -199,7 +210,7 @@ public class Accounts implements Serializable {
     }
 
     public Timestamp getDeletedAt() {
-        return deletedAt;
+        return this.deletedAt;
     }
 
     public void setDeletedAt(Timestamp deletedAt) {

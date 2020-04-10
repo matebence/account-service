@@ -11,4 +11,6 @@ public interface PasswordsService {
     boolean updatePasswordToken(Passwords passwords);
 
     Passwords getPasswordToken(Long passwordResetTokenId);
+
+    boolean validatePasswordResetToken(long accountId, String token);
 }

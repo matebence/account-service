@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Controller.Resources;
+package com.blesk.accountservice.Controller;
 
 import com.blesk.accountservice.Model.Privileges;
 import com.blesk.accountservice.Service.Privileges.PrivilegesServiceImpl;
@@ -7,6 +7,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -28,6 +29,7 @@ public class PrivilegesResource {
         this.privilegesService = privilegesService;
     }
 
+    @PreAuthorize("hasRole('VIEW_ALL_PRIVILEGES')")
     @GetMapping("/privileges/page/{pageNumber}/limit/{pageSize}")
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
     public CollectionModel<List<Privileges>> retrieveAllPrivileges(@PathVariable int pageNumber, @PathVariable int pageSize) {
@@ -40,6 +42,7 @@ public class PrivilegesResource {
         return collectionModel;
     }
 
+    @PreAuthorize("hasRole('VIEW_PRIVILEGES')")
     @GetMapping("/privileges/{privilegeId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Privileges> retrievePrivileges(@PathVariable long privilegeId) {
@@ -52,12 +55,14 @@ public class PrivilegesResource {
         return EntityModel;
     }
 
+    @PreAuthorize("hasRole('DELETE_PRIVILEGES')")
     @DeleteMapping("/privileges/{privilegeId}")
     @ResponseStatus(HttpStatus.OK)
     public void deletePrivileges(@PathVariable long privilegeId) {
         this.privilegesService.deletePrivilege(privilegeId);
     }
 
+    @PreAuthorize("hasRole('CREATE_PRIVILEGES')")
     @PostMapping("/privileges")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> createPrivileges(@Valid @RequestBody Privileges privileges) {
@@ -69,6 +74,7 @@ public class PrivilegesResource {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasRole('UPDATE_PRIVILEGES')")
     @PutMapping("/privileges/{privilegeId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updatePrivileges(@Valid @RequestBody Privileges privileges, @PathVariable long privilegeId) {

@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Controller.Resources;
+package com.blesk.accountservice.Controller;
 
 import com.blesk.accountservice.Model.Preferences.Preferences;
 import com.blesk.accountservice.Service.Preferences.PreferencesServiceImpl;
@@ -7,6 +7,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -28,6 +29,7 @@ public class PreferencesResource {
         this.preferencesService = preferencesService;
     }
 
+    @PreAuthorize("hasRole('VIEW_ALL_PREFERENCES')")
     @GetMapping("/preferences/page/{pageNumber}/limit/{pageSize}")
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
     public CollectionModel<List<Preferences>> retrieveAllPreferences(@PathVariable int pageNumber, @PathVariable int pageSize) {
@@ -40,6 +42,7 @@ public class PreferencesResource {
         return collectionModel;
     }
 
+    @PreAuthorize("hasRole('VIEW_PREFERENCES')")
     @GetMapping("/preferences/{preferenceId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Preferences> retrievePreferences(@PathVariable long preferenceId) {
@@ -52,12 +55,14 @@ public class PreferencesResource {
         return EntityModel;
     }
 
+    @PreAuthorize("hasRole('DELETE_PREFERENCES')")
     @DeleteMapping("/preferences/{preferenceId}")
     @ResponseStatus(HttpStatus.OK)
     public void deletePreferences(@PathVariable long preferenceId) {
         this.preferencesService.deletePreference(preferenceId);
     }
 
+    @PreAuthorize("hasRole('CREATE_PREFERENCES')")
     @PostMapping("/preferences")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> createPreferences(@Valid @RequestBody Preferences preferences) {
@@ -69,6 +74,7 @@ public class PreferencesResource {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasRole('UPDATE_PREFERENCES')")
     @PutMapping("/preferences/{preferenceId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updatePreferences(@Valid @RequestBody Preferences preferences, @PathVariable long preferenceId) {

@@ -1,11 +1,13 @@
 package com.blesk.accountservice.Service.Passwords;
 
 import com.blesk.accountservice.DAO.Passwords.PasswordsDAOImpl;
-import com.blesk.accountservice.Exceptions.AccountServiceException;
+import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Passwords;
-import com.blesk.accountservice.Values.Messages;
+import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Calendar;
 
 @Service
 public class PasswordsServiceImpl implements PasswordsService {
@@ -47,5 +49,16 @@ public class PasswordsServiceImpl implements PasswordsService {
         if (passwords == null)
             throw new AccountServiceException(Messages.GET_PASSWORD_TOKEN);
         return passwords;
+    }
+
+    @Override
+    public boolean validatePasswordResetToken(long accountId, String token) {
+        Passwords passwords = this.passwordsDAO.getPasswordTokenByToken(token);
+        if ((passwords == null) || (passwords.getAccount().getAccountId() != accountId)) {
+            return false;
+        }
+
+        Calendar cal = Calendar.getInstance();
+        return (passwords.getExpiryDate().getTime() - cal.getTime().getTime()) > 0;
     }
 }

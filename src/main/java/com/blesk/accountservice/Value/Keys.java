@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Values;
+package com.blesk.accountservice.Value;
 
 public class Keys {
 
@@ -8,7 +8,4 @@ public class Keys {
     public static final String SEARCH = "search";
 
     public static final String ORDER_BY = "orderBy";
-
-    public static final String USER_NAME = "userName";
-    public static final String USER_EMAIL = "email";
 }

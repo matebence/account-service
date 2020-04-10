@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Exceptions;
+package com.blesk.accountservice.Exception;
 
 public class AccountServiceException extends RuntimeException {
 

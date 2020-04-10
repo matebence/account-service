@@ -1,7 +1,7 @@
 package com.blesk.accountservice.Handler;
 
 import com.blesk.accountservice.DTO.ResponseMessage;
-import com.blesk.accountservice.Values.Messages;
+import com.blesk.accountservice.Value.Messages;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

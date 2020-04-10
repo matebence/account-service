@@ -24,7 +24,7 @@ public class JwtMapper {
     }
 
     public String getAccess_token() {
-        return access_token;
+        return this.access_token;
     }
 
     public void setAccess_token(String access_token) {
@@ -32,7 +32,7 @@ public class JwtMapper {
     }
 
     public String getToken_type() {
-        return token_type;
+        return this.token_type;
     }
 
     public void setToken_type(String token_type) {
@@ -40,7 +40,7 @@ public class JwtMapper {
     }
 
     public String getRefresh_token() {
-        return refresh_token;
+        return this.refresh_token;
     }
 
     public void setRefresh_token(String refresh_token) {
@@ -48,7 +48,7 @@ public class JwtMapper {
     }
 
     public Integer getExpires_in() {
-        return expires_in;
+        return this.expires_in;
     }
 
     public void setExpires_in(Integer expires_in) {
@@ -56,7 +56,7 @@ public class JwtMapper {
     }
 
     public Long getAccount_id() {
-        return account_id;
+        return this.account_id;
     }
 
     public void setAccount_id(Long account_id) {
@@ -64,7 +64,7 @@ public class JwtMapper {
     }
 
     public String getUser_name() {
-        return user_name;
+        return this.user_name;
     }
 
     public void setUser_name(String user_name) {
@@ -72,7 +72,7 @@ public class JwtMapper {
     }
 
     public Double getBalance() {
-        return balance;
+        return this.balance;
     }
 
     public void setBalance(Double balance) {
@@ -80,7 +80,7 @@ public class JwtMapper {
     }
 
     public Boolean getActivated() {
-        return activated;
+        return this.activated;
     }
 
     public void setActivated(Boolean activated) {
@@ -88,7 +88,7 @@ public class JwtMapper {
     }
 
     public String getJti() {
-        return jti;
+        return this.jti;
     }
 
     public void setJti(String jti) {

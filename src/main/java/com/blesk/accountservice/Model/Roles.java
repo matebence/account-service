@@ -1,6 +1,6 @@
 package com.blesk.accountservice.Model;
 
-import com.blesk.accountservice.Values.Messages;
+import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -64,7 +64,7 @@ public class Roles implements Serializable {
     }
 
     public Long getRoleId() {
-        return roleId;
+        return this.roleId;
     }
 
     public void setRoleId(Long roleId) {
@@ -72,7 +72,7 @@ public class Roles implements Serializable {
     }
 
     public Set<Privileges> getPrivileges() {
-        return privileges;
+        return this.privileges;
     }
 
     public void setPrivileges(Set<Privileges> privileges) {
@@ -80,7 +80,7 @@ public class Roles implements Serializable {
     }
 
     public Set<Accounts> getAccounts() {
-        return accounts;
+        return this.accounts;
     }
 
     public void setAccounts(Set<Accounts> accounts) {
@@ -88,7 +88,7 @@ public class Roles implements Serializable {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -96,7 +96,7 @@ public class Roles implements Serializable {
     }
 
     public Boolean getDeleted() {
-        return isDeleted;
+        return this.isDeleted;
     }
 
     public void setDeleted(Boolean deleted) {
@@ -104,7 +104,7 @@ public class Roles implements Serializable {
     }
 
     public Long getCreatedBy() {
-        return createdBy;
+        return this.createdBy;
     }
 
     public void setCreatedBy(Long createdBy) {
@@ -112,7 +112,7 @@ public class Roles implements Serializable {
     }
 
     public Timestamp getCreatedAt() {
-        return createdAt;
+        return this.createdAt;
     }
 
     public void setCreatedAt(Timestamp createdAt) {
@@ -120,7 +120,7 @@ public class Roles implements Serializable {
     }
 
     public Long getUpdatedBy() {
-        return updatedBy;
+        return this.updatedBy;
     }
 
     public void setUpdatedBy(Long updatedBy) {
@@ -128,7 +128,7 @@ public class Roles implements Serializable {
     }
 
     public Timestamp getUpdatedAt() {
-        return updatedAt;
+        return this.updatedAt;
     }
 
     public void setUpdatedAt(Timestamp updatedAt) {
@@ -136,7 +136,7 @@ public class Roles implements Serializable {
     }
 
     public Long getDeletedBy() {
-        return deletedBy;
+        return this.deletedBy;
     }
 
     public void setDeletedBy(Long deletedBy) {
@@ -144,7 +144,7 @@ public class Roles implements Serializable {
     }
 
     public Timestamp getDeletedAt() {
-        return deletedAt;
+        return this.deletedAt;
     }
 
     public void setDeletedAt(Timestamp deletedAt) {

@@ -32,13 +32,16 @@ INSERT INTO roles (name, created_by, created_at, is_deleted)
 VALUES ('COURIER_ROLE', 1, CURRENT_TIMESTAMP, FALSE);
 
 INSERT INTO privileges (name, created_by, created_at ,is_deleted)
-VALUES ('CREATE_TABLE_NAME', 1, CURRENT_TIMESTAMP, FALSE);
+VALUES ('VIEW_ALL_TABLE_NAME', 1, CURRENT_TIMESTAMP, FALSE);
 INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('READ_TABLE_NAME', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('UPDATE_TABLE_NAME', 1, CURRENT_TIMESTAMP, FALSE);
+VALUES ('VIEW_TABLE_NAME', 1, CURRENT_TIMESTAMP, FALSE);
 INSERT INTO privileges (name, created_by, created_at, is_deleted)
 VALUES ('DELETE_TABLE_NAME', 1, CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name, created_by, created_at, is_deleted)
+VALUES ('CREATE_TABLE_NAME', 1, CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name, created_by, created_at, is_deleted)
+VALUES ('UPDATE_TABLE_NAME', 1, CURRENT_TIMESTAMP, FALSE);
+
 
 INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (1, 1);

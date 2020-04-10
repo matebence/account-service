@@ -68,6 +68,7 @@ public class DAOImpl<T> implements DAO<T> {
         return (T) session.get(c, id);
     }
 
+    @Override
     @Transactional
     public List getAll(Class c, int pageNumber, int pageSize) {
         Session session = this.entityManager.unwrap(Session.class);

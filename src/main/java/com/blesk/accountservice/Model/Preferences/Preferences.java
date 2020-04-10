@@ -1,6 +1,6 @@
 package com.blesk.accountservice.Model.Preferences;
 
-import com.blesk.accountservice.Values.Messages;
+import com.blesk.accountservice.Value.Messages;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -30,7 +30,7 @@ public class Preferences implements Serializable {
     }
 
     public Long getPreferenceId() {
-        return preferenceId;
+        return this.preferenceId;
     }
 
     public void setPreferenceId(Long preferenceId) {
@@ -38,7 +38,7 @@ public class Preferences implements Serializable {
     }
 
     public Set<AccountPreferenceItems> getAccountPreferenceItems() {
-        return accountPreferenceItems;
+        return this.accountPreferenceItems;
     }
 
     public void setAccountPreferenceItems(Set<AccountPreferenceItems> accountPreferenceItems) {
@@ -46,7 +46,7 @@ public class Preferences implements Serializable {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {

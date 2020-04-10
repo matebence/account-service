@@ -1,7 +1,7 @@
 package com.blesk.accountservice.Model.Preferences;
 
 import com.blesk.accountservice.Model.Accounts;
-import com.blesk.accountservice.Values.Messages;
+import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -65,7 +65,7 @@ public class AccountPreferenceItems implements Serializable {
     }
 
     public AccountPreferenceItemsId getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(AccountPreferenceItemsId id) {
@@ -73,7 +73,7 @@ public class AccountPreferenceItems implements Serializable {
     }
 
     public Accounts getAccounts() {
-        return accounts;
+        return this.accounts;
     }
 
     public void setAccounts(Accounts accounts) {
@@ -81,7 +81,7 @@ public class AccountPreferenceItems implements Serializable {
     }
 
     public Preferences getPreferences() {
-        return preferences;
+        return this.preferences;
     }
 
     public void setPreferences(Preferences preferences) {
@@ -89,7 +89,7 @@ public class AccountPreferenceItems implements Serializable {
     }
 
     public boolean isSet() {
-        return isSet;
+        return this.isSet;
     }
 
     public void setSet(boolean set) {
@@ -97,7 +97,7 @@ public class AccountPreferenceItems implements Serializable {
     }
 
     public String getContent() {
-        return content;
+        return this.content;
     }
 
     public void setContent(String content) {
@@ -105,7 +105,7 @@ public class AccountPreferenceItems implements Serializable {
     }
 
     public int getValue() {
-        return value;
+        return this.value;
     }
 
     public void setValue(int value) {
@@ -113,7 +113,7 @@ public class AccountPreferenceItems implements Serializable {
     }
 
     public Boolean getDeleted() {
-        return isDeleted;
+        return this.isDeleted;
     }
 
     public void setDeleted(Boolean deleted) {
@@ -121,7 +121,7 @@ public class AccountPreferenceItems implements Serializable {
     }
 
     public Long getCreatedBy() {
-        return createdBy;
+        return this.createdBy;
     }
 
     public void setCreatedBy(Long createdBy) {
@@ -129,7 +129,7 @@ public class AccountPreferenceItems implements Serializable {
     }
 
     public Timestamp getCreatedAt() {
-        return createdAt;
+        return this.createdAt;
     }
 
     public void setCreatedAt(Timestamp createdAt) {
@@ -137,7 +137,7 @@ public class AccountPreferenceItems implements Serializable {
     }
 
     public Long getUpdatedBy() {
-        return updatedBy;
+        return this.updatedBy;
     }
 
     public void setUpdatedBy(Long updatedBy) {
@@ -145,7 +145,7 @@ public class AccountPreferenceItems implements Serializable {
     }
 
     public Timestamp getUpdatedAt() {
-        return updatedAt;
+        return this.updatedAt;
     }
 
     public void setUpdatedAt(Timestamp updatedAt) {
@@ -153,7 +153,7 @@ public class AccountPreferenceItems implements Serializable {
     }
 
     public Long getDeletedBy() {
-        return deletedBy;
+        return this.deletedBy;
     }
 
     public void setDeletedBy(Long deletedBy) {
@@ -161,7 +161,7 @@ public class AccountPreferenceItems implements Serializable {
     }
 
     public Timestamp getDeletedAt() {
-        return deletedAt;
+        return this.deletedAt;
     }
 
     public void setDeletedAt(Timestamp deletedAt) {

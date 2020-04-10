@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Values;
+package com.blesk.accountservice.Value;
 
 public class Messages {
 
@@ -11,7 +11,6 @@ public class Messages {
     public static final String SQL_EXCEPTION = "Operácia sa neuskutočnila";
     public static final String EXCEPTION = "Nastala neočakávaná chyba";
     public static final String PAGINATION_EXCEPTION = "Požiadavku sa nepodarilo spracv";
-    public static final String INDEX_NOT_FOUND_EXCEPTION = "Požiadavku sa nepodarilo spracovať";
 
     public static final String CREATE_ROLE = "Vytvorenie roli sa nepodarilo";
     public static final String DELETE_GET_ROLE = "Ľutujeme, ale rola neexistuje";
@@ -45,6 +44,7 @@ public class Messages {
     public static final String GET_PRIVILEGE_BY_NAME = "Ľutujeme, právo neexistuje";
 
     public static final String CREATE_GET_ACCOUNT = "Požadovaná rola pre vytvorenie nového úctu sa nenašla";
+    public static final String ACCOUNT_NEW_ERROR = "Vytvorenie účtu sa nepodarilo";
     public static final String CREATE_ACCOUNT = "Nepodarilo sa vytvoriť nový účet";
     public static final String DELETE_GET_ACCOUNT = "Ľutujeme, ale účet nebol nájdení";
     public static final String DELETE_ACCOUNT = "Odstránenie účtu bolo neúspešné";
@@ -81,12 +81,4 @@ public class Messages {
 
     public static final String LOGIN_TIMESTAMP_NULL = "Pri prihlasovaní nebol zaznamenaný dátum";
     public static final String LOGIN_IP_ADDRESS_NULL = "Pri prihlasovaní nebola zaznamenaná IP adresa";
-
-    public static final String ACCOUNT_SIGN_IN_VERIFY = "Používateľské údaje odoslané na spracovanie";
-    public static final String ACCOUNT_SIGN_IN_ERROR = "Používateľské údaje sa nepodarilo poslať na spracovanie";
-    public static final String ACCOUNT_FORGET_PASSWORD = "Postup obnovenia hesla Vám bol zaslaný na uvedenú emailovú adresu";
-    public static final String ACCOUNT_NEW_PUBLIC = "Účet bol vytvorený, na emailovú sme Vám poslali aktivačný odkaz";
-    public static final String ACCOUNT_NEW_ERROR = "Vytvorenie účtu sa nepodarilo";
-    public static final String ACCOUNT_FORGET_PASS = "Prosím zadajte nové heslo";
-    public static final String ACCOUNT_FORGET_ERROR = "Možnosť obnovenia zabudnutého hesla sa nepodarilo";
 }

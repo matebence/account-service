@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Controller.Resources;
+package com.blesk.accountservice.Controller;
 
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Service.Accounts.AccountsServiceImpl;
@@ -7,6 +7,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -31,6 +32,7 @@ public class AccountsResource {
         this.accountsService = accountsService;
     }
 
+    @PreAuthorize("hasRole('VIEW_ALL_ACCOUNTS')")
     @GetMapping("/accounts/page/{pageNumber}/limit/{pageSize}")
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
     public CollectionModel<List<Accounts>> retrieveAllAccounts(@PathVariable int pageNumber, @PathVariable int pageSize) {
@@ -43,6 +45,7 @@ public class AccountsResource {
         return collectionModel;
     }
 
+    @PreAuthorize("hasRole('VIEW_ACCOUNTS')")
     @GetMapping("/accounts/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Accounts> retrieveAccounts(@PathVariable long accountId) {
@@ -55,12 +58,14 @@ public class AccountsResource {
         return entityModel;
     }
 
+    @PreAuthorize("hasRole('DELETE_ACCOUNTS')")
     @DeleteMapping("/accounts/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteAccounts(@PathVariable long accountId) {
         this.accountsService.deleteAccount(accountId);
     }
 
+    @PreAuthorize("hasRole('CREATE_ACCOUNTS')")
     @PostMapping("/accounts")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> createAccounts(@Valid @RequestBody Accounts accounts) {
@@ -72,6 +77,7 @@ public class AccountsResource {
         return ResponseEntity.created(location).build();
     }
 
+    @PreAuthorize("hasRole('UPDATE_ACCOUNTS')")
     @PutMapping("/accounts/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updateAccounts(@Valid @RequestBody Accounts accounts, @PathVariable long accountId) {
@@ -82,6 +88,7 @@ public class AccountsResource {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('VIEW_ALL_ACCOUNTS')")
     @PostMapping("/accounts/search")
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<List<Accounts>> searchForAccounts(@RequestBody HashMap<String, HashMap<String, String>> search) {

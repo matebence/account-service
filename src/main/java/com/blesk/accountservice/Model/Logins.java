@@ -1,6 +1,6 @@
 package com.blesk.accountservice.Model;
 
-import com.blesk.accountservice.Values.Messages;
+import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -37,7 +37,7 @@ public class Logins implements Serializable {
     }
 
     public Long getLoginId() {
-        return loginId;
+        return this.loginId;
     }
 
     public void setLoginId(Long loginId) {
@@ -45,7 +45,7 @@ public class Logins implements Serializable {
     }
 
     public Accounts getAccount() {
-        return account;
+        return this.account;
     }
 
     public void setAccount(Accounts account) {
@@ -53,7 +53,7 @@ public class Logins implements Serializable {
     }
 
     public Timestamp getLastLogin() {
-        return lastLogin;
+        return this.lastLogin;
     }
 
     public void setLastLogin(Timestamp lastLogin) {
@@ -61,7 +61,7 @@ public class Logins implements Serializable {
     }
 
     public String getIpAddress() {
-        return ipAddress;
+        return this.ipAddress;
     }
 
     public void setIpAddress(String ipAddress) {

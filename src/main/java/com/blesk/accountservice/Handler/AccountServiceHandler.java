@@ -1,8 +1,8 @@
 package com.blesk.accountservice.Handler;
 
 import com.blesk.accountservice.DTO.ResponseMessage;
-import com.blesk.accountservice.Exceptions.AccountServiceException;
-import com.blesk.accountservice.Values.Messages;
+import com.blesk.accountservice.Exception.AccountServiceException;
+import com.blesk.accountservice.Value.Messages;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,9 +79,9 @@ public class AccountServiceHandler {
         return new ResponseEntity<>(errorObj, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public final ResponseEntity<ResponseMessage> handleExceptions() {
-//        ResponseMessage errorObj = new ResponseMessage(new Timestamp(System.currentTimeMillis()).toString(), Messages.EXCEPTION, true);
-//        return new ResponseEntity<>(errorObj, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler(Exception.class)
+    public final ResponseEntity<ResponseMessage> handleExceptions() {
+        ResponseMessage errorObj = new ResponseMessage(new Timestamp(System.currentTimeMillis()).toString(), Messages.EXCEPTION, true);
+        return new ResponseEntity<>(errorObj, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

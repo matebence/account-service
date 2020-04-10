@@ -1,6 +1,6 @@
 package com.blesk.accountservice.Model;
 
-import com.blesk.accountservice.Values.Messages;
+import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -42,7 +42,7 @@ public class Passwords implements Serializable {
     }
 
     public Long getPasswordResetTokenId() {
-        return passwordResetTokenId;
+        return this.passwordResetTokenId;
     }
 
     public void setPasswordResetTokenId(Long passwordResetTokenId) {
@@ -50,7 +50,7 @@ public class Passwords implements Serializable {
     }
 
     public String getToken() {
-        return token;
+        return this.token;
     }
 
     public void setToken(String token) {
@@ -58,7 +58,7 @@ public class Passwords implements Serializable {
     }
 
     public Accounts getAccount() {
-        return account;
+        return this.account;
     }
 
     public void setAccount(Accounts account) {
@@ -66,7 +66,7 @@ public class Passwords implements Serializable {
     }
 
     public Date getExpiryDate() {
-        return expiryDate;
+        return this.expiryDate;
     }
 
     public void setExpiryDate() {

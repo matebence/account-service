@@ -1,7 +1,7 @@
-package com.blesk.accountservice.Exceptions;
+package com.blesk.accountservice.Exception;
 
 import com.blesk.accountservice.DTO.ResponseMessage;
-import com.blesk.accountservice.Values.Messages;
+import com.blesk.accountservice.Value.Messages;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

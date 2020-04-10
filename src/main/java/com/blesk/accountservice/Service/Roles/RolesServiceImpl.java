@@ -1,10 +1,10 @@
 package com.blesk.accountservice.Service.Roles;
 
 import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
-import com.blesk.accountservice.Exceptions.AccountServiceException;
+import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Privileges;
 import com.blesk.accountservice.Model.Roles;
-import com.blesk.accountservice.Values.Messages;
+import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

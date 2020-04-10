@@ -17,7 +17,7 @@ public class AccountPreferenceItemsId implements Serializable {
     }
 
     public Long getPreferenceId() {
-        return preferenceId;
+        return this.preferenceId;
     }
 
     public void setPreferenceId(Long preferenceId) {
@@ -25,7 +25,7 @@ public class AccountPreferenceItemsId implements Serializable {
     }
 
     public Long getAccountId() {
-        return accountId;
+        return this.accountId;
     }
 
     public void setAccountId(Long accountId) {
