@@ -26,7 +26,7 @@ public class AuthorizationsServiceImpl implements AuthorizationsService {
     @Override
     public boolean send(Accounts accounts) {
         try {
-            amqpTemplate.convertAndSend(authorizationExchange, authorizationRoutingkey, accounts);
+            this.amqpTemplate.convertAndSend(this.authorizationExchange, this.authorizationRoutingkey, accounts);
             return true;
         } catch (AmqpException ex) {
             return false;

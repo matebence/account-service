@@ -87,4 +87,6 @@ public class Messages {
     public static final String ACCOUNT_FORGET_PASSWORD = "Postup obnovenia hesla Vám bol zaslaný na uvedenú emailovú adresu";
     public static final String ACCOUNT_NEW_PUBLIC = "Účet bol vytvorený, na emailovú sme Vám poslali aktivačný odkaz";
     public static final String ACCOUNT_NEW_ERROR = "Vytvorenie účtu sa nepodarilo";
+    public static final String ACCOUNT_FORGET_PASS = "Prosím zadajte nové heslo";
+    public static final String ACCOUNT_FORGET_ERROR = "Možnosť obnovenia zabudnutého hesla sa nepodarilo";
 }
