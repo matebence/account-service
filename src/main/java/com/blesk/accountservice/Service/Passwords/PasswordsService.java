@@ -6,11 +6,11 @@ public interface PasswordsService {
 
     Passwords createPasswordToken(Passwords passwords);
 
-    boolean deletePasswordToken(Long passwordResetTokenId);
+    Boolean deletePasswordToken(Long passwordResetTokenId);
 
-    boolean updatePasswordToken(Passwords passwords);
+    Boolean updatePasswordToken(Passwords passwords);
 
     Passwords getPasswordToken(Long passwordResetTokenId);
 
-    boolean validatePasswordResetToken(long accountId, String token);
+    Boolean validatePasswordResetToken(long accountId, String token);
 }

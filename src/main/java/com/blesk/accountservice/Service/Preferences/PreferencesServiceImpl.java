@@ -27,7 +27,7 @@ public class PreferencesServiceImpl implements PreferencesService {
     }
 
     @Override
-    public boolean deletePreference(Long preferenceId) {
+    public Boolean deletePreference(Long preferenceId) {
         Preferences preferences = this.preferencesDAO.get(Preferences.class, preferenceId);
         if (preferences == null)
             throw new AccountServiceException(Messages.DELETE_GET_PREFERENCE);
@@ -37,7 +37,7 @@ public class PreferencesServiceImpl implements PreferencesService {
     }
 
     @Override
-    public boolean updatePreference(Preferences preferences) {
+    public Boolean updatePreference(Preferences preferences) {
         if (!this.preferencesDAO.update(preferences))
             throw new AccountServiceException(Messages.UPDATE_PREFEREBCE);
         return true;

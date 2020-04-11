@@ -8,9 +8,9 @@ public interface PrivilegesService {
 
     Privileges createPrivilege(Privileges privileges);
 
-    boolean deletePrivilege(Long privilegeId);
+    Boolean deletePrivilege(Long privilegeId);
 
-    boolean updatePrivilege(Privileges privileges);
+    Boolean updatePrivilege(Privileges privileges);
 
     Privileges getPrivilege(Long privilegeId);
 

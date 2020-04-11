@@ -6,9 +6,9 @@ public interface DAO<T> {
 
     T save(T t);
 
-    boolean update(T t);
+    Boolean update(T t);
 
-    boolean delete(T t);
+    Boolean delete(T t);
 
     T get(Class c, Long id);
 

@@ -35,7 +35,7 @@ public class DAOImpl<T> implements DAO<T> {
 
     @Override
     @Transactional
-    public boolean update(T t) {
+    public Boolean update(T t) {
         Session session = this.entityManager.unwrap(Session.class);
         try {
             session.update(t);
@@ -49,7 +49,7 @@ public class DAOImpl<T> implements DAO<T> {
 
     @Override
     @Transactional
-    public boolean delete(T t) {
+    public Boolean delete(T t) {
         Session session = this.entityManager.unwrap(Session.class);
         try {
             session.delete(t);

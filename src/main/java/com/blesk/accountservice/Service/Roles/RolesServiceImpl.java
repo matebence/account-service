@@ -29,7 +29,7 @@ public class RolesServiceImpl implements RolesService {
     }
 
     @Override
-    public boolean deleteRole(Long roleId) {
+    public Boolean deleteRole(Long roleId) {
         Roles roles = this.roleDAO.get(Roles.class, roleId);
         if (roles == null)
             throw new AccountServiceException(Messages.DELETE_GET_ROLE);
@@ -39,7 +39,7 @@ public class RolesServiceImpl implements RolesService {
     }
 
     @Override
-    public boolean updateRole(Roles roles) {
+    public Boolean updateRole(Roles roles) {
         if (!this.roleDAO.update(roles))
             throw new AccountServiceException(Messages.UPDATE_ROLE);
         return true;

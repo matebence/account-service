@@ -27,7 +27,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     }
 
     @Override
-    public boolean deletePrivilege(Long privilegeId) {
+    public Boolean deletePrivilege(Long privilegeId) {
         Privileges privileges = this.privilegeDAO.get(Privileges.class, privilegeId);
         if (privileges == null)
             throw new AccountServiceException(Messages.DELETE_GET_PRIVILEGE);
@@ -37,7 +37,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     }
 
     @Override
-    public boolean updatePrivilege(Privileges privileges) {
+    public Boolean updatePrivilege(Privileges privileges) {
         if (!this.privilegeDAO.update(privileges))
             throw new AccountServiceException(Messages.UPDATE_PRIVILEGE);
         return true;

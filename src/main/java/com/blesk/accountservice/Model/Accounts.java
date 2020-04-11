@@ -29,7 +29,7 @@ public class Accounts implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Roles> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "preferences", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "preferences", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Set<AccountPreferenceItems> accountPreferenceItems = new HashSet<>();
 
     @NotNull(message = Messages.ACCOUNTS_USER_NAME_NULL)

@@ -55,7 +55,7 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Override
-    public boolean deleteAccount(Long accountId) {
+    public Boolean deleteAccount(Long accountId) {
         Accounts accounts = this.accountDAO.get(Accounts.class, accountId);
         if (accounts == null)
             throw new AccountServiceException(Messages.DELETE_GET_ACCOUNT);
@@ -65,7 +65,7 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Override
-    public boolean updateAccount(Accounts accounts) {
+    public Boolean updateAccount(Accounts accounts) {
         if (!this.accountDAO.update(accounts))
             throw new AccountServiceException(Messages.UPDATE_ACCOUNT);
         return true;

@@ -1,5 +1,5 @@
 INSERT INTO accounts (user_name, email, password, is_activated, created_by, created_at, is_deleted)
-VALUES ('system', 'system@blesk.sk', '$2a$10$xbZxaa42MsALegA6lD78COWz.sBYCZYLZVjb904f0y42TEm1JG/Me', TRUE, 1, CURRENT_TIMESTAMP, FALSE);
+VALUES ('system', 'system@blesk.sk', '$2y$10$2V6Si2mzFJd9Q4x2LkUqgeEMmJKAbg6/bd9TjUWSnxltyemWBxJh6', TRUE, 1, CURRENT_TIMESTAMP, FALSE);
 INSERT INTO accounts (user_name, email, password, is_activated, created_by, created_at, is_deleted)
 VALUES ('admin', 'admin@blesk.sk', '$2a$10$yglygEX/oNZuex6lh.1QTOeIwR5lbBqeROU.F7N9D8XSmrU9ReFYS', TRUE, 1, CURRENT_TIMESTAMP, FALSE);
 INSERT INTO accounts (user_name, email, password, is_activated, created_by, created_at, is_deleted)

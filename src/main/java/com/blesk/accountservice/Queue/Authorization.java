@@ -2,8 +2,10 @@ package com.blesk.accountservice.Queue;
 
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Accounts;
+import com.blesk.accountservice.Model.Logins;
 import com.blesk.accountservice.Model.Passwords;
 import com.blesk.accountservice.Service.Accounts.AccountsServiceImpl;
+import com.blesk.accountservice.Service.Logins.LoginsServiceImpl;
 import com.blesk.accountservice.Service.Passwords.PasswordsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -18,17 +20,20 @@ public class Authorization {
 
     private PasswordsServiceImpl passwordsService;
 
+    private LoginsServiceImpl loginsService;
+
     @Autowired
-    public Authorization(AccountsServiceImpl accountsService, PasswordsServiceImpl passwordsService) {
+    public Authorization(AccountsServiceImpl accountsService, PasswordsServiceImpl passwordsService, LoginsServiceImpl loginsService) {
         this.accountsService = accountsService;
         this.passwordsService = passwordsService;
+        this.loginsService = loginsService;
     }
 
     @RabbitListener(queues = "blesk.verifyAccountQueue")
     public Accounts verifyAccountForSigningIn(String userName) {
         try {
             return this.accountsService.getAccountInformations(userName);
-        }catch (AccountServiceException ex){
+        } catch (AccountServiceException ex) {
             return null;
         }
     }
@@ -37,7 +42,7 @@ public class Authorization {
     public Accounts createNewPublicAccount(Accounts accounts) {
         try {
             return this.accountsService.createAccount(accounts, new String[]{"CLIENT_ROLE", "COURIER_ROLE"});
-        }catch (AccountServiceException ex){
+        } catch (AccountServiceException ex) {
             return null;
         }
     }
@@ -54,13 +59,29 @@ public class Authorization {
 
         try {
             return this.passwordsService.createPasswordToken(passwords);
-        }catch (AccountServiceException ex){
+        } catch (AccountServiceException ex) {
             return null;
         }
     }
 
     @RabbitListener(queues = "blesk.changePasswordQueue")
-    public boolean assignNewPasswordToForgetAccount(Accounts accounts) {
-        return this.passwordsService.validatePasswordResetToken(accounts.getAccountId(), accounts.getPasswords().getToken());
+    public Boolean assignNewPasswordToForgetAccount(Accounts accounts) {
+        try {
+            return this.passwordsService.validatePasswordResetToken(accounts.getAccountId(), accounts.getPasswords().getToken());
+        } catch (AccountServiceException ex) {
+            return null;
+        }
+    }
+
+    @RabbitListener(queues = "blesk.lastLoginQueue")
+    public Boolean recordLastSuccessfullLogin(Logins logins) {
+        try {
+            Logins login = this.loginsService.getLogin(logins.getLoginId());
+            login.setIpAddress(logins.getIpAddress());
+            login.setLastLogin(logins.getLastLogin());
+            return this.loginsService.updateLogin(login);
+        } catch (AccountServiceException ex) {
+            return null;
+        }
     }
 }

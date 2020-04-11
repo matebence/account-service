@@ -27,7 +27,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     }
 
     @Override
-    public boolean deletePasswordToken(Long passwordResetTokenId) {
+    public Boolean deletePasswordToken(Long passwordResetTokenId) {
         Passwords passwords = this.passwordsDAO.get(Passwords.class, passwordResetTokenId);
         if (passwords == null)
             throw new AccountServiceException(Messages.DELETE_GET_PASSWORD_TOKEN);
@@ -37,7 +37,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     }
 
     @Override
-    public boolean updatePasswordToken(Passwords passwords) {
+    public Boolean updatePasswordToken(Passwords passwords) {
         if (!this.passwordsDAO.update(passwords))
             throw new AccountServiceException(Messages.UPDATE_PASSWORD_TOKEN);
         return true;
@@ -52,11 +52,13 @@ public class PasswordsServiceImpl implements PasswordsService {
     }
 
     @Override
-    public boolean validatePasswordResetToken(long accountId, String token) {
+    public Boolean validatePasswordResetToken(long accountId, String token) {
         Passwords passwords = this.passwordsDAO.getPasswordTokenByToken(token);
-        if ((passwords == null) || (passwords.getAccount().getAccountId() != accountId)) {
+        if (passwords == null)
+            throw new AccountServiceException(Messages.VALIDATE_PASSWORD_TOKEN);
+
+        if (passwords.getAccount().getAccountId() != accountId)
             return false;
-        }
 
         Calendar cal = Calendar.getInstance();
         return (passwords.getExpiryDate().getTime() - cal.getTime().getTime()) > 0;
