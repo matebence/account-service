@@ -5,9 +5,11 @@ import org.springframework.boot.autoconfigure.security.oauth2.resource.JwtAccess
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+@Component
 public class JwtConverter extends DefaultAccessTokenConverter implements JwtAccessTokenConverterConfigurer {
 
     @Override
@@ -33,7 +35,10 @@ public class JwtConverter extends DefaultAccessTokenConverter implements JwtAcce
             jwtMapper.setExpires_in((Integer) map.get("expires_in"));
 
         if (map.get("account_id") != null)
-            jwtMapper.setAccount_id((Long) map.get("account_id"));
+            jwtMapper.setAccount_id((Integer) map.get("account_id"));
+
+        if (map.get("login_id") != null)
+            jwtMapper.setLogin_id((Integer) map.get("login_id"));
 
         if (map.get("user_name") != null)
             jwtMapper.setUser_name((String) map.get("user_name"));
