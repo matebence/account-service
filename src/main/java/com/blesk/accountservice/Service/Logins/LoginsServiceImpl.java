@@ -7,6 +7,8 @@ import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class LoginsServiceImpl implements LoginsService {
 
@@ -18,6 +20,7 @@ public class LoginsServiceImpl implements LoginsService {
     }
 
     @Override
+    @Transactional
     public Logins createLogin(Logins logins) {
         if (this.loginsDAO.save(logins).getLoginId() == null)
             throw new AccountServiceException(Messages.CREATE_LOGIN);
@@ -25,6 +28,7 @@ public class LoginsServiceImpl implements LoginsService {
     }
 
     @Override
+    @Transactional
     public Boolean deleteLogin(Long loginId) {
         Logins logins = this.loginsDAO.get(Logins.class, loginId);
         if (logins == null)
@@ -35,6 +39,7 @@ public class LoginsServiceImpl implements LoginsService {
     }
 
     @Override
+    @Transactional
     public Boolean updateLogin(Logins logins) {
         if (!this.loginsDAO.update(logins))
             throw new AccountServiceException(Messages.UPDATE_LOGIN);
@@ -42,6 +47,7 @@ public class LoginsServiceImpl implements LoginsService {
     }
 
     @Override
+    @Transactional
     public Logins getLogin(Long loginId) {
         Logins login = this.loginsDAO.get(Logins.class, loginId);
         if (login == null)

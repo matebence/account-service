@@ -10,7 +10,9 @@ public class JwtMapper {
 
     private Integer expires_in;
 
-    private Long account_id;
+    private Integer account_id;
+
+    private Integer login_id;
 
     private String user_name;
 
@@ -55,12 +57,20 @@ public class JwtMapper {
         this.expires_in = expires_in;
     }
 
-    public Long getAccount_id() {
+    public Integer getAccount_id() {
         return this.account_id;
     }
 
-    public void setAccount_id(Long account_id) {
+    public void setAccount_id(Integer account_id) {
         this.account_id = account_id;
+    }
+
+    public Integer getLogin_id() {
+        return this.login_id;
+    }
+
+    public void setLogin_id(Integer login_id) {
+        this.login_id = login_id;
     }
 
     public String getUser_name() {

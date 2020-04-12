@@ -11,7 +11,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
 
 @Repository
 public class PreferencesDAOImpl extends DAOImpl<Preferences> implements PreferencesDAO {
@@ -20,7 +19,6 @@ public class PreferencesDAOImpl extends DAOImpl<Preferences> implements Preferen
     private EntityManager entityManager;
 
     @Override
-    @Transactional
     public Preferences getPreferenceByName(String name) {
         Session session = this.entityManager.unwrap(Session.class);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();

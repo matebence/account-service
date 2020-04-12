@@ -8,6 +8,7 @@ import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ public class RolesServiceImpl implements RolesService {
     }
 
     @Override
+    @Transactional
     public Roles createRole(Roles roles) {
         if (this.roleDAO.save(roles).getRoleId() == null)
             throw new AccountServiceException(Messages.CREATE_ROLE);
@@ -29,6 +31,7 @@ public class RolesServiceImpl implements RolesService {
     }
 
     @Override
+    @Transactional
     public Boolean deleteRole(Long roleId) {
         Roles roles = this.roleDAO.get(Roles.class, roleId);
         if (roles == null)
@@ -39,6 +42,7 @@ public class RolesServiceImpl implements RolesService {
     }
 
     @Override
+    @Transactional
     public Boolean updateRole(Roles roles) {
         if (!this.roleDAO.update(roles))
             throw new AccountServiceException(Messages.UPDATE_ROLE);
@@ -46,6 +50,7 @@ public class RolesServiceImpl implements RolesService {
     }
 
     @Override
+    @Transactional
     public Roles getRole(Long roleId) {
         Roles role = this.roleDAO.get(Roles.class, roleId);
         if (role == null)
@@ -54,6 +59,7 @@ public class RolesServiceImpl implements RolesService {
     }
 
     @Override
+    @Transactional
     public List<Roles> getAllRoles(int pageNumber, int pageSize) {
         List<Roles> roles = this.roleDAO.getAll(Roles.class, pageNumber, pageSize);
         if (roles == null)
@@ -62,6 +68,7 @@ public class RolesServiceImpl implements RolesService {
     }
 
     @Override
+    @Transactional
     public Roles getRoleByName(String roleName) {
         Roles role = this.roleDAO.getRoleByName(roleName);
         if (role == null)
@@ -70,6 +77,7 @@ public class RolesServiceImpl implements RolesService {
     }
 
     @Override
+    @Transactional
     public Set<Privileges> getRolePrivileges(String roleName) {
         Set<Privileges> privileges = this.roleDAO.getPrivilegesAssignedToRole(roleName);
         if (privileges.isEmpty())

@@ -1,7 +1,8 @@
 package com.blesk.accountservice.Model;
 
 import com.blesk.accountservice.Value.Messages;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -13,7 +14,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 @Entity(name = "PasswordResetToken")
-@Table(name = "password_reset_token")
+@Table(name = "password_reset_token", uniqueConstraints = {@UniqueConstraint(columnNames = {"password_reset_token_id"})})
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Passwords.class)
 public class Passwords implements Serializable {
 
     private static final int EXPIRATION = 60 * 24;
@@ -27,10 +29,9 @@ public class Passwords implements Serializable {
     @Column(name = "token", nullable = false)
     private String token;
 
-    @JsonIgnore
-    @OneToOne(cascade = CascadeType.MERGE, orphanRemoval = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "account_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Accounts account;
 
     @FutureOrPresent(message = Messages.PASSWORDS_DATE_VALID)

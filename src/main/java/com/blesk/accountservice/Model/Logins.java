@@ -1,7 +1,8 @@
 package com.blesk.accountservice.Model;
 
 import com.blesk.accountservice.Value.Messages;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -11,7 +12,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity(name = "Logins")
-@Table(name = "logins")
+@Table(name = "logins", uniqueConstraints = {@UniqueConstraint(columnNames = {"login_id"})})
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Logins.class)
 public class Logins implements Serializable {
 
     @Id
@@ -19,15 +21,14 @@ public class Logins implements Serializable {
     @Column(name = "login_id")
     private Long loginId;
 
-    @JsonIgnore
-    @OneToOne(cascade = CascadeType.MERGE, orphanRemoval = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "account_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Accounts account;
 
     @NotNull(message = Messages.LOGIN_TIMESTAMP_NULL)
     @Column(name = "last_login", nullable = false)
-    private java.sql.Timestamp lastLogin;
+    private Timestamp lastLogin;
 
     @NotNull(message = Messages.LOGIN_IP_ADDRESS_NULL)
     @Column(name = "ip_address", nullable = false)

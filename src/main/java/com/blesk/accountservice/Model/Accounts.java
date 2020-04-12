@@ -2,6 +2,10 @@ package com.blesk.accountservice.Model;
 
 import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
 import com.blesk.accountservice.Value.Messages;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -10,7 +14,8 @@ import java.sql.Timestamp;
 import java.util.*;
 
 @Entity(name = "Accounts")
-@Table(name = "accounts")
+@Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"account_id"})})
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Accounts.class)
 public class Accounts implements Serializable {
 
     @Id
@@ -18,18 +23,20 @@ public class Accounts implements Serializable {
     @Column(name = "account_id")
     private Long accountId;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "account")
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "account")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Logins login;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "account")
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "account")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Passwords passwords;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "account_role_items", joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Roles> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "preferences", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "preferences", fetch = FetchType.EAGER)
     private Set<AccountPreferenceItems> accountPreferenceItems = new HashSet<>();
 
     @NotNull(message = Messages.ACCOUNTS_USER_NAME_NULL)
@@ -62,21 +69,21 @@ public class Accounts implements Serializable {
     private Long createdBy;
 
     @Column(name = "created_at", updatable = false, nullable = false)
-    private java.sql.Timestamp createdAt;
+    private Timestamp createdAt;
 
     @Positive(message = Messages.ENTITY_IDS)
     @Column(name = "updated_by", updatable = false)
     private Long updatedBy;
 
     @Column(name = "updated_at")
-    private java.sql.Timestamp updatedAt;
+    private Timestamp updatedAt;
 
     @Positive(message = Messages.ENTITY_IDS)
     @Column(name = "deleted_by")
     private Long deletedBy;
 
     @Column(name = "deleted_at")
-    private java.sql.Timestamp deletedAt;
+    private Timestamp deletedAt;
 
     public Accounts() {
     }

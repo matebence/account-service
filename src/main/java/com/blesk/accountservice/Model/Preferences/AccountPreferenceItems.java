@@ -2,7 +2,10 @@ package com.blesk.accountservice.Model.Preferences;
 
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Value.Messages;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,18 +15,18 @@ import java.sql.Timestamp;
 
 @Entity(name = "AccountPreferenceItems")
 @Table(name = "account_preference_items")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = AccountPreferenceItems.class)
 public class AccountPreferenceItems implements Serializable {
 
     @EmbeddedId
     private AccountPreferenceItemsId id;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @MapsId("accountId")
     private Accounts accounts;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("preferenceId")
     private Preferences preferences;
 
@@ -45,21 +48,21 @@ public class AccountPreferenceItems implements Serializable {
     private Long createdBy;
 
     @Column(name = "created_at", updatable = false, nullable = false)
-    private java.sql.Timestamp createdAt;
+    private Timestamp createdAt;
 
     @Positive(message = Messages.ENTITY_IDS)
     @Column(name = "updated_by", updatable = false)
     private Long updatedBy;
 
     @Column(name = "updated_at")
-    private java.sql.Timestamp updatedAt;
+    private Timestamp updatedAt;
 
     @Positive(message = Messages.ENTITY_IDS)
     @Column(name = "deleted_by")
     private Long deletedBy;
 
     @Column(name = "deleted_at")
-    private java.sql.Timestamp deletedAt;
+    private Timestamp deletedAt;
 
     public AccountPreferenceItems() {
     }

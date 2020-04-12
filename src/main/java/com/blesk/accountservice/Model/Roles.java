@@ -1,7 +1,8 @@
 package com.blesk.accountservice.Model;
 
 import com.blesk.accountservice.Value.Messages;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,7 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "Roles")
-@Table(name = "roles")
+@Table(name = "roles", uniqueConstraints = {@UniqueConstraint(columnNames = {"role_id"})})
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Roles.class)
 public class Roles implements Serializable {
 
     @Id
@@ -21,13 +23,12 @@ public class Roles implements Serializable {
     @Column(name = "role_id")
     private Long roleId;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_privilege_items", joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "privilege_id"))
     private Set<Privileges> privileges = new HashSet<Privileges>();
 
-    @JsonIgnore
-    @ManyToMany(cascade = CascadeType.MERGE, mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private Set<Accounts> accounts = new HashSet<Accounts>();
 
     @NotNull(message = Messages.ROLES_NULL)
@@ -44,21 +45,21 @@ public class Roles implements Serializable {
     private Long createdBy;
 
     @Column(name = "created_at", updatable = false, nullable = false)
-    private java.sql.Timestamp createdAt;
+    private Timestamp createdAt;
 
     @Positive(message = Messages.ENTITY_IDS)
     @Column(name = "updated_by", updatable = false)
     private Long updatedBy;
 
     @Column(name = "updated_at")
-    private java.sql.Timestamp updatedAt;
+    private Timestamp updatedAt;
 
     @Positive(message = Messages.ENTITY_IDS)
     @Column(name = "deleted_by")
     private Long deletedBy;
 
     @Column(name = "deleted_at")
-    private java.sql.Timestamp deletedAt;
+    private Timestamp deletedAt;
 
     public Roles() {
     }

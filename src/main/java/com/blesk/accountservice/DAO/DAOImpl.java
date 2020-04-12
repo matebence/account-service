@@ -10,7 +10,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
 import java.util.*;
 
 @Repository
@@ -20,7 +19,6 @@ public class DAOImpl<T> implements DAO<T> {
     private EntityManager entityManager;
 
     @Override
-    @Transactional
     public T save(T t) {
         Session session = this.entityManager.unwrap(Session.class);
         try {
@@ -34,11 +32,10 @@ public class DAOImpl<T> implements DAO<T> {
     }
 
     @Override
-    @Transactional
     public Boolean update(T t) {
         Session session = this.entityManager.unwrap(Session.class);
         try {
-            session.update(t);
+            session.saveOrUpdate(t);
         } catch (Exception e) {
             session.clear();
             session.close();
@@ -48,7 +45,6 @@ public class DAOImpl<T> implements DAO<T> {
     }
 
     @Override
-    @Transactional
     public Boolean delete(T t) {
         Session session = this.entityManager.unwrap(Session.class);
         try {
@@ -62,14 +58,12 @@ public class DAOImpl<T> implements DAO<T> {
     }
 
     @Override
-    @Transactional
     public T get(Class c, Long id) {
         Session session = this.entityManager.unwrap(Session.class);
         return (T) session.get(c, id);
     }
 
     @Override
-    @Transactional
     public List getAll(Class c, int pageNumber, int pageSize) {
         Session session = this.entityManager.unwrap(Session.class);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();

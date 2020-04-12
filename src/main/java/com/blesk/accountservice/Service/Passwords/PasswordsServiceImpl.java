@@ -7,6 +7,7 @@ import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Calendar;
 
 @Service
@@ -20,6 +21,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     }
 
     @Override
+    @Transactional
     public Passwords createPasswordToken(Passwords passwords) {
         if (this.passwordsDAO.save(passwords).getPasswordResetTokenId() == null)
             throw new AccountServiceException(Messages.CREATE_PASSWORD_TOKEN);
@@ -27,6 +29,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     }
 
     @Override
+    @Transactional
     public Boolean deletePasswordToken(Long passwordResetTokenId) {
         Passwords passwords = this.passwordsDAO.get(Passwords.class, passwordResetTokenId);
         if (passwords == null)
@@ -37,6 +40,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     }
 
     @Override
+    @Transactional
     public Boolean updatePasswordToken(Passwords passwords) {
         if (!this.passwordsDAO.update(passwords))
             throw new AccountServiceException(Messages.UPDATE_PASSWORD_TOKEN);
@@ -44,6 +48,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     }
 
     @Override
+    @Transactional
     public Passwords getPasswordToken(Long passwordResetTokenId) {
         Passwords passwords = this.passwordsDAO.get(Passwords.class, passwordResetTokenId);
         if (passwords == null)
@@ -52,6 +57,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     }
 
     @Override
+    @Transactional
     public Boolean validatePasswordResetToken(long accountId, String token) {
         Passwords passwords = this.passwordsDAO.getPasswordTokenByToken(token);
         if (passwords == null)

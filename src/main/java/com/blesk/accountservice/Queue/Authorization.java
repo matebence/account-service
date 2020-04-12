@@ -34,7 +34,20 @@ public class Authorization {
         try {
             return this.accountsService.getAccountInformations(userName);
         } catch (AccountServiceException ex) {
-            return null;
+            return new Accounts();
+        }
+    }
+
+    @RabbitListener(queues = "blesk.lastLoginQueue")
+    public Boolean recordLastSuccessfullLogin(Logins logins) {
+        try {
+            Accounts accounts = this.accountsService.getAccount(logins.getAccount().getAccountId());
+            if (accounts.getPasswords() != null)
+                this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordResetTokenId());
+
+            return this.loginsService.updateLogin(logins);
+        } catch (AccountServiceException ex) {
+            return Boolean.FALSE;
         }
     }
 
@@ -43,7 +56,7 @@ public class Authorization {
         try {
             return this.accountsService.createAccount(accounts, new String[]{"CLIENT_ROLE", "COURIER_ROLE"});
         } catch (AccountServiceException ex) {
-            return null;
+            return new Accounts();
         }
     }
 
@@ -60,7 +73,7 @@ public class Authorization {
         try {
             return this.passwordsService.createPasswordToken(passwords);
         } catch (AccountServiceException ex) {
-            return null;
+            return new Passwords();
         }
     }
 
@@ -69,19 +82,7 @@ public class Authorization {
         try {
             return this.passwordsService.validatePasswordResetToken(accounts.getAccountId(), accounts.getPasswords().getToken());
         } catch (AccountServiceException ex) {
-            return null;
-        }
-    }
-
-    @RabbitListener(queues = "blesk.lastLoginQueue")
-    public Boolean recordLastSuccessfullLogin(Logins logins) {
-        try {
-            Logins login = this.loginsService.getLogin(logins.getLoginId());
-            login.setIpAddress(logins.getIpAddress());
-            login.setLastLogin(logins.getLastLogin());
-            return this.loginsService.updateLogin(login);
-        } catch (AccountServiceException ex) {
-            return null;
+            return Boolean.FALSE;
         }
     }
 }

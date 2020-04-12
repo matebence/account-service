@@ -1,6 +1,10 @@
 package com.blesk.accountservice.DTO;
 
-public class ResponseMessage {
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.util.HashMap;
+
+public class Response {
 
     private String timestamp;
 
@@ -8,10 +12,17 @@ public class ResponseMessage {
 
     private boolean error;
 
-    public ResponseMessage() {
+    private HashMap<String, String> nav;
+
+    public Response() {
     }
 
-    public ResponseMessage(String timestamp, String message, boolean error) {
+    {
+        this.nav = new HashMap<>();
+        this.nav.put("home", ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString());
+    }
+
+    public Response(String timestamp, String message, boolean error) {
         this.timestamp = timestamp;
         this.message = message;
         this.error = error;
@@ -41,12 +52,21 @@ public class ResponseMessage {
         this.error = error;
     }
 
+    public HashMap getNav() {
+        return this.nav;
+    }
+
+    public void setNav(String name, String url) {
+        this.nav.put(name, url);
+    }
+
     @Override
     public String toString() {
-        return "ResponseMessage{" +
-                "timestamp=" + timestamp +
+        return "Response{" +
+                "timestamp='" + timestamp + '\'' +
                 ", message='" + message + '\'' +
                 ", error=" + error +
+                ", nav=" + nav +
                 '}';
     }
 }

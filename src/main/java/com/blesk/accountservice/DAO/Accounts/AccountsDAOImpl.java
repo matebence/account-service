@@ -11,7 +11,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import javax.transaction.Transactional;
 import java.util.*;
 
 @Repository
@@ -21,7 +20,6 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
     private EntityManager entityManager;
 
     @Override
-    @Transactional
     public Accounts getAccountInformations(String userName) {
         Session session = this.entityManager.unwrap(Session.class);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -50,7 +48,6 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
     }
 
     @Override
-    @Transactional
     public Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias, int pageNumber) {
         final int PAGE_SIZE = 10;
 

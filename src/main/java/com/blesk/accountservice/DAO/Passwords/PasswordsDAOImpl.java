@@ -11,7 +11,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
 
 @Repository
 public class PasswordsDAOImpl extends DAOImpl<Passwords> implements PasswordsDAO {
@@ -20,7 +19,6 @@ public class PasswordsDAOImpl extends DAOImpl<Passwords> implements PasswordsDAO
     private EntityManager entityManager;
 
     @Override
-    @Transactional
     public Passwords getPasswordTokenByToken(String token) {
         Session session = this.entityManager.unwrap(Session.class);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();

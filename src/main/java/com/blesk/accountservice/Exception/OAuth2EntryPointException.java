@@ -1,6 +1,6 @@
 package com.blesk.accountservice.Exception;
 
-import com.blesk.accountservice.DTO.ResponseMessage;
+import com.blesk.accountservice.DTO.Response;
 import com.blesk.accountservice.Value.Messages;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.security.core.AuthenticationException;
@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 public class OAuth2EntryPointException implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws ServletException {
-        ResponseMessage errorObj = new ResponseMessage(new Timestamp(System.currentTimeMillis()).toString(), Messages.AUTH_EXCEPTION,true);
+        Response errorObj = new Response(new Timestamp(System.currentTimeMillis()).toString(), Messages.AUTH_EXCEPTION,true);
 
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

@@ -10,6 +10,7 @@ import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -39,6 +40,7 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Override
+    @Transactional
     public Accounts createAccount(Accounts accounts, String[] allowedRoles) {
         if (accounts.getRoles().size() > 5)
             throw new AccountServiceException(Messages.ACCOUNT_NEW_ERROR);
@@ -55,6 +57,7 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Override
+    @Transactional
     public Boolean deleteAccount(Long accountId) {
         Accounts accounts = this.accountDAO.get(Accounts.class, accountId);
         if (accounts == null)
@@ -65,6 +68,7 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Override
+    @Transactional
     public Boolean updateAccount(Accounts accounts) {
         if (!this.accountDAO.update(accounts))
             throw new AccountServiceException(Messages.UPDATE_ACCOUNT);
@@ -72,6 +76,7 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Override
+    @Transactional
     public Accounts getAccount(Long accountId) {
         Accounts accounts = this.accountDAO.get(Accounts.class, accountId);
         if (accounts == null)
@@ -80,6 +85,7 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Override
+    @Transactional
     public List<Accounts> getAllAccounts(int pageNumber, int pageSize) {
         List<Accounts> accounts = this.accountDAO.getAll(Accounts.class, pageNumber, pageSize);
         if (accounts.isEmpty())
@@ -88,6 +94,7 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Override
+    @Transactional
     public Accounts getAccountInformations(String userName) {
         Accounts accounts = this.accountDAO.getAccountInformations(userName);
         if (accounts == null)
@@ -100,6 +107,7 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Override
+    @Transactional
     public Accounts findAccountByEmail(String email) {
         Accounts accounts = this.accountDAO.findAccountByEmail(email);
         if (accounts == null)
@@ -109,6 +117,7 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria) {
         if (criteria.get(Keys.PAGINATION) == null)
             throw new NullPointerException(Messages.PAGINATION_EXCEPTION);

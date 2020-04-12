@@ -1,7 +1,8 @@
 package com.blesk.accountservice.Model;
 
 import com.blesk.accountservice.Value.Messages;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,7 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "Privileges")
-@Table(name = "privileges")
+@Table(name = "privileges", uniqueConstraints = {@UniqueConstraint(columnNames = {"privilege_id"})})
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Privileges.class)
 public class Privileges implements Serializable {
 
     @Id
@@ -21,8 +23,7 @@ public class Privileges implements Serializable {
     @Column(name = "privilege_id")
     private Long privilegeId;
 
-    @JsonIgnore
-    @ManyToMany(cascade = CascadeType.MERGE, mappedBy = "privileges", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "privileges", fetch = FetchType.EAGER)
     private Set<Roles> roles = new HashSet<Roles>();
 
     @NotNull(message = Messages.PRIVILEGES_NULL)
@@ -39,21 +40,21 @@ public class Privileges implements Serializable {
     private Long createdBy;
 
     @Column(name = "created_at", updatable = false, nullable = false)
-    private java.sql.Timestamp createdAt;
+    private Timestamp createdAt;
 
     @Positive(message = Messages.ENTITY_IDS)
     @Column(name = "updated_by", updatable = false)
     private Long updatedBy;
 
     @Column(name = "updated_at")
-    private java.sql.Timestamp updatedAt;
+    private Timestamp updatedAt;
 
     @Positive(message = Messages.ENTITY_IDS)
     @Column(name = "deleted_by")
     private Long deletedBy;
 
     @Column(name = "deleted_at")
-    private java.sql.Timestamp deletedAt;
+    private Timestamp deletedAt;
 
     public Privileges() {
     }

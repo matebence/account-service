@@ -7,6 +7,7 @@ import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -20,6 +21,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     }
 
     @Override
+    @Transactional
     public Privileges createPrivilege(Privileges privileges) {
         if (this.privilegeDAO.save(privileges).getPrivilegeId() == null)
             throw new AccountServiceException(Messages.CREATE_PRIVILEGE);
@@ -27,6 +29,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     }
 
     @Override
+    @Transactional
     public Boolean deletePrivilege(Long privilegeId) {
         Privileges privileges = this.privilegeDAO.get(Privileges.class, privilegeId);
         if (privileges == null)
@@ -37,6 +40,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     }
 
     @Override
+    @Transactional
     public Boolean updatePrivilege(Privileges privileges) {
         if (!this.privilegeDAO.update(privileges))
             throw new AccountServiceException(Messages.UPDATE_PRIVILEGE);
@@ -44,6 +48,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     }
 
     @Override
+    @Transactional
     public Privileges getPrivilege(Long privilegeId) {
         Privileges privilege = this.privilegeDAO.get(Privileges.class, privilegeId);
         if (privilege == null)
@@ -52,6 +57,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     }
 
     @Override
+    @Transactional
     public List<Privileges> getAllPrivileges(int pageNumber, int pageSize) {
         List<Privileges> privileges = this.privilegeDAO.getAll(Privileges.class, pageNumber, pageSize);
         if (privileges == null)
@@ -60,6 +66,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     }
 
     @Override
+    @Transactional
     public Privileges getPrivilegeByName(String privilegeName) {
         Privileges privilege = this.privilegeDAO.getPrivilegeByName(privilegeName);
         if (privilege == null)

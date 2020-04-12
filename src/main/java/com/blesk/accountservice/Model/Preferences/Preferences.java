@@ -1,6 +1,10 @@
 package com.blesk.accountservice.Model.Preferences;
 
 import com.blesk.accountservice.Value.Messages;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,7 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "Preferences")
-@Table(name = "preferences")
+@Table(name = "preferences", uniqueConstraints = {@UniqueConstraint(columnNames = {"preference_id"})})
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Preferences.class)
 public class Preferences implements Serializable {
 
     @Id
@@ -18,7 +23,8 @@ public class Preferences implements Serializable {
     @Column(name = "preference_id")
     private Long preferenceId;
 
-    @OneToMany(cascade = CascadeType.MERGE, mappedBy = "accounts")
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "preferences", fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<AccountPreferenceItems> accountPreferenceItems = new HashSet<>();
 
     @NotNull(message = Messages.PREFERENCES_NULL)
