@@ -1,8 +1,8 @@
 package com.blesk.accountservice.DAO.Preferences;
 
-import com.blesk.accountservice.Model.Preferences.Preferences;
+import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
 
 public interface PreferencesDAO {
 
-    Preferences getPreferenceByName(String name);
+    AccountPreferenceItems getPreferenceByName(String name);
 }

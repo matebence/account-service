@@ -1,6 +1,6 @@
-package com.blesk.accountservice.Validator;
+package com.blesk.accountservice.Validator.Service;
 
 public interface FieldValueExists {
 
-    boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException;
+    Boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException;
 }

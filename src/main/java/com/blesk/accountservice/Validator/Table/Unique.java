@@ -1,5 +1,6 @@
-package com.blesk.accountservice.Validator;
+package com.blesk.accountservice.Validator.Table;
 
+import com.blesk.accountservice.Validator.Service.FieldValueExists;
 import com.blesk.accountservice.Value.Messages;
 
 import javax.validation.Constraint;

@@ -2,15 +2,23 @@ package com.blesk.accountservice.Queue;
 
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Accounts;
+import com.blesk.accountservice.Model.Activations;
 import com.blesk.accountservice.Model.Logins;
 import com.blesk.accountservice.Model.Passwords;
 import com.blesk.accountservice.Service.Accounts.AccountsServiceImpl;
+import com.blesk.accountservice.Service.Activations.ActivationServiceImpl;
 import com.blesk.accountservice.Service.Logins.LoginsServiceImpl;
 import com.blesk.accountservice.Service.Passwords.PasswordsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import java.util.HashMap;
+import java.util.Set;
 import java.util.UUID;
 
 @Component
@@ -20,12 +28,15 @@ public class Authorization {
 
     private PasswordsServiceImpl passwordsService;
 
+    private ActivationServiceImpl activationService;
+
     private LoginsServiceImpl loginsService;
 
     @Autowired
-    public Authorization(AccountsServiceImpl accountsService, PasswordsServiceImpl passwordsService, LoginsServiceImpl loginsService) {
+    public Authorization(AccountsServiceImpl accountsService, PasswordsServiceImpl passwordsService, ActivationServiceImpl activationService, LoginsServiceImpl loginsService) {
         this.accountsService = accountsService;
         this.passwordsService = passwordsService;
+        this.activationService = activationService;
         this.loginsService = loginsService;
     }
 
@@ -53,10 +64,42 @@ public class Authorization {
 
     @RabbitListener(queues = "blesk.createAccountQueue")
     public Accounts createNewPublicAccount(Accounts accounts) {
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        Validator validator = validatorFactory.getValidator();
+        Set<ConstraintViolation<Accounts>> violations = validator.validate(accounts);
+
         try {
-            return this.accountsService.createAccount(accounts, new String[]{"CLIENT_ROLE", "COURIER_ROLE"});
+            HashMap<String, String> validation = new HashMap<>();
+            if (!violations.isEmpty()){
+                for (ConstraintViolation<Accounts> violation : violations) {
+                    validation.put(violation.getPropertyPath().toString(), violation.getMessage());
+                    System.out.println(violation.getPropertyPath().toString() + " = " + violation.getMessage());
+                }
+                accounts.setValidations(validation);
+                System.out.println(validation.size());
+                return accounts;
+            }
+
+            Accounts account = this.accountsService.createAccount(accounts, new String[]{"CLIENT_ROLE", "COURIER_ROLE"});
+            account.setValidations(validation);
+            Activations activations = new Activations();
+            activations.setToken(UUID.randomUUID().toString());
+            activations.setAccount(account);
+            account.setActivations(activations);
+
+            this.activationService.createActivationToken(activations);
+            return account;
         } catch (AccountServiceException ex) {
             return new Accounts();
+        }
+    }
+
+    @RabbitListener(queues = "blesk.verifyActivationTokenQueue")
+    public Boolean verifyActivationTokenForNewAccount(Accounts accounts) {
+        try {
+            return this.activationService.validateActivationToken(accounts.getAccountId(), accounts.getPasswords().getToken());
+        } catch (AccountServiceException ex) {
+            return Boolean.FALSE;
         }
     }
 
@@ -77,10 +120,10 @@ public class Authorization {
         }
     }
 
-    @RabbitListener(queues = "blesk.changePasswordQueue")
-    public Boolean assignNewPasswordToForgetAccount(Accounts accounts) {
+    @RabbitListener(queues = "blesk.verifyPasswordTokenQueue")
+    public Boolean verifyPasswordTokenForForgetPassword(Accounts accounts) {
         try {
-            return this.passwordsService.validatePasswordResetToken(accounts.getAccountId(), accounts.getPasswords().getToken());
+            return this.passwordsService.validatePasswordToken(accounts.getAccountId(), accounts.getPasswords().getToken());
         } catch (AccountServiceException ex) {
             return Boolean.FALSE;
         }

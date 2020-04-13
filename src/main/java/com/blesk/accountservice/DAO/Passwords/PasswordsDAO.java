@@ -4,5 +4,5 @@ import com.blesk.accountservice.Model.Passwords;
 
 public interface PasswordsDAO {
 
-    Passwords getPasswordTokenByToken(String token);
+    Passwords getPasswordToken(String token);
 }

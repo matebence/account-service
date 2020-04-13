@@ -1,7 +1,11 @@
 package com.blesk.accountservice.Model;
 
+import com.blesk.accountservice.Service.Accounts.AccountsService;
+import com.blesk.accountservice.Service.Privileges.PrivilegesService;
+import com.blesk.accountservice.Validator.Table.Unique;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
@@ -16,6 +20,7 @@ import java.util.Set;
 @Entity(name = "Privileges")
 @Table(name = "privileges", uniqueConstraints = {@UniqueConstraint(columnNames = {"privilege_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Privileges.class)
+@JsonIgnoreProperties(value = {"roles"})
 public class Privileges implements Serializable {
 
     @Id
@@ -28,7 +33,8 @@ public class Privileges implements Serializable {
 
     @NotNull(message = Messages.PRIVILEGES_NULL)
     @Size(min = 3, max = 255, message = Messages.PRIVILEGES_SIZE)
-    @Column(name = "name", nullable = false, unique = true)
+    @Unique(service = PrivilegesService.class, fieldName = "name", message = Messages.PRIVILEGES_UNIQUE)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "is_deleted", nullable = false)

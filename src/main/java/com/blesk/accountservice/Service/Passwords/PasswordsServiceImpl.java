@@ -58,8 +58,8 @@ public class PasswordsServiceImpl implements PasswordsService {
 
     @Override
     @Transactional
-    public Boolean validatePasswordResetToken(long accountId, String token) {
-        Passwords passwords = this.passwordsDAO.getPasswordTokenByToken(token);
+    public Boolean validatePasswordToken(long accountId, String token) {
+        Passwords passwords = this.passwordsDAO.getPasswordToken(token);
         if (passwords == null)
             throw new AccountServiceException(Messages.VALIDATE_PASSWORD_TOKEN);
 

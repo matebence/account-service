@@ -116,7 +116,6 @@ INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (1, 19);
 INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (1, 20);
-
 INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (2, 1);
 INSERT INTO role_privilege_items (role_id, privilege_id)
@@ -163,16 +162,3 @@ INSERT INTO account_role_items (account_id, role_id)
 VALUES (1, 1);
 INSERT INTO account_role_items (account_id, role_id)
 VALUES (2, 2);
-
-INSERT INTO preferences (name)
-VALUES ('aaa');
-INSERT INTO preferences (name)
-VALUES ('bbb');
-INSERT INTO preferences (name)
-VALUES ('ccc');
-INSERT INTO account_preference_items (content, is_set, value, created_at, created_by, accounts_account_id, preferences_preference_id, is_deleted)
-VALUES ('aaa', false, 23, CURRENT_TIMESTAMP, 1, 1, 1, false);
-INSERT INTO account_preference_items (content, is_set, value, created_at, created_by, accounts_account_id, preferences_preference_id, is_deleted)
-VALUES ('bbb', false, 23, CURRENT_TIMESTAMP, 1, 1, 2, false);
-INSERT INTO account_preference_items (content, is_set, value, created_at, created_by, accounts_account_id, preferences_preference_id, is_deleted)
-VALUES ('ccc', false, 23, CURRENT_TIMESTAMP, 1, 1, 3, false);

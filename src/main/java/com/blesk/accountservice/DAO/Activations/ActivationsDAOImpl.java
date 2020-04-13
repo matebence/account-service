@@ -1,7 +1,7 @@
-package com.blesk.accountservice.DAO.Passwords;
+package com.blesk.accountservice.DAO.Activations;
 
 import com.blesk.accountservice.DAO.DAOImpl;
-import com.blesk.accountservice.Model.Passwords;
+import com.blesk.accountservice.Model.Activations;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
@@ -13,17 +13,17 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 @Repository
-public class PasswordsDAOImpl extends DAOImpl<Passwords> implements PasswordsDAO {
+public class ActivationsDAOImpl extends DAOImpl<Activations> implements ActivationsDAO {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public Passwords getPasswordToken(String token) {
+    public Activations gettActivationToken(String token) {
         Session session = this.entityManager.unwrap(Session.class);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaQuery<Passwords> criteriaQuery = criteriaBuilder.createQuery(Passwords.class);
-        Root<Passwords> root = criteriaQuery.from(Passwords.class);
+        CriteriaQuery<Activations> criteriaQuery = criteriaBuilder.createQuery(Activations.class);
+        Root<Activations> root = criteriaQuery.from(Activations.class);
         try {
             return this.entityManager.createQuery(criteriaQuery
                     .where(criteriaBuilder.equal(root.get("token"), token))).getSingleResult();

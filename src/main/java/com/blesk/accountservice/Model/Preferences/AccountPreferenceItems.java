@@ -3,6 +3,7 @@ package com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -16,6 +17,7 @@ import java.sql.Timestamp;
 @Entity(name = "AccountPreferenceItems")
 @Table(name = "account_preference_items")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = AccountPreferenceItems.class)
+@JsonIgnoreProperties(value={ "accounts", "preferences"})
 public class AccountPreferenceItems implements Serializable {
 
     @EmbeddedId

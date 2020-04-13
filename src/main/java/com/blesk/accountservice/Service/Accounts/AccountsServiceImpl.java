@@ -129,4 +129,13 @@ public class AccountsServiceImpl implements AccountsService {
 
         return accounts;
     }
+
+    @Override
+    @Transactional
+    public Boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
+        if (value == null || fieldName == null)
+            throw new UnsupportedOperationException(String.format(Messages.UNSUPPORTED_COLUMN, fieldName));
+
+        return this.accountDAO.unique(Accounts.class, fieldName,value.toString());
+    }
 }

@@ -1,6 +1,6 @@
 package com.blesk.accountservice.Controller;
 
-import com.blesk.accountservice.Model.Preferences.Preferences;
+import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
 import com.blesk.accountservice.Service.Preferences.PreferencesServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -32,9 +32,9 @@ public class PreferencesResource {
     @PreAuthorize("hasRole('VIEW_ALL_PREFERENCES')")
     @GetMapping("/preferences/page/{pageNumber}/limit/{pageSize}")
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
-    public CollectionModel<List<Preferences>> retrieveAllPreferences(@PathVariable int pageNumber, @PathVariable int pageSize) {
-        List<Preferences> preferences = this.preferencesService.getAllPreferences(pageNumber, pageSize);
-        CollectionModel<List<Preferences>> collectionModel = new CollectionModel(preferences);
+    public CollectionModel<List<AccountPreferenceItems>> retrieveAllPreferences(@PathVariable int pageNumber, @PathVariable int pageSize) {
+        List<AccountPreferenceItems> accountPreferenceItems = this.preferencesService.getAllPreferences(pageNumber, pageSize);
+        CollectionModel<List<AccountPreferenceItems>> collectionModel = new CollectionModel(accountPreferenceItems);
 
         collectionModel.add(linkTo(methodOn(this.getClass()).retrieveAllPreferences(pageNumber, pageSize)).withSelfRel());
         collectionModel.add(linkTo(methodOn(this.getClass()).retrieveAllPreferences(++pageNumber, pageSize)).withRel("next-range"));
@@ -45,10 +45,10 @@ public class PreferencesResource {
     @PreAuthorize("hasRole('VIEW_PREFERENCES')")
     @GetMapping("/preferences/{preferenceId}")
     @ResponseStatus(HttpStatus.OK)
-    public EntityModel<Preferences> retrievePreferences(@PathVariable long preferenceId) {
-        Preferences preferences = this.preferencesService.getPreference(preferenceId);
+    public EntityModel<AccountPreferenceItems> retrievePreferences(@PathVariable long preferenceId) {
+        AccountPreferenceItems accountPreferenceItems = this.preferencesService.getPreference(preferenceId);
 
-        EntityModel<Preferences> EntityModel = new EntityModel<Preferences>(preferences);
+        EntityModel<AccountPreferenceItems> EntityModel = new EntityModel<AccountPreferenceItems>(accountPreferenceItems);
         EntityModel.add(linkTo(methodOn(this.getClass()).retrievePreferences(preferenceId)).withSelfRel());
         EntityModel.add(linkTo(methodOn(this.getClass()).retrieveAllPreferences(0, 10)).withRel("all-preferences"));
 
@@ -65,11 +65,11 @@ public class PreferencesResource {
     @PreAuthorize("hasRole('CREATE_PREFERENCES')")
     @PostMapping("/preferences")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> createPreferences(@Valid @RequestBody Preferences preferences) {
-        Preferences preference = this.preferencesService.createPreference(preferences);
+    public ResponseEntity<Object> createPreferences(@Valid @RequestBody AccountPreferenceItems accountPreferenceItems) {
+        AccountPreferenceItems preference = this.preferencesService.createPreference(accountPreferenceItems);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{preferenceId}")
-                .buildAndExpand(preference.getPreferenceId()).toUri();
+                .buildAndExpand(preference.getPreferences().getPreferenceId()).toUri();
 
         return ResponseEntity.created(location).build();
     }
@@ -77,11 +77,11 @@ public class PreferencesResource {
     @PreAuthorize("hasRole('UPDATE_PREFERENCES')")
     @PutMapping("/preferences/{preferenceId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Object> updatePreferences(@Valid @RequestBody Preferences preferences, @PathVariable long preferenceId) {
+    public ResponseEntity<Object> updatePreferences(@Valid @RequestBody AccountPreferenceItems accountPreferenceItems, @PathVariable long preferenceId) {
         if (this.preferencesService.getPreference(preferenceId) != null) {
-            preferences.setPreferenceId(preferenceId);
+            accountPreferenceItems.getPreferences().setPreferenceId(preferenceId);
         }
-        this.preferencesService.updatePreference(preferences);
+        this.preferencesService.updatePreference(accountPreferenceItems);
         return ResponseEntity.noContent().build();
     }
 }

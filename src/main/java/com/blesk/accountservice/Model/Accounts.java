@@ -1,13 +1,17 @@
 package com.blesk.accountservice.Model;
 
 import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
+import com.blesk.accountservice.Service.Accounts.AccountsService;
+import com.blesk.accountservice.Validator.Table.Unique;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.validation.ConstraintViolation;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -16,6 +20,7 @@ import java.util.*;
 @Entity(name = "Accounts")
 @Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"account_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Accounts.class)
+@JsonIgnoreProperties(value={ "accountPreferenceItems"})
 public class Accounts implements Serializable {
 
     @Id
@@ -31,6 +36,10 @@ public class Accounts implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Passwords passwords;
 
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "account")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Activations activations;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "account_role_items", joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -41,21 +50,20 @@ public class Accounts implements Serializable {
 
     @NotNull(message = Messages.ACCOUNTS_USER_NAME_NULL)
     @Size(min = 5, max = 255, message = Messages.ACCOUNTS_USER_NAME_LENGHT)
-    @Column(name = "user_name", nullable = false, unique = true)
+    @Unique(service = AccountsService.class, fieldName = "userName", message = Messages.ACCOUNTS_USER_NAME_UNIQUE)
+    @Column(name = "user_name", nullable = false)
     private String userName;
 
     @NotNull(message = Messages.ACCOUNTS_EMAIL_NULL)
     @Email(message = Messages.ACCOUNTS_EMAIL)
     @Size(min = 5, max = 255, message = Messages.ACCOUNTS_EMAIL_LENGHT)
-    @Column(name = "email", nullable = false, unique = true)
+    @Unique(service = AccountsService.class, fieldName = "email", message = Messages.ACCOUNTS_EMAIL_UNIQUE)
+    @Column(name = "email", nullable = false)
     private String email;
 
     @NotNull(message = Messages.ACCOUNTS_PASSWORD_NULL)
     @Column(name = "password", nullable = false)
     private String password;
-
-    @Transient
-    private String confirmPassword;
 
     @Column(name = "is_activated", nullable = false)
     private Boolean isActivated;
@@ -85,6 +93,12 @@ public class Accounts implements Serializable {
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
+    @Transient
+    private String confirmPassword;
+
+    @Transient
+    private HashMap<String, String> validations = new HashMap<>();
+
     public Accounts() {
     }
 
@@ -110,6 +124,14 @@ public class Accounts implements Serializable {
 
     public void setPasswords(Passwords passwords) {
         this.passwords = passwords;
+    }
+
+    public Activations getActivations() {
+        return this.activations;
+    }
+
+    public void setActivations(Activations activations) {
+        this.activations = activations;
     }
 
     public Set<Roles> getRoles() {
@@ -150,14 +172,6 @@ public class Accounts implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getConfirmPassword() {
-        return this.confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
     }
 
     public Boolean getActivated() {
@@ -222,6 +236,22 @@ public class Accounts implements Serializable {
 
     public void setDeletedAt(Timestamp deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public String getConfirmPassword() {
+        return this.confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public HashMap<String, String> getValidations() {
+        return this.validations;
+    }
+
+    public void setValidations(HashMap<String, String> validations) {
+        this.validations = validations;
     }
 
     @PrePersist

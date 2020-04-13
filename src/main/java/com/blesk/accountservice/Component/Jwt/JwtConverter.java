@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Component;
+package com.blesk.accountservice.Component.Jwt;
 
 import org.springframework.boot.autoconfigure.security.oauth2.resource.JwtAccessTokenConverterConfigurer;
 

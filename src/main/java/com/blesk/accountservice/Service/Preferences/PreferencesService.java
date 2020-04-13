@@ -1,20 +1,21 @@
 package com.blesk.accountservice.Service.Preferences;
 
-import com.blesk.accountservice.Model.Preferences.Preferences;
+import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
+import com.blesk.accountservice.Validator.Service.FieldValueExists;
 
 import java.util.List;
 
-public interface PreferencesService {
+public interface PreferencesService extends FieldValueExists {
 
-    Preferences createPreference(Preferences preferences);
+    AccountPreferenceItems createPreference(AccountPreferenceItems accountPreferenceItems);
 
     Boolean deletePreference(Long preferenceId);
 
-    Boolean updatePreference(Preferences preferences);
+    Boolean updatePreference(AccountPreferenceItems accountPreferenceItems);
 
-    Preferences getPreference(Long preferenceId);
+    AccountPreferenceItems getPreference(Long preferenceId);
 
-    List<Preferences> getAllPreferences(int pageNumber, int pageSize);
+    List<AccountPreferenceItems> getAllPreferences(int pageNumber, int pageSize);
 
-    Preferences getPreferenceByName(String preferenceName);
+    AccountPreferenceItems getPreferenceByName(String preferenceName);
 }

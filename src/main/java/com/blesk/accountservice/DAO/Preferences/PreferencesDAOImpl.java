@@ -1,7 +1,7 @@
 package com.blesk.accountservice.DAO.Preferences;
 
 import com.blesk.accountservice.DAO.DAOImpl;
-import com.blesk.accountservice.Model.Preferences.Preferences;
+import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
@@ -13,17 +13,17 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 @Repository
-public class PreferencesDAOImpl extends DAOImpl<Preferences> implements PreferencesDAO {
+public class PreferencesDAOImpl extends DAOImpl<AccountPreferenceItems> implements PreferencesDAO {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public Preferences getPreferenceByName(String name) {
+    public AccountPreferenceItems getPreferenceByName(String name) {
         Session session = this.entityManager.unwrap(Session.class);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaQuery<Preferences> criteriaQuery = criteriaBuilder.createQuery(Preferences.class);
-        Root<Preferences> root = criteriaQuery.from(Preferences.class);
+        CriteriaQuery<AccountPreferenceItems> criteriaQuery = criteriaBuilder.createQuery(AccountPreferenceItems.class);
+        Root<AccountPreferenceItems> root = criteriaQuery.from(AccountPreferenceItems.class);
         try {
             return this.entityManager.createQuery(criteriaQuery
                     .where(criteriaBuilder.equal(root.get("name"), name))).getSingleResult();

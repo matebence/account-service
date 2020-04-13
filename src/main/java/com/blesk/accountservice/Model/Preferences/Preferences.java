@@ -1,5 +1,8 @@
 package com.blesk.accountservice.Model.Preferences;
 
+import com.blesk.accountservice.Service.Accounts.AccountsService;
+import com.blesk.accountservice.Service.Preferences.PreferencesService;
+import com.blesk.accountservice.Validator.Table.Unique;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -29,7 +32,8 @@ public class Preferences implements Serializable {
 
     @NotNull(message = Messages.PREFERENCES_NULL)
     @Size(min = 3, max = 255, message = Messages.PREFERENCES_SIZE)
-    @Column(name = "name", nullable = false, unique = true)
+    @Unique(service = PreferencesService.class, fieldName = "name", message = Messages.PREFERENCES_UNIQUE)
+    @Column(name = "name", nullable = false)
     private String name;
 
     public Preferences() {

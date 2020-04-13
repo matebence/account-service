@@ -91,4 +91,18 @@ public class DAOImpl<T> implements DAO<T> {
             return null;
         }
     }
+
+    @Override
+    public Boolean unique(Class c, String fieldName, String value) {
+        Session session = this.entityManager.unwrap(Session.class);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(c);
+        Root root = criteriaQuery.from(c);
+        try {
+            return !this.entityManager.createQuery(criteriaQuery
+                    .where(criteriaBuilder.equal(root.get(fieldName), value))).getResultList().isEmpty();
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
 }

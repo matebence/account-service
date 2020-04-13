@@ -2,6 +2,7 @@ package com.blesk.accountservice.Service.Privileges;
 
 import com.blesk.accountservice.DAO.Privileges.PrivilegesDAOImpl;
 import com.blesk.accountservice.Exception.AccountServiceException;
+import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Privileges;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,5 +73,14 @@ public class PrivilegesServiceImpl implements PrivilegesService {
         if (privilege == null)
             throw new AccountServiceException(Messages.GET_PRIVILEGE_BY_NAME);
         return privilege;
+    }
+
+    @Override
+    @Transactional
+    public Boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
+        if (value == null || fieldName == null)
+            throw new UnsupportedOperationException(String.format(Messages.UNSUPPORTED_COLUMN, fieldName));
+
+        return this.privilegeDAO.unique(Accounts.class, fieldName, value.toString());
     }
 }
