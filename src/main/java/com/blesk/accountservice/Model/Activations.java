@@ -57,11 +57,11 @@ public class Activations implements Serializable {
         this.token = token;
     }
 
-    public Accounts getAccount() {
+    public Accounts getAccounts() {
         return this.accounts;
     }
 
-    public void setAccount(Accounts accounts) {
+    public void setAccounts(Accounts accounts) {
         this.accounts = accounts;
     }
 }

@@ -1,4 +1,4 @@
-package com.blesk.authorizationserver.Component;
+package com.blesk.accountservice.Component.Mailer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

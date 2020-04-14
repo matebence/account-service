@@ -1,6 +1,6 @@
-package com.blesk.authorizationserver.Service.Emails;
+package com.blesk.accountservice.Service.Emails;
 
-import com.blesk.authorizationserver.Model.Accounts;
+import com.blesk.accountservice.Model.Accounts;
 
 import java.util.Map;
 

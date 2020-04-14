@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -31,9 +30,11 @@ public class ActivationsDAOImpl extends DAOImpl<Activations> implements Activati
         CriteriaQuery<Activations> criteriaQuery = criteriaBuilder.createQuery(Activations.class);
         Root<Activations> root = criteriaQuery.from(Activations.class);
         try {
-            return this.entityManager.createQuery(criteriaQuery
+            return session.createQuery(criteriaQuery
                     .where(criteriaBuilder.equal(root.get("token"), token))).getSingleResult();
         } catch (NoResultException ex) {
+            session.clear();
+            session.close();
             return null;
         }
     }

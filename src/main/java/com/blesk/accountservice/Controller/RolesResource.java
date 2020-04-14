@@ -9,10 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -48,11 +46,11 @@ public class RolesResource {
     public EntityModel<Roles> retrieveRoles(@PathVariable long roleId) {
         Roles roles = this.rolesService.getRole(roleId);
 
-        EntityModel<Roles> EntityModel = new EntityModel<Roles>(roles);
-        EntityModel.add(linkTo(methodOn(this.getClass()).retrieveRoles(roleId)).withSelfRel());
-        EntityModel.add(linkTo(methodOn(this.getClass()).retrieveAllRoles(0, 10)).withRel("all-roles"));
+        EntityModel<Roles> entityModel = new EntityModel<Roles>(roles);
+        entityModel.add(linkTo(methodOn(this.getClass()).retrieveRoles(roleId)).withSelfRel());
+        entityModel.add(linkTo(methodOn(this.getClass()).retrieveAllRoles(0, 10)).withRel("all-roles"));
 
-        return EntityModel;
+        return entityModel;
     }
 
     @PreAuthorize("hasRole('DELETE_ROLES')")
@@ -65,13 +63,12 @@ public class RolesResource {
     @PreAuthorize("hasRole('CREATE_ROLES')")
     @PostMapping("/roles")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> createRoles(@Valid @RequestBody Roles roles) {
+    public EntityModel<Roles> createRoles(@Valid @RequestBody Roles roles) {
         Roles role = this.rolesService.createRole(roles);
+        EntityModel<Roles> entityModel = new EntityModel<Roles>(role);
+        entityModel.add(linkTo(methodOn(this.getClass()).retrieveRoles(role.getRoleId())).withRel("role"));
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{roleId}")
-                .buildAndExpand(role.getRoleId()).toUri();
-
-        return ResponseEntity.created(location).build();
+        return entityModel;
     }
 
     @PreAuthorize("hasRole('UPDATE_ROLES')")
@@ -80,8 +77,9 @@ public class RolesResource {
     public ResponseEntity<Object> updateRoles(@Valid @RequestBody Roles roles, @PathVariable long roleId) {
         if (this.rolesService.getRole(roleId) != null) {
             roles.setRoleId(roleId);
+            this.rolesService.updateRole(roles);
         }
-        this.rolesService.updateRole(roles);
+        
         return ResponseEntity.noContent().build();
     }
 }

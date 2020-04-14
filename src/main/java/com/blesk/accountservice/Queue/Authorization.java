@@ -2,29 +2,35 @@ package com.blesk.accountservice.Queue;
 
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Accounts;
-import com.blesk.accountservice.Model.Activations;
 import com.blesk.accountservice.Model.Logins;
 import com.blesk.accountservice.Model.Passwords;
 import com.blesk.accountservice.Service.Accounts.AccountsServiceImpl;
 import com.blesk.accountservice.Service.Activations.ActivationServiceImpl;
+import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
 import com.blesk.accountservice.Service.Logins.LoginsServiceImpl;
 import com.blesk.accountservice.Service.Passwords.PasswordsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 @Component
 public class Authorization {
+
+    @Value("${blesk.javamailer.url.forget-password}")
+    private String resetPasswordUrl;
+
+    @Value("${blesk.javamailer.url.account-activation}")
+    private String activationUrl;
 
     private AccountsServiceImpl accountsService;
 
@@ -34,15 +40,15 @@ public class Authorization {
 
     private ActivationServiceImpl activationService;
 
-    private PasswordEncoder passwordEncoder;
+    private EmailsServiceImpl emailsService;
 
     @Autowired
-    public Authorization(AccountsServiceImpl accountsService, PasswordsServiceImpl passwordsService, LoginsServiceImpl loginsService, ActivationServiceImpl activationService, PasswordEncoder passwordEncoder) {
+    public Authorization(AccountsServiceImpl accountsService, PasswordsServiceImpl passwordsService, LoginsServiceImpl loginsService, ActivationServiceImpl activationService, EmailsServiceImpl emailsService) {
         this.accountsService = accountsService;
         this.passwordsService = passwordsService;
         this.loginsService = loginsService;
         this.activationService = activationService;
-        this.passwordEncoder = passwordEncoder;
+        this.emailsService = emailsService;
     }
 
     @RabbitListener(queues = "blesk.verifyAccountQueue")
@@ -57,7 +63,7 @@ public class Authorization {
     @RabbitListener(queues = "blesk.lastLoginQueue")
     public Boolean recordLastSuccessfullLogin(Logins logins) {
         try {
-            Accounts accounts = this.accountsService.getAccount(logins.getAccount().getAccountId());
+            Accounts accounts = this.accountsService.getAccount(logins.getAccounts().getAccountId());
             if (accounts.getPasswords() != null)
                 this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordResetTokenId());
 
@@ -71,7 +77,7 @@ public class Authorization {
     public Accounts createNewPublicAccount(Accounts accounts) {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<Accounts>> violations = validator.validate(accounts);
+        Set<ConstraintViolation<Accounts>> violations = validator.validate(accounts, Accounts.validationWithEncryption.class);
 
         try {
             HashMap<String, String> validation = new HashMap<>();
@@ -83,8 +89,12 @@ public class Authorization {
                 return accounts;
             }
 
-            accounts.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
-            return this.accountsService.createAccount(accounts, new String[]{"CLIENT_ROLE", "COURIER_ROLE"});
+            Accounts account = this.accountsService.createAccount(accounts, new String[]{"CLIENT_ROLE", "COURIER_ROLE"}).getAccounts();
+            Map<String, Object> variables = new HashMap<>();
+            variables.put("activationUrl", String.format(this.activationUrl, account.getAccountId(), account.getActivations().getToken()));
+            this.emailsService.sendHtmlMesseage("Registrácia", "signupactivation", variables, account);
+
+            return account;
         } catch (AccountServiceException ex) {
             return new Accounts();
         }
@@ -93,7 +103,15 @@ public class Authorization {
     @RabbitListener(queues = "blesk.verifyActivationTokenQueue")
     public Boolean verifyActivationTokenForNewAccount(Accounts accounts) {
         try {
-            return this.activationService.validateActivationToken(accounts.getAccountId(), accounts.getActivations().getToken());
+            Boolean result = this.activationService.validateActivationToken(accounts.getAccountId(), accounts.getActivations().getToken());
+            if (result) {
+                Accounts account = this.accountsService.getAccount(accounts.getAccountId());
+                account.setActivated(result);
+
+                if (this.accountsService.updateAccount(account))
+                    return result;
+            }
+            return Boolean.FALSE;
         } catch (AccountServiceException ex) {
             return Boolean.FALSE;
         }
@@ -102,7 +120,12 @@ public class Authorization {
     @RabbitListener(queues = "blesk.forgetPasswordQueue")
     public Passwords recoverAccountWithForgetPassword(String email) {
         try {
-            return this.passwordsService.createPasswordToken(new Passwords(this.accountsService.findAccountByEmail(email), UUID.randomUUID().toString()));
+            Passwords passwords = this.passwordsService.createPasswordToken(new Passwords(this.accountsService.findAccountByEmail(email), UUID.randomUUID().toString()));
+            Map<String, Object> variables = new HashMap<>();
+            variables.put("resetPasswordUrl", String.format(this.resetPasswordUrl, passwords.getAccounts().getAccountId(), passwords.getToken()));
+            this.emailsService.sendHtmlMesseage("Zabudnuté heslo", "forgetpassword", variables, passwords.getAccounts());
+
+            return passwords;
         } catch (AccountServiceException ex) {
             return new Passwords();
         }

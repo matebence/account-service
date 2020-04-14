@@ -61,6 +61,6 @@ public class ActivationServiceImpl implements ActivationService {
         if (activations == null)
             throw new AccountServiceException(Messages.VALIDATE_ACTIVATION_TOKEN);
 
-        return activations.getAccount().getAccountId() == accountId;
+        return activations.getAccounts().getAccountId() == accountId;
     }
 }

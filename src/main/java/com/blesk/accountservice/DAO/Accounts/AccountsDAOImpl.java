@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.*;
@@ -32,9 +31,11 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
         CriteriaQuery<Accounts> criteriaQuery = criteriaBuilder.createQuery(Accounts.class);
         Root<Accounts> root = criteriaQuery.from(Accounts.class);
         try {
-            return this.entityManager.createQuery(criteriaQuery
+            return session.createQuery(criteriaQuery
                     .where(criteriaBuilder.equal(root.get("userName"), userName))).getSingleResult();
         } catch (NoResultException ex) {
+            session.clear();
+            session.close();
             return null;
         }
     }
@@ -46,9 +47,11 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
         CriteriaQuery<Accounts> criteriaQuery = criteriaBuilder.createQuery(Accounts.class);
         Root<Accounts> root = criteriaQuery.from(Accounts.class);
         try {
-            return this.entityManager.createQuery(criteriaQuery
+            return session.createQuery(criteriaQuery
                     .where(criteriaBuilder.equal(root.get("email"), email))).getSingleResult();
         } catch (NoResultException ex) {
+            session.clear();
+            session.close();
             return null;
         }
     }
@@ -56,8 +59,8 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
     @Override
     public Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias, int pageNumber) {
         final int PAGE_SIZE = 10;
-
-        CriteriaBuilder criteriaBuilder = this.entityManager.getCriteriaBuilder();
+        Session session = this.entityManager.unwrap(Session.class);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Accounts> criteriaQuery = criteriaBuilder.createQuery(Accounts.class);
         Root<Accounts> root = criteriaQuery.from(Accounts.class);
 
@@ -86,7 +89,7 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
             select.where(predicates.toArray(new Predicate[]{}));
         }
 
-        TypedQuery<Accounts> typedQuery = this.entityManager.createQuery(select);
+        TypedQuery<Accounts> typedQuery = session.createQuery(select);
         if (criterias.get(Keys.PAGINATION) != null) {
             typedQuery.setFirstResult(pageNumber);
             typedQuery.setMaxResults(PAGE_SIZE);
@@ -121,6 +124,8 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
             map.put("results", typedQuery.getResultList());
             return map;
         } catch (NoResultException ex) {
+            session.clear();
+            session.close();
             return null;
         }
     }

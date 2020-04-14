@@ -1,7 +1,7 @@
-package com.blesk.authorizationserver.Service.Emails;
+package com.blesk.accountservice.Service.Emails;
 
-import com.blesk.authorizationserver.Component.HtmlMailerImpl;
-import com.blesk.authorizationserver.Model.Accounts;
+import com.blesk.accountservice.Component.Mailer.HtmlMailerImpl;
+import com.blesk.accountservice.Model.Accounts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;

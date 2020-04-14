@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,10 +17,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -34,9 +32,12 @@ public class AccountServiceHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public final ResponseEntity<Object> handleMethodArgumentException(MethodArgumentNotValidException ex) {
         Map<String, Object> errorObj = new LinkedHashMap<>();
-        errorObj.put("timestamp", new Date());
+        HashMap<String, String> errors = new HashMap<>();
+        for(FieldError error: ex.getBindingResult().getFieldErrors()){
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
 
-        List<String> errors = ex.getBindingResult().getFieldErrors().stream().map(x -> x.getDefaultMessage()).collect(Collectors.toList());
+        errorObj.put("timestamp", new Date());
         errorObj.put("validations", errors);
         errorObj.put("error", true);
 

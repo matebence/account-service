@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -24,7 +23,6 @@ public class PasswordsDAOImpl extends DAOImpl<Passwords> implements PasswordsDAO
         this.entityManager = entityManager;
     }
 
-
     @Override
     public Passwords getPasswordToken(String token) {
         Session session = this.entityManager.unwrap(Session.class);
@@ -32,9 +30,11 @@ public class PasswordsDAOImpl extends DAOImpl<Passwords> implements PasswordsDAO
         CriteriaQuery<Passwords> criteriaQuery = criteriaBuilder.createQuery(Passwords.class);
         Root<Passwords> root = criteriaQuery.from(Passwords.class);
         try {
-            return this.entityManager.createQuery(criteriaQuery
+            return session.createQuery(criteriaQuery
                     .where(criteriaBuilder.equal(root.get("token"), token))).getSingleResult();
         } catch (NoResultException ex) {
+            session.clear();
+            session.close();
             return null;
         }
     }

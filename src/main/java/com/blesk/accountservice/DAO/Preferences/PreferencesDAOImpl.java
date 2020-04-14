@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -24,7 +23,6 @@ public class PreferencesDAOImpl extends DAOImpl<AccountPreferenceItems> implemen
         this.entityManager = entityManager;
     }
 
-
     @Override
     public AccountPreferenceItems getPreferenceByName(String name) {
         Session session = this.entityManager.unwrap(Session.class);
@@ -32,9 +30,11 @@ public class PreferencesDAOImpl extends DAOImpl<AccountPreferenceItems> implemen
         CriteriaQuery<AccountPreferenceItems> criteriaQuery = criteriaBuilder.createQuery(AccountPreferenceItems.class);
         Root<AccountPreferenceItems> root = criteriaQuery.from(AccountPreferenceItems.class);
         try {
-            return this.entityManager.createQuery(criteriaQuery
+            return session.createQuery(criteriaQuery
                     .where(criteriaBuilder.equal(root.get("name"), name))).getSingleResult();
         } catch (NoResultException ex) {
+            session.clear();
+            session.close();
             return null;
         }
     }

@@ -9,10 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -48,11 +46,11 @@ public class PreferencesResource {
     public EntityModel<AccountPreferenceItems> retrievePreferences(@PathVariable long preferenceId) {
         AccountPreferenceItems accountPreferenceItems = this.preferencesService.getPreference(preferenceId);
 
-        EntityModel<AccountPreferenceItems> EntityModel = new EntityModel<AccountPreferenceItems>(accountPreferenceItems);
-        EntityModel.add(linkTo(methodOn(this.getClass()).retrievePreferences(preferenceId)).withSelfRel());
-        EntityModel.add(linkTo(methodOn(this.getClass()).retrieveAllPreferences(0, 10)).withRel("all-preferences"));
+        EntityModel<AccountPreferenceItems> entityModel = new EntityModel<AccountPreferenceItems>(accountPreferenceItems);
+        entityModel.add(linkTo(methodOn(this.getClass()).retrievePreferences(preferenceId)).withSelfRel());
+        entityModel.add(linkTo(methodOn(this.getClass()).retrieveAllPreferences(0, 10)).withRel("all-preferences"));
 
-        return EntityModel;
+        return entityModel;
     }
 
     @PreAuthorize("hasRole('DELETE_PREFERENCES')")
@@ -65,13 +63,12 @@ public class PreferencesResource {
     @PreAuthorize("hasRole('CREATE_PREFERENCES')")
     @PostMapping("/preferences")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> createPreferences(@Valid @RequestBody AccountPreferenceItems accountPreferenceItems) {
+    public EntityModel<AccountPreferenceItems> createPreferences(@Valid @RequestBody AccountPreferenceItems accountPreferenceItems) {
         AccountPreferenceItems preference = this.preferencesService.createPreference(accountPreferenceItems);
+        EntityModel<AccountPreferenceItems> entityModel = new EntityModel<AccountPreferenceItems>(preference);
+        entityModel.add(linkTo(methodOn(this.getClass()).retrievePreferences(preference.getPreferences().getPreferenceId())).withRel("preference"));
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{preferenceId}")
-                .buildAndExpand(preference.getPreferences().getPreferenceId()).toUri();
-
-        return ResponseEntity.created(location).build();
+        return entityModel;
     }
 
     @PreAuthorize("hasRole('UPDATE_PREFERENCES')")
@@ -80,8 +77,9 @@ public class PreferencesResource {
     public ResponseEntity<Object> updatePreferences(@Valid @RequestBody AccountPreferenceItems accountPreferenceItems, @PathVariable long preferenceId) {
         if (this.preferencesService.getPreference(preferenceId) != null) {
             accountPreferenceItems.getPreferences().setPreferenceId(preferenceId);
+            this.preferencesService.updatePreference(accountPreferenceItems);
         }
-        this.preferencesService.updatePreference(accountPreferenceItems);
+
         return ResponseEntity.noContent().build();
     }
 }

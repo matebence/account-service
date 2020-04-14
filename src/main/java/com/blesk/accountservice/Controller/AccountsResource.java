@@ -8,11 +8,9 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.validation.Valid;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,23 +65,23 @@ public class AccountsResource {
     @PreAuthorize("hasRole('CREATE_ACCOUNTS')")
     @PostMapping("/accounts")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> createAccounts(@Valid @RequestBody Accounts accounts) {
-        Accounts account = this.accountsService.createAccount(accounts, new String[]{"SYSTEM_ROLE", "ADMIN_ROLE", "MANAGER_ROLE", "CLIENT_ROLE", "COURIER_ROLE"});
+    public EntityModel<Accounts> createAccounts(@Validated(Accounts.validationWithEncryption.class) @RequestBody Accounts accounts) {
+        Accounts account = this.accountsService.createAccount(accounts, new String[]{"SYSTEM_ROLE", "ADMIN_ROLE", "MANAGER_ROLE", "CLIENT_ROLE", "COURIER_ROLE"}).getAccounts();
+        EntityModel<Accounts> entityModel = new EntityModel<Accounts>(account);
+        entityModel.add(linkTo(methodOn(this.getClass()).retrieveAccounts(account.getAccountId())).withRel("account"));
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{preferenceId}")
-                .buildAndExpand(account.getAccountId()).toUri();
-
-        return ResponseEntity.created(location).build();
+        return entityModel;
     }
 
     @PreAuthorize("hasRole('UPDATE_ACCOUNTS')")
     @PutMapping("/accounts/{accountId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Object> updateAccounts(@Valid @RequestBody Accounts accounts, @PathVariable long accountId) {
-        if (this.accountsService.getAccount(accountId) != null) {
+    public ResponseEntity<Object> updateAccounts(@Validated(Accounts.validationWithEncryption.class) @RequestBody Accounts accounts, @PathVariable long accountId) {
+        if (this.accountsService.getAccount(accountId) != null){
             accounts.setAccountId(accountId);
+            this.accountsService.updateAccount(accounts);
         }
-        this.accountsService.updateAccount(accounts);
+
         return ResponseEntity.noContent().build();
     }
 

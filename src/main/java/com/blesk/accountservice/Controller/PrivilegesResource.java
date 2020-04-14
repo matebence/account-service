@@ -9,10 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -48,11 +46,11 @@ public class PrivilegesResource {
     public EntityModel<Privileges> retrievePrivileges(@PathVariable long privilegeId) {
         Privileges privileges = this.privilegesService.getPrivilege(privilegeId);
 
-        EntityModel<Privileges> EntityModel = new EntityModel<Privileges>(privileges);
-        EntityModel.add(linkTo(methodOn(this.getClass()).retrievePrivileges(privilegeId)).withSelfRel());
-        EntityModel.add(linkTo(methodOn(this.getClass()).retrieveAllPrivileges(0, 10)).withRel("all-privileges"));
+        EntityModel<Privileges> entityModel = new EntityModel<Privileges>(privileges);
+        entityModel.add(linkTo(methodOn(this.getClass()).retrievePrivileges(privilegeId)).withSelfRel());
+        entityModel.add(linkTo(methodOn(this.getClass()).retrieveAllPrivileges(0, 10)).withRel("all-privileges"));
 
-        return EntityModel;
+        return entityModel;
     }
 
     @PreAuthorize("hasRole('DELETE_PRIVILEGES')")
@@ -65,13 +63,12 @@ public class PrivilegesResource {
     @PreAuthorize("hasRole('CREATE_PRIVILEGES')")
     @PostMapping("/privileges")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> createPrivileges(@Valid @RequestBody Privileges privileges) {
+    public EntityModel<Privileges> createPrivileges(@Valid @RequestBody Privileges privileges) {
         Privileges privilege = this.privilegesService.createPrivilege(privileges);
+        EntityModel<Privileges> entityModel = new EntityModel<Privileges>(privilege);
+        entityModel.add(linkTo(methodOn(this.getClass()).retrievePrivileges(privilege.getPrivilegeId())).withRel("privilege"));
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{privilegeId}")
-                .buildAndExpand(privilege.getPrivilegeId()).toUri();
-
-        return ResponseEntity.created(location).build();
+        return entityModel;
     }
 
     @PreAuthorize("hasRole('UPDATE_PRIVILEGES')")
@@ -80,8 +77,9 @@ public class PrivilegesResource {
     public ResponseEntity<Object> updatePrivileges(@Valid @RequestBody Privileges privileges, @PathVariable long privilegeId) {
         if (this.privilegesService.getPrivilege(privilegeId) != null) {
             privileges.setPrivilegeId(privilegeId);
+            this.privilegesService.updatePrivilege(privileges);
         }
-        this.privilegesService.updatePrivilege(privileges);
+
         return ResponseEntity.noContent().build();
     }
 }

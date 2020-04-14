@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,7 +25,6 @@ public class RolesDAOImpl extends DAOImpl<Roles> implements RolesDAO {
         super(entityManager);
         this.entityManager = entityManager;
     }
-
 
     @Override
     public Set<Roles> getListOfRoles(Set<Roles> roles) {
@@ -49,6 +47,8 @@ public class RolesDAOImpl extends DAOImpl<Roles> implements RolesDAO {
         try {
             return new HashSet<Roles>((List<Roles>)this.entityManager.createQuery(select).getResultList());
         } catch (NoResultException ex) {
+            session.clear();
+            session.close();
             return null;
         }
     }
@@ -61,9 +61,11 @@ public class RolesDAOImpl extends DAOImpl<Roles> implements RolesDAO {
         Root<Roles> root = criteriaQuery.from(Roles.class);
 
         try {
-            return this.entityManager.createQuery(criteriaQuery
+            return session.createQuery(criteriaQuery
                     .where(criteriaBuilder.equal(root.get("name"), name))).getSingleResult();
         } catch (NoResultException ex) {
+            session.clear();
+            session.close();
             return null;
         }
     }

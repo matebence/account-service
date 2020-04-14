@@ -1,6 +1,8 @@
 package com.blesk.accountservice.Service.Accounts;
 
+import com.blesk.accountservice.AccountServiceApplication;
 import com.blesk.accountservice.DAO.Accounts.AccountsDAOImpl;
+import com.blesk.accountservice.DAO.Activations.ActivationsDAOImpl;
 import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Accounts;
@@ -9,9 +11,12 @@ import com.blesk.accountservice.Model.Roles;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+import javax.naming.AuthenticationException;
 import java.util.*;
 
 @Service
@@ -21,10 +26,16 @@ public class AccountsServiceImpl implements AccountsService {
 
     private RolesDAOImpl roleDAO;
 
+    private ActivationsDAOImpl activationsDAO;
+
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
-    public AccountsServiceImpl(AccountsDAOImpl accountDAO, RolesDAOImpl roleDAO) {
+    public AccountsServiceImpl(AccountsDAOImpl accountDAO, RolesDAOImpl roleDAO, ActivationsDAOImpl activationsDAO, PasswordEncoder passwordEncoder) {
         this.accountDAO = accountDAO;
         this.roleDAO = roleDAO;
+        this.activationsDAO = activationsDAO;
+        this.passwordEncoder = passwordEncoder;
     }
 
     private boolean checkForAllowedRoles(Set<Roles> roles, String[] allowedRoles) {
@@ -42,7 +53,7 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
-    public Accounts createAccount(Accounts accounts, String[] allowedRoles) {
+    public Activations createAccount(@Validated(Accounts.validationWithoutEncryption.class) Accounts accounts, String[] allowedRoles) {
         if (accounts.getRoles().size() > 5)
             throw new AccountServiceException(Messages.ACCOUNT_NEW_ERROR);
         Set<Roles> roles = new HashSet<>(accounts.getRoles());
@@ -51,11 +62,24 @@ public class AccountsServiceImpl implements AccountsService {
         Set<Roles> assignedRoles = this.roleDAO.getListOfRoles(accounts.getRoles());
         if (assignedRoles.isEmpty())
             throw new AccountServiceException(Messages.CREATE_GET_ACCOUNT);
-        accounts.setActivations(new Activations(UUID.randomUUID().toString()));
+
+        accounts.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
+        accounts.setCreatedBy(AccountServiceApplication.SYSTEM);
         accounts.setRoles(assignedRoles);
-        if (this.accountDAO.save(accounts) == null)
+        Activations activations = new Activations(UUID.randomUUID().toString());
+        accounts.setActivations(activations);
+        Accounts account = this.accountDAO.save(accounts);
+
+        if (account == null)
             throw new AccountServiceException(Messages.CREATE_ACCOUNT);
-        return accounts;
+
+        activations.setAccounts(account);
+        Activations activation = this.activationsDAO.save(activations);
+
+        if (activation == null)
+            throw new AccountServiceException(Messages.ACTIVATION_TOKEN_ACCOUNT);
+
+        return activation;
     }
 
     @Override
@@ -122,7 +146,7 @@ public class AccountsServiceImpl implements AccountsService {
     @Transactional
     public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria) {
         if (criteria.get(Keys.PAGINATION) == null)
-            throw new NullPointerException(Messages.PAGINATION_EXCEPTION);
+            throw new AccountServiceException(Messages.PAGINATION_EXCEPTION);
 
         Map<String, Object> accounts = this.accountDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
 

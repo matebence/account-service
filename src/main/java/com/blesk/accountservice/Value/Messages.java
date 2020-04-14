@@ -10,7 +10,7 @@ public class Messages {
     public static final String AUTH_REQUIRED_EXCEPTION = "Prístup odmietnutý";
     public static final String SQL_EXCEPTION = "Operácia sa neuskutočnila";
     public static final String EXCEPTION = "Nastala neočakávaná chyba";
-    public static final String PAGINATION_EXCEPTION = "Požiadavku sa nepodarilo spracv";
+    public static final String PAGINATION_EXCEPTION = "Požiadavku sa nepodarilo spracovať";
 
 
 
@@ -57,6 +57,7 @@ public class Messages {
     public static final String CREATE_GET_ACCOUNT = "Požadovaná rola pre vytvorenie nového úctu sa nenašla";
     public static final String ACCOUNT_NEW_ERROR = "Vytvorenie účtu sa nepodarilo";
     public static final String CREATE_ACCOUNT = "Nepodarilo sa vytvoriť nový účet";
+    public static final String ACTIVATION_TOKEN_ACCOUNT = "Nepodarilo sa vytvoriť aktivačný kľúč účet";
     public static final String DELETE_GET_ACCOUNT = "Ľutujeme, ale účet nebol nájdení";
     public static final String DELETE_ACCOUNT = "Odstránenie účtu bolo neúspešné";
     public static final String UPDATE_ACCOUNT = "Aktualizovanie účtu bolo neúspešné";

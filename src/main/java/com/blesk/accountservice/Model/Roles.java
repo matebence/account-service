@@ -28,8 +28,7 @@ public class Roles implements Serializable {
     private Long roleId;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "role_privilege_items", joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "privilege_id"))
+    @JoinTable(name = "role_privilege_items", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "privilege_id"))
     private Set<Privileges> privileges = new HashSet<Privileges>();
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)

@@ -34,6 +34,17 @@ public class Logins implements Serializable {
     @Column(name = "ip_address", nullable = false)
     private String ipAddress;
 
+    public Logins(Accounts accounts, Timestamp lastLogin, String ipAddress) {
+        this.accounts = accounts;
+        this.lastLogin = lastLogin;
+        this.ipAddress = ipAddress;
+    }
+
+    public Logins(Timestamp lastLogin, String ipAddress) {
+        this.lastLogin = lastLogin;
+        this.ipAddress = ipAddress;
+    }
+
     public Logins() {
     }
 
@@ -45,11 +56,11 @@ public class Logins implements Serializable {
         this.loginId = loginId;
     }
 
-    public Accounts getAccount() {
+    public Accounts getAccounts() {
         return this.accounts;
     }
 
-    public void setAccount(Accounts accounts) {
+    public void setAccounts(Accounts accounts) {
         this.accounts = accounts;
     }
 

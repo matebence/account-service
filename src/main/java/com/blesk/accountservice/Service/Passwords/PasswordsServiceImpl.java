@@ -63,7 +63,7 @@ public class PasswordsServiceImpl implements PasswordsService {
         if (passwords == null)
             throw new AccountServiceException(Messages.VALIDATE_PASSWORD_TOKEN);
 
-        if (passwords.getAccount().getAccountId() != accountId)
+        if (passwords.getAccounts().getAccountId() != accountId)
             return false;
 
         Calendar cal = Calendar.getInstance();

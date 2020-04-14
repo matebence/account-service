@@ -3,6 +3,7 @@ package com.blesk.accountservice.Model;
 import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
 import com.blesk.accountservice.Service.Accounts.AccountsService;
 import com.blesk.accountservice.Validator.Table.Match.FieldMatch;
+import com.blesk.accountservice.Validator.Table.Password.EncryptionAware;
 import com.blesk.accountservice.Validator.Table.Unique.Unique;
 import com.blesk.accountservice.Validator.Table.Password.Password;
 import com.blesk.accountservice.Value.Messages;
@@ -21,9 +22,15 @@ import java.util.*;
 @Entity(name = "Accounts")
 @Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"account_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Accounts.class)
-@JsonIgnoreProperties(value={ "accountPreferenceItems"})
-@FieldMatch(first = "password", second = "confirmPassword", message = Messages.ACCOUNTS_PASWORD_MATCH)
-public class Accounts implements Serializable {
+@JsonIgnoreProperties(value = {"accountPreferenceItems"})
+@FieldMatch(first = "password", second = "confirmPassword", message = Messages.ACCOUNTS_PASWORD_MATCH, groups = Accounts.validationWithEncryption.class)
+public class Accounts implements Serializable, EncryptionAware {
+
+    public interface validationWithEncryption {
+    }
+
+    public interface validationWithoutEncryption {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,30 +50,32 @@ public class Accounts implements Serializable {
     private Activations activations;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "account_role_items", joinColumns = @JoinColumn(name = "account_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "account_role_items", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Roles> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "preferences", fetch = FetchType.EAGER)
     private Set<AccountPreferenceItems> accountPreferenceItems = new HashSet<>();
 
-    @NotNull(message = Messages.ACCOUNTS_USER_NAME_NULL)
-    @Size(min = 5, max = 255, message = Messages.ACCOUNTS_USER_NAME_LENGHT)
-    @Unique(service = AccountsService.class, fieldName = "userName", message = Messages.ACCOUNTS_USER_NAME_UNIQUE)
+    @NotNull(message = Messages.ACCOUNTS_USER_NAME_NULL, groups = validationWithEncryption.class)
+    @Size(min = 5, max = 255, message = Messages.ACCOUNTS_USER_NAME_LENGHT, groups = validationWithEncryption.class)
+    @Unique(service = AccountsService.class, fieldName = "userName", message = Messages.ACCOUNTS_USER_NAME_UNIQUE, groups = validationWithEncryption.class)
     @Column(name = "user_name", nullable = false)
     private String userName;
 
-    @NotNull(message = Messages.ACCOUNTS_EMAIL_NULL)
-    @Email(message = Messages.ACCOUNTS_EMAIL)
-    @Size(min = 5, max = 255, message = Messages.ACCOUNTS_EMAIL_LENGHT)
-    @Unique(service = AccountsService.class, fieldName = "email", message = Messages.ACCOUNTS_EMAIL_UNIQUE)
+    @NotNull(message = Messages.ACCOUNTS_EMAIL_NULL, groups = validationWithEncryption.class)
+    @Email(message = Messages.ACCOUNTS_EMAIL, groups = validationWithEncryption.class)
+    @Size(min = 5, max = 255, message = Messages.ACCOUNTS_EMAIL_LENGHT, groups = validationWithEncryption.class)
+    @Unique(service = AccountsService.class, fieldName = "email", message = Messages.ACCOUNTS_EMAIL_UNIQUE, groups = validationWithEncryption.class)
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Password
-    @NotNull(message = Messages.ACCOUNTS_PASSWORD_NULL)
+    @Password(groups = validationWithEncryption.class)
+    @NotNull(message = Messages.ACCOUNTS_PASSWORD_NULL, groups = validationWithEncryption.class)
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Transient
+    private String confirmPassword;
 
     @Column(name = "is_activated", nullable = false)
     private Boolean isActivated;
@@ -74,30 +83,27 @@ public class Accounts implements Serializable {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @NotNull(message = Messages.ENTITY_CREATOR_ID)
-    @Positive(message = Messages.ENTITY_IDS)
+    @NotNull(message = Messages.ENTITY_CREATOR_ID, groups = validationWithoutEncryption.class)
+    @Positive(message = Messages.ENTITY_IDS, groups = validationWithoutEncryption.class)
     @Column(name = "created_by", nullable = false)
     private Long createdBy;
 
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
 
-    @Positive(message = Messages.ENTITY_IDS)
+    @Positive(message = Messages.ENTITY_IDS, groups = validationWithEncryption.class)
     @Column(name = "updated_by", updatable = false)
     private Long updatedBy;
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @Positive(message = Messages.ENTITY_IDS)
+    @Positive(message = Messages.ENTITY_IDS, groups = validationWithEncryption.class)
     @Column(name = "deleted_by")
     private Long deletedBy;
 
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
-
-    @Transient
-    private String confirmPassword;
 
     @Transient
     private HashMap<String, String> validations = new HashMap<>();
@@ -169,12 +175,22 @@ public class Accounts implements Serializable {
         this.email = email;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
     public String getPassword() {
         return this.password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    @Override
+    public String getConfirmPassword() {
+        return this.confirmPassword;
     }
 
     public Boolean getActivated() {
@@ -239,14 +255,6 @@ public class Accounts implements Serializable {
 
     public void setDeletedAt(Timestamp deletedAt) {
         this.deletedAt = deletedAt;
-    }
-
-    public String getConfirmPassword() {
-        return this.confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
     }
 
     public HashMap<String, String> getValidations() {
