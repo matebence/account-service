@@ -2,6 +2,7 @@ package com.blesk.accountservice.DAO;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -15,8 +16,12 @@ import java.util.*;
 @Repository
 public class DAOImpl<T> implements DAO<T> {
 
-    @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    public DAOImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     @Override
     public T save(T t) {

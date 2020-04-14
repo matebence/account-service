@@ -8,8 +8,8 @@ import com.blesk.accountservice.Model.Roles;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +26,7 @@ public class RolesServiceImpl implements RolesService {
     @Override
     @Transactional
     public Roles createRole(Roles roles) {
-        if (this.roleDAO.save(roles).getRoleId() == null)
+        if (this.roleDAO.save(roles) == null)
             throw new AccountServiceException(Messages.CREATE_ROLE);
         return roles;
     }

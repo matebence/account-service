@@ -10,8 +10,8 @@ import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -53,7 +53,7 @@ public class AccountsServiceImpl implements AccountsService {
             throw new AccountServiceException(Messages.CREATE_GET_ACCOUNT);
         accounts.setActivations(new Activations(UUID.randomUUID().toString()));
         accounts.setRoles(assignedRoles);
-        if (this.accountDAO.save(accounts).getAccountId() == null)
+        if (this.accountDAO.save(accounts) == null)
             throw new AccountServiceException(Messages.CREATE_ACCOUNT);
         return accounts;
     }

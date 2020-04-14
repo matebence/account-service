@@ -3,6 +3,7 @@ package com.blesk.accountservice.DAO.Activations;
 import com.blesk.accountservice.DAO.DAOImpl;
 import com.blesk.accountservice.Model.Activations;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -15,8 +16,13 @@ import javax.persistence.criteria.Root;
 @Repository
 public class ActivationsDAOImpl extends DAOImpl<Activations> implements ActivationsDAO {
 
-    @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    public ActivationsDAOImpl(EntityManager entityManager) {
+        super(entityManager);
+        this.entityManager = entityManager;
+    }
 
     @Override
     public Activations gettActivationToken(String token) {

@@ -7,8 +7,8 @@ import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -24,7 +24,7 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Override
     @Transactional
     public AccountPreferenceItems createPreference(AccountPreferenceItems accountPreferenceItems) {
-        if (this.preferencesDAO.save(accountPreferenceItems).getPreferences().getPreferenceId() == null)
+        if (this.preferencesDAO.save(accountPreferenceItems).getPreferences() == null)
             throw new AccountServiceException(Messages.CREATE_PREFERENCE);
         return accountPreferenceItems;
     }

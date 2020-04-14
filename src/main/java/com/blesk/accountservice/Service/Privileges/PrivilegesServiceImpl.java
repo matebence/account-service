@@ -7,8 +7,8 @@ import com.blesk.accountservice.Model.Privileges;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -24,7 +24,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Override
     @Transactional
     public Privileges createPrivilege(Privileges privileges) {
-        if (this.privilegeDAO.save(privileges).getPrivilegeId() == null)
+        if (this.privilegeDAO.save(privileges) == null)
             throw new AccountServiceException(Messages.CREATE_PRIVILEGE);
         return privileges;
     }

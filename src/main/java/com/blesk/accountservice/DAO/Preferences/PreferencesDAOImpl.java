@@ -3,6 +3,7 @@ package com.blesk.accountservice.DAO.Preferences;
 import com.blesk.accountservice.DAO.DAOImpl;
 import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -15,8 +16,14 @@ import javax.persistence.criteria.Root;
 @Repository
 public class PreferencesDAOImpl extends DAOImpl<AccountPreferenceItems> implements PreferencesDAO {
 
-    @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    public PreferencesDAOImpl(EntityManager entityManager) {
+        super(entityManager);
+        this.entityManager = entityManager;
+    }
+
 
     @Override
     public AccountPreferenceItems getPreferenceByName(String name) {

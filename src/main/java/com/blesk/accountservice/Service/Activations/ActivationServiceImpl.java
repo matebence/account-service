@@ -6,8 +6,7 @@ import com.blesk.accountservice.Model.Activations;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ActivationServiceImpl implements ActivationService {
@@ -22,7 +21,7 @@ public class ActivationServiceImpl implements ActivationService {
     @Override
     @Transactional
     public Activations createActivationToken(Activations activations) {
-        if (this.activationsDAO.save(activations).getAccountActivationId() == null)
+        if (this.activationsDAO.save(activations) == null)
             throw new AccountServiceException(Messages.CREATE_ACTIVATION_TOKEN);
         return activations;
     }

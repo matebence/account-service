@@ -6,8 +6,8 @@ import com.blesk.accountservice.Model.Passwords;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Calendar;
 
 @Service
@@ -23,7 +23,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Override
     @Transactional
     public Passwords createPasswordToken(Passwords passwords) {
-        if (this.passwordsDAO.save(passwords).getPasswordResetTokenId() == null)
+        if (this.passwordsDAO.save(passwords) == null)
             throw new AccountServiceException(Messages.CREATE_PASSWORD_TOKEN);
         return passwords;
     }

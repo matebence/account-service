@@ -6,8 +6,7 @@ import com.blesk.accountservice.Model.Logins;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LoginsServiceImpl implements LoginsService {
@@ -22,7 +21,7 @@ public class LoginsServiceImpl implements LoginsService {
     @Override
     @Transactional
     public Logins createLogin(Logins logins) {
-        if (this.loginsDAO.save(logins).getLoginId() == null)
+        if (this.loginsDAO.save(logins) == null)
             throw new AccountServiceException(Messages.CREATE_LOGIN);
         return logins;
     }
