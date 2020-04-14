@@ -2,7 +2,9 @@ package com.blesk.accountservice.Model;
 
 import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
 import com.blesk.accountservice.Service.Accounts.AccountsService;
-import com.blesk.accountservice.Validator.Table.Unique;
+import com.blesk.accountservice.Validator.Table.Match.FieldMatch;
+import com.blesk.accountservice.Validator.Table.Unique.Unique;
+import com.blesk.accountservice.Validator.Table.Password.Password;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -11,7 +13,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import javax.validation.ConstraintViolation;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -21,6 +22,7 @@ import java.util.*;
 @Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"account_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Accounts.class)
 @JsonIgnoreProperties(value={ "accountPreferenceItems"})
+@FieldMatch(first = "password", second = "confirmPassword", message = Messages.ACCOUNTS_PASWORD_MATCH)
 public class Accounts implements Serializable {
 
     @Id
@@ -28,15 +30,15 @@ public class Accounts implements Serializable {
     @Column(name = "account_id")
     private Long accountId;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "account")
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "accounts")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Logins login;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "account")
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "accounts")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Passwords passwords;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "account")
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "accounts")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Activations activations;
 
@@ -61,6 +63,7 @@ public class Accounts implements Serializable {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Password
     @NotNull(message = Messages.ACCOUNTS_PASSWORD_NULL)
     @Column(name = "password", nullable = false)
     private String password;

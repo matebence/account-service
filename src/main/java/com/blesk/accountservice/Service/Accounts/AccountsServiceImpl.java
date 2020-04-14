@@ -4,6 +4,7 @@ import com.blesk.accountservice.DAO.Accounts.AccountsDAOImpl;
 import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Accounts;
+import com.blesk.accountservice.Model.Activations;
 import com.blesk.accountservice.Model.Roles;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
@@ -50,6 +51,7 @@ public class AccountsServiceImpl implements AccountsService {
         Set<Roles> assignedRoles = this.roleDAO.getListOfRoles(accounts.getRoles());
         if (assignedRoles.isEmpty())
             throw new AccountServiceException(Messages.CREATE_GET_ACCOUNT);
+        accounts.setActivations(new Activations(UUID.randomUUID().toString()));
         accounts.setRoles(assignedRoles);
         if (this.accountDAO.save(accounts).getAccountId() == null)
             throw new AccountServiceException(Messages.CREATE_ACCOUNT);

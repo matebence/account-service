@@ -24,7 +24,7 @@ public class Logins implements Serializable {
     @OneToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "account_id", nullable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private Accounts account;
+    private Accounts accounts;
 
     @NotNull(message = Messages.LOGIN_TIMESTAMP_NULL)
     @Column(name = "last_login", nullable = false)
@@ -46,11 +46,11 @@ public class Logins implements Serializable {
     }
 
     public Accounts getAccount() {
-        return this.account;
+        return this.accounts;
     }
 
-    public void setAccount(Accounts account) {
-        this.account = account;
+    public void setAccount(Accounts accounts) {
+        this.accounts = accounts;
     }
 
     public Timestamp getLastLogin() {

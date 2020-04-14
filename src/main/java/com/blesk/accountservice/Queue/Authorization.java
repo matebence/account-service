@@ -11,8 +11,10 @@ import com.blesk.accountservice.Service.Logins.LoginsServiceImpl;
 import com.blesk.accountservice.Service.Passwords.PasswordsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -28,16 +30,19 @@ public class Authorization {
 
     private PasswordsServiceImpl passwordsService;
 
-    private ActivationServiceImpl activationService;
-
     private LoginsServiceImpl loginsService;
 
+    private ActivationServiceImpl activationService;
+
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
-    public Authorization(AccountsServiceImpl accountsService, PasswordsServiceImpl passwordsService, ActivationServiceImpl activationService, LoginsServiceImpl loginsService) {
+    public Authorization(AccountsServiceImpl accountsService, PasswordsServiceImpl passwordsService, LoginsServiceImpl loginsService, ActivationServiceImpl activationService, PasswordEncoder passwordEncoder) {
         this.accountsService = accountsService;
         this.passwordsService = passwordsService;
-        this.activationService = activationService;
         this.loginsService = loginsService;
+        this.activationService = activationService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @RabbitListener(queues = "blesk.verifyAccountQueue")
@@ -70,25 +75,16 @@ public class Authorization {
 
         try {
             HashMap<String, String> validation = new HashMap<>();
-            if (!violations.isEmpty()){
+            if (!violations.isEmpty()) {
                 for (ConstraintViolation<Accounts> violation : violations) {
                     validation.put(violation.getPropertyPath().toString(), violation.getMessage());
-                    System.out.println(violation.getPropertyPath().toString() + " = " + violation.getMessage());
                 }
                 accounts.setValidations(validation);
-                System.out.println(validation.size());
                 return accounts;
             }
 
-            Accounts account = this.accountsService.createAccount(accounts, new String[]{"CLIENT_ROLE", "COURIER_ROLE"});
-            account.setValidations(validation);
-            Activations activations = new Activations();
-            activations.setToken(UUID.randomUUID().toString());
-            activations.setAccount(account);
-            account.setActivations(activations);
-
-            this.activationService.createActivationToken(activations);
-            return account;
+            accounts.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
+            return this.accountsService.createAccount(accounts, new String[]{"CLIENT_ROLE", "COURIER_ROLE"});
         } catch (AccountServiceException ex) {
             return new Accounts();
         }
@@ -97,7 +93,7 @@ public class Authorization {
     @RabbitListener(queues = "blesk.verifyActivationTokenQueue")
     public Boolean verifyActivationTokenForNewAccount(Accounts accounts) {
         try {
-            return this.activationService.validateActivationToken(accounts.getAccountId(), accounts.getPasswords().getToken());
+            return this.activationService.validateActivationToken(accounts.getAccountId(), accounts.getActivations().getToken());
         } catch (AccountServiceException ex) {
             return Boolean.FALSE;
         }
@@ -105,16 +101,8 @@ public class Authorization {
 
     @RabbitListener(queues = "blesk.forgetPasswordQueue")
     public Passwords recoverAccountWithForgetPassword(String email) {
-        Accounts accounts = this.accountsService.findAccountByEmail(email);
-        String token = UUID.randomUUID().toString();
-
-        Passwords passwords = new Passwords();
-        passwords.setAccount(accounts);
-        passwords.setToken(token);
-        passwords.setExpiryDate();
-
         try {
-            return this.passwordsService.createPasswordToken(passwords);
+            return this.passwordsService.createPasswordToken(new Passwords(this.accountsService.findAccountByEmail(email), UUID.randomUUID().toString()));
         } catch (AccountServiceException ex) {
             return new Passwords();
         }

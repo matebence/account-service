@@ -27,7 +27,16 @@ public class Activations implements Serializable {
     @OneToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "account_id", nullable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private Accounts account;
+    private Accounts accounts;
+
+    public Activations(Accounts accounts, String token) {
+        this.accounts = accounts;
+        this.token = token;
+    }
+
+    public Activations(String token) {
+        this.token = token;
+    }
 
     public Activations() {
     }
@@ -49,10 +58,10 @@ public class Activations implements Serializable {
     }
 
     public Accounts getAccount() {
-        return this.account;
+        return this.accounts;
     }
 
-    public void setAccount(Accounts account) {
-        this.account = account;
+    public void setAccount(Accounts accounts) {
+        this.accounts = accounts;
     }
 }

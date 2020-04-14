@@ -32,12 +32,23 @@ public class Passwords implements Serializable {
     @OneToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "account_id", nullable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private Accounts account;
+    private Accounts accounts;
 
     @FutureOrPresent(message = Messages.PASSWORDS_DATE_VALID)
     @NotNull(message = Messages.PASSWORDS_DATE_NULL)
     @Column(name = "expiry_date", nullable = false)
     private Date expiryDate;
+
+    public Passwords(Accounts accounts, String token) {
+        this.accounts = accounts;
+        this.token = token;
+        setExpiryDate();
+    }
+
+    public Passwords(String token) {
+        this.token = token;
+        setExpiryDate();
+    }
 
     public Passwords() {
     }
@@ -59,11 +70,11 @@ public class Passwords implements Serializable {
     }
 
     public Accounts getAccount() {
-        return this.account;
+        return this.accounts;
     }
 
-    public void setAccount(Accounts account) {
-        this.account = account;
+    public void setAccount(Accounts accounts) {
+        this.accounts = accounts;
     }
 
     public Date getExpiryDate() {

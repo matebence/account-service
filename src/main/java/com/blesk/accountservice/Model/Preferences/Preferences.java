@@ -1,8 +1,7 @@
 package com.blesk.accountservice.Model.Preferences;
 
-import com.blesk.accountservice.Service.Accounts.AccountsService;
 import com.blesk.accountservice.Service.Preferences.PreferencesService;
-import com.blesk.accountservice.Validator.Table.Unique;
+import com.blesk.accountservice.Validator.Table.Unique.Unique;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;

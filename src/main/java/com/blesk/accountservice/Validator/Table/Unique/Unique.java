@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Validator.Table;
+package com.blesk.accountservice.Validator.Table.Unique;
 
 import com.blesk.accountservice.Validator.Service.FieldValueExists;
 import com.blesk.accountservice.Value.Messages;
@@ -14,7 +14,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({ METHOD, FIELD, ANNOTATION_TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = UniqueValidator.class)
+@Constraint(validatedBy = UniqueValidation.class)
 @Documented
 public @interface Unique {
     String message() default Messages.UNIQUE_FIELD_DEFAULT;

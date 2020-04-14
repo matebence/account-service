@@ -15,6 +15,8 @@ public class Messages {
 
 
     public static final String UNIQUE_FIELD_DEFAULT = "Obsah pola nie je jedinečné";
+    public static final String PASSWORD_FIELD_DEFAULT = "Heslo nie je dostačne bezpecné";
+    public static final String FIELD_MATCH_DEFAULT = "Dve zvolené stlpce sa nezhodujú";
 
     public static final String ENTITY_IDS = "Nesprávny formát identifikačného čísla";
     public static final String ENTITY_CREATOR_ID = "Identifikačné číslo vytvárajúcého používateľa nebol nastavení";
@@ -22,6 +24,7 @@ public class Messages {
     public static final String ACCOUNTS_USER_NAME_NULL = "Nezadali ste používateľské meno";
     public static final String ACCOUNTS_USER_NAME_LENGHT = "Používateľské meno je príliž krátké alebo dlhé";
     public static final String ACCOUNTS_USER_NAME_UNIQUE = "Používatelské meno už existuje";
+    public static final String ACCOUNTS_PASWORD_MATCH = "Heslá sa nezhodujú";
     public static final String ACCOUNTS_PASSWORD_NULL = "Nezadali ste heslo";
     public static final String ACCOUNTS_EMAIL_NULL = "Nezadali ste emailovú adresu";
     public static final String ACCOUNTS_EMAIL_LENGHT = "Emailová adresa je príliž krátka alebo dlhá";
@@ -112,4 +115,6 @@ public class Messages {
 
 
     public static final String UNSUPPORTED_COLUMN = "Stľpec v tabulke neexistuje, kontrola jedinečnosti pre stľpec %s sa nevykonala";
+    public static final String BLACKLISTED_PASSWORDS = "Nepodarilo sa načítať súbor neplatných hesiel";
+    public static final String PASSWORD_RULES = "Nepodarilo sa načítať validačný súbor";
 }
