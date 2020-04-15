@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Timestamp;
 
-public class OAuth2EntryPointHandler implements AccessDeniedHandler {
+public class OAuthEntryPointHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
