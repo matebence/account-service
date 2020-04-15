@@ -9,6 +9,7 @@ import com.blesk.accountservice.Service.Activations.ActivationServiceImpl;
 import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
 import com.blesk.accountservice.Service.Logins.LoginsServiceImpl;
 import com.blesk.accountservice.Service.Passwords.PasswordsServiceImpl;
+import org.hibernate.TransientPropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,7 +56,7 @@ public class Authorization {
     public Accounts verifyAccountForSigningIn(String userName) {
         try {
             return this.accountsService.getAccountInformations(userName);
-        } catch (AccountServiceException ex) {
+        } catch (AccountServiceException | TransientPropertyValueException ex) {
             return new Accounts();
         }
     }
@@ -68,7 +69,7 @@ public class Authorization {
                 this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordResetTokenId());
 
             return this.loginsService.updateLogin(logins);
-        } catch (AccountServiceException ex) {
+        } catch (AccountServiceException | TransientPropertyValueException ex) {
             return Boolean.FALSE;
         }
     }
@@ -95,7 +96,7 @@ public class Authorization {
             this.emailsService.sendHtmlMesseage("Registrácia", "signupactivation", variables, account);
 
             return account;
-        } catch (AccountServiceException ex) {
+        } catch (AccountServiceException | TransientPropertyValueException ex) {
             return new Accounts();
         }
     }
@@ -112,7 +113,7 @@ public class Authorization {
                     return result;
             }
             return Boolean.FALSE;
-        } catch (AccountServiceException ex) {
+        } catch (AccountServiceException | TransientPropertyValueException ex) {
             return Boolean.FALSE;
         }
     }
@@ -126,7 +127,7 @@ public class Authorization {
             this.emailsService.sendHtmlMesseage("Zabudnuté heslo", "forgetpassword", variables, passwords.getAccounts());
 
             return passwords;
-        } catch (AccountServiceException ex) {
+        } catch (AccountServiceException | TransientPropertyValueException ex) {
             return new Passwords();
         }
     }
@@ -135,7 +136,7 @@ public class Authorization {
     public Boolean verifyPasswordTokenForForgetPassword(Accounts accounts) {
         try {
             return this.passwordsService.validatePasswordToken(accounts.getAccountId(), accounts.getPasswords().getToken());
-        } catch (AccountServiceException ex) {
+        } catch (AccountServiceException | TransientPropertyValueException ex) {
             return Boolean.FALSE;
         }
     }
