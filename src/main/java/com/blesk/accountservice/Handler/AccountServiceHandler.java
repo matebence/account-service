@@ -18,7 +18,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class AccountServiceHandler {

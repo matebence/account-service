@@ -4,10 +4,8 @@ import com.blesk.accountservice.DAO.DAOImpl;
 import com.blesk.accountservice.Model.Privileges;
 import com.blesk.accountservice.Model.Roles;
 import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
@@ -17,14 +15,6 @@ import java.util.Set;
 
 @Repository
 public class RolesDAOImpl extends DAOImpl<Roles> implements RolesDAO {
-
-    private EntityManager entityManager;
-
-    @Autowired
-    public RolesDAOImpl(EntityManager entityManager) {
-        super(entityManager);
-        this.entityManager = entityManager;
-    }
 
     @Override
     public Set<Roles> getListOfRoles(Set<Roles> roles) {

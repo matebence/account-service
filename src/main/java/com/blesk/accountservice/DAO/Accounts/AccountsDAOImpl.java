@@ -4,10 +4,8 @@ import com.blesk.accountservice.DAO.DAOImpl;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Value.Keys;
 import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
@@ -15,14 +13,6 @@ import java.util.*;
 
 @Repository
 public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
-
-    private EntityManager entityManager;
-
-    @Autowired
-    public AccountsDAOImpl(EntityManager entityManager) {
-        super(entityManager);
-        this.entityManager = entityManager;
-    }
 
     @Override
     public Accounts getAccountInformations(String userName) {

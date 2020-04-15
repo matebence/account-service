@@ -2,11 +2,11 @@ package com.blesk.accountservice.DAO;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -15,12 +15,8 @@ import java.util.*;
 @Repository
 public class DAOImpl<T> implements DAO<T> {
 
-    private EntityManager entityManager;
-
-    @Autowired
-    public DAOImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    @PersistenceContext
+    protected EntityManager entityManager;
 
     @Override
     public T save(T t) {
