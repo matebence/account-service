@@ -10,9 +10,11 @@ import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
 import com.blesk.accountservice.Service.Logins.LoginsServiceImpl;
 import com.blesk.accountservice.Service.Passwords.PasswordsServiceImpl;
 import org.hibernate.TransientPropertyValueException;
+import org.springframework.amqp.rabbit.support.ListenerExecutionFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintViolation;
@@ -53,29 +55,29 @@ public class Authorization {
     }
 
     @RabbitListener(queues = "blesk.verifyAccountQueue")
-    public Accounts verifyAccountForSigningIn(String userName) {
+    public Accounts verifyAccountForSigningIn(String userName) throws ListenerExecutionFailedException {
         try {
             return this.accountsService.getAccountInformations(userName);
-        } catch (AccountServiceException | TransientPropertyValueException ex) {
+        } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return new Accounts();
         }
     }
 
     @RabbitListener(queues = "blesk.lastLoginQueue")
-    public Boolean recordLastSuccessfullLogin(Logins logins) {
+    public Boolean recordLastSuccessfullLogin(Logins logins) throws ListenerExecutionFailedException {
         try {
             Accounts accounts = this.accountsService.getAccount(logins.getAccounts().getAccountId());
             if (accounts.getPasswords() != null)
                 this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordResetTokenId());
 
             return this.loginsService.updateLogin(logins);
-        } catch (AccountServiceException | TransientPropertyValueException ex) {
+        } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
         }
     }
 
     @RabbitListener(queues = "blesk.createAccountQueue")
-    public Accounts createNewPublicAccount(Accounts accounts) {
+    public Accounts createNewPublicAccount(Accounts accounts) throws ListenerExecutionFailedException {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<Accounts>> violations = validator.validate(accounts, Accounts.validationWithEncryption.class);
@@ -96,13 +98,13 @@ public class Authorization {
             this.emailsService.sendHtmlMesseage("Registrácia", "signupactivation", variables, account);
 
             return account;
-        } catch (AccountServiceException | TransientPropertyValueException ex) {
+        } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return new Accounts();
         }
     }
 
     @RabbitListener(queues = "blesk.verifyActivationTokenQueue")
-    public Boolean verifyActivationTokenForNewAccount(Accounts accounts) {
+    public Boolean verifyActivationTokenForNewAccount(Accounts accounts) throws ListenerExecutionFailedException {
         try {
             Boolean result = this.activationService.validateActivationToken(accounts.getAccountId(), accounts.getActivations().getToken());
             if (result) {
@@ -113,13 +115,13 @@ public class Authorization {
                     return result;
             }
             return Boolean.FALSE;
-        } catch (AccountServiceException | TransientPropertyValueException ex) {
+        } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
         }
     }
 
     @RabbitListener(queues = "blesk.forgetPasswordQueue")
-    public Passwords recoverAccountWithForgetPassword(String email) {
+    public Passwords recoverAccountWithForgetPassword(String email) throws ListenerExecutionFailedException {
         try {
             Passwords passwords = this.passwordsService.createPasswordToken(new Passwords(this.accountsService.findAccountByEmail(email), UUID.randomUUID().toString()));
             Map<String, Object> variables = new HashMap<>();
@@ -127,16 +129,16 @@ public class Authorization {
             this.emailsService.sendHtmlMesseage("Zabudnuté heslo", "forgetpassword", variables, passwords.getAccounts());
 
             return passwords;
-        } catch (AccountServiceException | TransientPropertyValueException ex) {
+        } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return new Passwords();
         }
     }
 
     @RabbitListener(queues = "blesk.verifyPasswordTokenQueue")
-    public Boolean verifyPasswordTokenForForgetPassword(Accounts accounts) {
+    public Boolean verifyPasswordTokenForForgetPassword(Accounts accounts) throws ListenerExecutionFailedException {
         try {
             return this.passwordsService.validatePasswordToken(accounts.getAccountId(), accounts.getPasswords().getToken());
-        } catch (AccountServiceException | TransientPropertyValueException ex) {
+        } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
         }
     }
