@@ -39,22 +39,18 @@ public class Privileges implements Serializable {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
-    @NotNull(message = Messages.ENTITY_CREATOR_ID)
-    @Positive(message = Messages.ENTITY_IDS)
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by", updatable = false, nullable = false)
     private Long createdBy;
 
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
 
-    @Positive(message = Messages.ENTITY_IDS)
-    @Column(name = "updated_by", updatable = false)
+    @Column(name = "updated_by")
     private Long updatedBy;
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @Positive(message = Messages.ENTITY_IDS)
     @Column(name = "deleted_by")
     private Long deletedBy;
 
@@ -153,5 +149,10 @@ public class Privileges implements Serializable {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
+    }
+
+    @PreRemove
+    protected void preRemove() {
+        this.deletedAt = new Timestamp(System.currentTimeMillis());
     }
 }

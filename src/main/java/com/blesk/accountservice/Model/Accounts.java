@@ -83,22 +83,18 @@ public class Accounts implements Serializable, EncryptionAware {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @NotNull(message = Messages.ENTITY_CREATOR_ID, groups = validationWithoutEncryption.class)
-    @Positive(message = Messages.ENTITY_IDS, groups = validationWithoutEncryption.class)
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by", updatable = false, nullable = false)
     private Long createdBy;
 
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
 
-    @Positive(message = Messages.ENTITY_IDS, groups = validationWithEncryption.class)
-    @Column(name = "updated_by", updatable = false)
+    @Column(name = "updated_by")
     private Long updatedBy;
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @Positive(message = Messages.ENTITY_IDS, groups = validationWithEncryption.class)
     @Column(name = "deleted_by")
     private Long deletedBy;
 
@@ -275,5 +271,10 @@ public class Accounts implements Serializable, EncryptionAware {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
+    }
+
+    @PreRemove
+    protected void preRemove() {
+        this.deletedAt = new Timestamp(System.currentTimeMillis());
     }
 }

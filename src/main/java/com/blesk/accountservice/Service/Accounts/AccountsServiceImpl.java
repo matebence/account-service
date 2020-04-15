@@ -64,7 +64,6 @@ public class AccountsServiceImpl implements AccountsService {
             throw new AccountServiceException(Messages.CREATE_GET_ACCOUNT);
 
         accounts.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
-        accounts.setCreatedBy(AccountServiceApplication.SYSTEM);
         accounts.setRoles(assignedRoles);
         Activations activations = new Activations(UUID.randomUUID().toString());
         accounts.setActivations(activations);

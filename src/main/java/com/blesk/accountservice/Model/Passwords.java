@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -38,6 +39,9 @@ public class Passwords implements Serializable {
     @NotNull(message = Messages.PASSWORDS_DATE_NULL)
     @Column(name = "expiry_date", nullable = false)
     private Date expiryDate;
+
+    @Column(name = "created_at", updatable = false, nullable = false)
+    private Timestamp createdAt;
 
     public Passwords(Accounts accounts, String token) {
         this.accounts = accounts;
@@ -86,5 +90,18 @@ public class Passwords implements Serializable {
         cal.setTimeInMillis(new Date().getTime());
         cal.add(Calendar.MINUTE, Passwords.EXPIRATION);
         this.expiryDate = new Date(cal.getTime().getTime());
+    }
+
+    public Timestamp getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @PrePersist
+    protected void prePersist() {
+        this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 }

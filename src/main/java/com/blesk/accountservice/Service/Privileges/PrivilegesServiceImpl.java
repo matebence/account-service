@@ -81,6 +81,6 @@ public class PrivilegesServiceImpl implements PrivilegesService {
         if (value == null || fieldName == null)
             throw new UnsupportedOperationException(String.format(Messages.UNSUPPORTED_COLUMN, fieldName));
 
-        return this.privilegeDAO.unique(Accounts.class, fieldName, value.toString());
+        return this.privilegeDAO.unique(Privileges.class, fieldName, value.toString());
     }
 }

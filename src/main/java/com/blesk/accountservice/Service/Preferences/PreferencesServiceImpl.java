@@ -4,6 +4,7 @@ import com.blesk.accountservice.DAO.Preferences.PreferencesDAOImpl;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
+import com.blesk.accountservice.Model.Preferences.Preferences;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,6 +82,6 @@ public class PreferencesServiceImpl implements PreferencesService {
         if (value == null || fieldName == null)
             throw new UnsupportedOperationException(String.format(Messages.UNSUPPORTED_COLUMN, fieldName));
 
-        return this.preferencesDAO.unique(Accounts.class, fieldName, value.toString());
+        return this.preferencesDAO.unique(AccountPreferenceItems.class, fieldName, value.toString());
     }
 }

@@ -36,29 +36,25 @@ public class Roles implements Serializable {
 
     @NotNull(message = Messages.ROLES_NULL)
     @Size(min = 3, max = 255, message = Messages.ROLES_SIZE)
-    @Unique(service = RolesService.class, fieldName = "name", message = Messages.ROLES_UNIQUE)
+//    @Unique(service = RolesService.class, fieldName = "name", message = Messages.ROLES_UNIQUE)
     @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
-    @NotNull(message = Messages.ENTITY_CREATOR_ID)
-    @Positive(message = Messages.ENTITY_IDS)
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by", updatable = false, nullable = false)
     private Long createdBy;
 
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
 
-    @Positive(message = Messages.ENTITY_IDS)
-    @Column(name = "updated_by", updatable = false)
+    @Column(name = "updated_by")
     private Long updatedBy;
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @Positive(message = Messages.ENTITY_IDS)
     @Column(name = "deleted_by")
     private Long deletedBy;
 
@@ -165,5 +161,10 @@ public class Roles implements Serializable {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
+    }
+
+    @PreRemove
+    protected void preRemove() {
+        this.deletedAt = new Timestamp(System.currentTimeMillis());
     }
 }

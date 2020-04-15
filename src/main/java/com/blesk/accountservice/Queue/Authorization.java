@@ -1,5 +1,6 @@
 package com.blesk.accountservice.Queue;
 
+import com.blesk.accountservice.AccountServiceApplication;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Logins;
@@ -92,6 +93,7 @@ public class Authorization {
                 return accounts;
             }
 
+            accounts.setCreatedBy(AccountServiceApplication.SYSTEM);
             Accounts account = this.accountsService.createAccount(accounts, new String[]{"CLIENT_ROLE", "COURIER_ROLE"}).getAccounts();
             Map<String, Object> variables = new HashMap<>();
             variables.put("activationUrl", String.format(this.activationUrl, account.getAccountId(), account.getActivations().getToken()));

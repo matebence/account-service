@@ -92,6 +92,6 @@ public class RolesServiceImpl implements RolesService {
         if (value == null || fieldName == null)
             throw new UnsupportedOperationException(String.format(Messages.UNSUPPORTED_COLUMN, fieldName));
 
-        return this.roleDAO.unique(Accounts.class, fieldName, value.toString());
+        return this.roleDAO.unique(Roles.class, fieldName, value.toString());
     }
 }

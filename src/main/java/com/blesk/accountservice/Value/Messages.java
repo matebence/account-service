@@ -18,9 +18,6 @@ public class Messages {
     public static final String PASSWORD_FIELD_DEFAULT = "Heslo nie je dostačne bezpecné";
     public static final String FIELD_MATCH_DEFAULT = "Dve zvolené stlpce sa nezhodujú";
 
-    public static final String ENTITY_IDS = "Nesprávny formát identifikačného čísla";
-    public static final String ENTITY_CREATOR_ID = "Identifikačné číslo vytvárajúcého používateľa nebol nastavení";
-
     public static final String ACCOUNTS_USER_NAME_NULL = "Nezadali ste používateľské meno";
     public static final String ACCOUNTS_USER_NAME_LENGHT = "Používateľské meno je príliž krátké alebo dlhé";
     public static final String ACCOUNTS_USER_NAME_UNIQUE = "Používatelské meno už existuje";
