@@ -2,12 +2,11 @@ package com.blesk.accountservice.Service.Roles;
 
 import com.blesk.accountservice.Model.Privileges;
 import com.blesk.accountservice.Model.Roles;
-import com.blesk.accountservice.Validator.Service.FieldValueExists;
 
 import java.util.List;
 import java.util.Set;
 
-public interface RolesService extends FieldValueExists {
+public interface RolesService {
 
     Roles createRole(Roles roles);
 

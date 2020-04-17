@@ -1,23 +1,24 @@
 package com.blesk.accountservice.Model;
 
-import com.blesk.accountservice.Service.Roles.RolesService;
-import com.blesk.accountservice.Validator.Table.Unique.Unique;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+@DynamicInsert
+@DynamicUpdate
 @Entity(name = "Roles")
-@Table(name = "roles", uniqueConstraints = {@UniqueConstraint(columnNames = {"role_id"})})
+@Table(name = "roles", uniqueConstraints = {@UniqueConstraint(name = "role_id", columnNames = "role_id"), @UniqueConstraint(name = "role_name", columnNames = "name")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Roles.class)
 @JsonIgnoreProperties(value = {"accounts"})
 public class Roles implements Serializable {
@@ -36,13 +37,13 @@ public class Roles implements Serializable {
 
     @NotNull(message = Messages.ROLES_NULL)
     @Size(min = 3, max = 255, message = Messages.ROLES_SIZE)
-//    @Unique(service = RolesService.class, fieldName = "name", message = Messages.ROLES_UNIQUE)
     @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
+    @NotNull(message = Messages.ENTITY_CREATOR_ID)
     @Column(name = "created_by", updatable = false, nullable = false)
     private Long createdBy;
 
@@ -161,10 +162,9 @@ public class Roles implements Serializable {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
-    }
-
-    @PreRemove
-    protected void preRemove() {
-        this.deletedAt = new Timestamp(System.currentTimeMillis());
+        if(this.deletedBy != null){
+            this.deletedAt = new Timestamp(System.currentTimeMillis());
+            this.isDeleted = true;
+        }
     }
 }

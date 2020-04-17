@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Validator.Table.Password;
+package com.blesk.accountservice.Validator.Password;
 
 public interface EncryptionAware {
 

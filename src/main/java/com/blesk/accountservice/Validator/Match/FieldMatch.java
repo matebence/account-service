@@ -1,4 +1,4 @@
-package com.blesk.accountservice.Validator.Table.Match;
+package com.blesk.accountservice.Validator.Match;
 
 import com.blesk.accountservice.Value.Messages;
 

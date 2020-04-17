@@ -1,6 +1,5 @@
 package com.blesk.accountservice.Service.Accounts;
 
-import com.blesk.accountservice.AccountServiceApplication;
 import com.blesk.accountservice.DAO.Accounts.AccountsDAOImpl;
 import com.blesk.accountservice.DAO.Activations.ActivationsDAOImpl;
 import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import javax.naming.AuthenticationException;
 import java.util.*;
 
 @Service
@@ -54,8 +52,6 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     public Activations createAccount(@Validated(Accounts.validationWithoutEncryption.class) Accounts accounts, String[] allowedRoles) {
-        if (accounts.getRoles().size() > 5)
-            throw new AccountServiceException(Messages.ACCOUNT_NEW_ERROR);
         Set<Roles> roles = new HashSet<>(accounts.getRoles());
         if (!checkForAllowedRoles(roles, allowedRoles))
             throw new AccountServiceException(Messages.ACCOUNT_NEW_ERROR);
@@ -153,14 +149,5 @@ public class AccountsServiceImpl implements AccountsService {
             throw new AccountServiceException(Messages.SEARCH_FOR_ACCOUNT);
 
         return accounts;
-    }
-
-    @Override
-    @Transactional
-    public Boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
-        if (value == null || fieldName == null)
-            throw new UnsupportedOperationException(String.format(Messages.UNSUPPORTED_COLUMN, fieldName));
-
-        return this.accountDAO.unique(Accounts.class, fieldName,value.toString());
     }
 }

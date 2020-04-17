@@ -3,6 +3,8 @@ package com.blesk.accountservice.Handler;
 import com.blesk.accountservice.DTO.Response;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Value.Messages;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,16 +33,53 @@ public class AccountServiceHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public final ResponseEntity<Object> handleMethodArgumentException(MethodArgumentNotValidException ex) {
         Map<String, Object> errorObj = new LinkedHashMap<>();
-        HashMap<String, String> errors = new HashMap<>();
-        for(FieldError error: ex.getBindingResult().getFieldErrors()){
-            errors.put(error.getField(), error.getDefaultMessage());
+        HashMap<String, String> validations = new HashMap<>();
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            validations.put(error.getField(), error.getDefaultMessage());
         }
 
         errorObj.put("timestamp", new Date());
-        errorObj.put("validations", errors);
+        errorObj.put("validations", validations);
         errorObj.put("error", true);
 
-        return new ResponseEntity<>(errorObj, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(errorObj, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    protected ResponseEntity<Object> handleUniqueContraintException(DataIntegrityViolationException ex) {
+        Map<String, Object> errorObj = new LinkedHashMap<>();
+        HashMap<String, String> unique = new HashMap<>();
+        ConstraintViolationException exDetail = (ConstraintViolationException) ex.getCause();
+        switch (exDetail.getConstraintName()) {
+            case "account_id":
+                unique.put("accountId", Messages.UNIQUE_FIELD_DEFAULT);
+            case "account_username":
+                unique.put("userName", Messages.ACCOUNTS_USER_NAME_UNIQUE);
+            case "account_email":
+                unique.put("email", Messages.ACCOUNTS_EMAIL_UNIQUE);
+                break;
+            case "preference_id":
+                unique.put("preferenceId", Messages.UNIQUE_FIELD_DEFAULT);
+            case "preference_name":
+                unique.put("name", Messages.PREFERENCES_UNIQUE);
+                break;
+            case "privilege_id":
+                unique.put("privilegeId", Messages.UNIQUE_FIELD_DEFAULT);
+            case "privilege_name":
+                unique.put("name", Messages.PRIVILEGES_UNIQUE);
+                break;
+            case "role_id":
+                unique.put("roleId", Messages.UNIQUE_FIELD_DEFAULT);
+            case "role_name":
+                unique.put("name", Messages.ROLES_UNIQUE);
+                break;
+        }
+
+        errorObj.put("timestamp", new Date());
+        errorObj.put("validations", unique);
+        errorObj.put("error", true);
+
+        return new ResponseEntity<>(errorObj, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

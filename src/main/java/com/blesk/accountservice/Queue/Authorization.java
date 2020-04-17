@@ -10,11 +10,14 @@ import com.blesk.accountservice.Service.Activations.ActivationServiceImpl;
 import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
 import com.blesk.accountservice.Service.Logins.LoginsServiceImpl;
 import com.blesk.accountservice.Service.Passwords.PasswordsServiceImpl;
+import com.blesk.accountservice.Value.Messages;
 import org.hibernate.TransientPropertyValueException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.amqp.rabbit.support.ListenerExecutionFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Component;
 
@@ -82,24 +85,41 @@ public class Authorization {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<Accounts>> violations = validator.validate(accounts, Accounts.validationWithEncryption.class);
+        HashMap<String, String> validation = new HashMap<>();
+
+        if (!violations.isEmpty()) {
+            for (ConstraintViolation<Accounts> violation : violations) {
+                validation.put(violation.getPropertyPath().toString(), violation.getMessage());
+            }
+            accounts.setValidations(validation);
+            return accounts;
+        }
 
         try {
-            HashMap<String, String> validation = new HashMap<>();
-            if (!violations.isEmpty()) {
-                for (ConstraintViolation<Accounts> violation : violations) {
-                    validation.put(violation.getPropertyPath().toString(), violation.getMessage());
-                }
-                accounts.setValidations(validation);
-                return accounts;
-            }
-
             accounts.setCreatedBy(AccountServiceApplication.SYSTEM);
-            Accounts account = this.accountsService.createAccount(accounts, new String[]{"CLIENT_ROLE", "COURIER_ROLE"}).getAccounts();
+            Accounts account = this.accountsService.createAccount(accounts, new String[]{"ROLE_CLIENT", "ROLE_COURIER"}).getAccounts();
+
             Map<String, Object> variables = new HashMap<>();
             variables.put("activationUrl", String.format(this.activationUrl, account.getAccountId(), account.getActivations().getToken()));
             this.emailsService.sendHtmlMesseage("Registrácia", "signupactivation", variables, account);
-
             return account;
+
+        } catch (DataIntegrityViolationException e) {
+            ConstraintViolationException exDetail = (ConstraintViolationException) e.getCause();
+            HashMap<String, String> unique = new HashMap<>();
+
+            switch (exDetail.getConstraintName()) {
+                case "account_id":
+                    unique.put("accountId", Messages.UNIQUE_FIELD_DEFAULT);
+                case "account_username":
+                    unique.put("userName", Messages.ACCOUNTS_USER_NAME_UNIQUE);
+                case "account_email":
+                    unique.put("email", Messages.ACCOUNTS_EMAIL_UNIQUE);
+                    break;
+            }
+            accounts.setValidations(unique);
+            return accounts;
+
         } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return new Accounts();
         }

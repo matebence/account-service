@@ -13,6 +13,4 @@ public interface DAO<T> {
     T get(Class c, Long id);
 
     List<T> getAll(Class c, int pageNumber, int pageSize);
-
-    Boolean unique(Class c, String fieldName, String value);
 }

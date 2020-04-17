@@ -2,7 +2,6 @@ package com.blesk.accountservice.Service.Roles;
 
 import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
 import com.blesk.accountservice.Exception.AccountServiceException;
-import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Privileges;
 import com.blesk.accountservice.Model.Roles;
 import com.blesk.accountservice.Value.Messages;
@@ -84,14 +83,5 @@ public class RolesServiceImpl implements RolesService {
         if (privileges.isEmpty())
             throw new AccountServiceException(String.format(Messages.GET_ROLE_PRIVILEGES, roleName));
         return privileges;
-    }
-
-    @Override
-    @Transactional
-    public Boolean fieldValueExists(Object value, String fieldName) throws UnsupportedOperationException {
-        if (value == null || fieldName == null)
-            throw new UnsupportedOperationException(String.format(Messages.UNSUPPORTED_COLUMN, fieldName));
-
-        return this.roleDAO.unique(Roles.class, fieldName, value.toString());
     }
 }

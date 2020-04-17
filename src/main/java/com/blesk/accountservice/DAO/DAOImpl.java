@@ -1,6 +1,7 @@
 package com.blesk.accountservice.DAO;
 
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
@@ -23,6 +24,8 @@ public class DAOImpl<T> implements DAO<T> {
         Session session = this.entityManager.unwrap(Session.class);
         try {
             session.save(t);
+        } catch (ConstraintViolationException e) {
+            throw e;
         } catch (Exception e) {
             session.clear();
             session.close();
@@ -36,6 +39,8 @@ public class DAOImpl<T> implements DAO<T> {
         Session session = this.entityManager.unwrap(Session.class);
         try {
             session.saveOrUpdate(t);
+        } catch (ConstraintViolationException e) {
+            throw e;
         } catch (Exception e) {
             session.clear();
             session.close();
@@ -82,9 +87,9 @@ public class DAOImpl<T> implements DAO<T> {
             pageSize = total.intValue();
 
         if ((pageNumber > 0) && (pageNumber < (Math.floor(total / pageSize))) ||
-            (pageNumber == 0) && (pageNumber < (Math.floor(total / pageSize))) ||
-            (pageNumber > 0) && (pageNumber == Math.floor(total / pageSize)) ||
-            (pageNumber == 0) && (pageNumber == Math.floor(total / pageSize))) {
+                (pageNumber == 0) && (pageNumber < (Math.floor(total / pageSize))) ||
+                (pageNumber > 0) && (pageNumber == Math.floor(total / pageSize)) ||
+                (pageNumber == 0) && (pageNumber == Math.floor(total / pageSize))) {
 
             CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(c);
             Root select = criteriaQuery.from(c);
@@ -103,22 +108,6 @@ public class DAOImpl<T> implements DAO<T> {
             }
         } else {
             return Collections.emptyList();
-        }
-    }
-
-    @Override
-    public Boolean unique(Class c, String fieldName, String value) {
-        Session session = this.entityManager.unwrap(Session.class);
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(c);
-        Root root = criteriaQuery.from(c);
-        try {
-            return !session.createQuery(criteriaQuery
-                    .where(criteriaBuilder.equal(root.get(fieldName), value))).getResultList().isEmpty();
-        } catch (NoResultException ex) {
-            session.clear();
-            session.close();
-            return null;
         }
     }
 }

@@ -3,6 +3,8 @@ package com.blesk.accountservice.Model;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -11,6 +13,8 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+@DynamicInsert
+@DynamicUpdate
 @Entity(name = "Logins")
 @Table(name = "logins", uniqueConstraints = {@UniqueConstraint(columnNames = {"login_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Logins.class)

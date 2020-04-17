@@ -21,6 +21,7 @@ public class EmailsServiceImpl implements EmailsService {
     private String from;
 
     private JavaMailSender emailSender;
+
     private HtmlMailerImpl htmlMailer;
 
     @Autowired

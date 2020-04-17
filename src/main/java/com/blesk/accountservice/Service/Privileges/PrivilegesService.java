@@ -1,11 +1,10 @@
 package com.blesk.accountservice.Service.Privileges;
 
 import com.blesk.accountservice.Model.Privileges;
-import com.blesk.accountservice.Validator.Service.FieldValueExists;
 
 import java.util.List;
 
-public interface PrivilegesService extends FieldValueExists {
+public interface PrivilegesService {
 
     Privileges createPrivilege(Privileges privileges);
 

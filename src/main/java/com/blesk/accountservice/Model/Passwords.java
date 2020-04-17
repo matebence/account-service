@@ -3,6 +3,8 @@ package com.blesk.accountservice.Model;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -14,6 +16,8 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
+@DynamicInsert
+@DynamicUpdate
 @Entity(name = "PasswordResetToken")
 @Table(name = "password_reset_token", uniqueConstraints = {@UniqueConstraint(columnNames = {"password_reset_token_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Passwords.class)

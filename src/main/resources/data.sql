@@ -23,15 +23,15 @@ VALUES (5, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0');
 
 
 INSERT INTO roles (name, created_by, created_at, is_deleted)
-VALUES ('SYSTEM_ROLE', 1, CURRENT_TIMESTAMP, FALSE);
+VALUES ('ROLE_SYSTEM', 1, CURRENT_TIMESTAMP, FALSE);
 INSERT INTO roles (name, created_by, created_at, is_deleted)
-VALUES ('ADMIN_ROLE', 1, CURRENT_TIMESTAMP, FALSE);
+VALUES ('ROLE_ADMIN', 1, CURRENT_TIMESTAMP, FALSE);
 INSERT INTO roles (name, created_by, created_at, is_deleted)
-VALUES ('MANAGER_ROLE', 1, CURRENT_TIMESTAMP, FALSE);
+VALUES ('ROLE_MANAGER', 1, CURRENT_TIMESTAMP, FALSE);
 INSERT INTO roles (name, created_by, created_at, is_deleted)
-VALUES ('CLIENT_ROLE', 1, CURRENT_TIMESTAMP, FALSE);
+VALUES ('ROLE_CLIENT', 1, CURRENT_TIMESTAMP, FALSE);
 INSERT INTO roles (name, created_by, created_at, is_deleted)
-VALUES ('COURIER_ROLE', 1, CURRENT_TIMESTAMP, FALSE);
+VALUES ('ROLE_COURIER', 1, CURRENT_TIMESTAMP, FALSE);
 
 
 INSERT INTO privileges (name, created_by, created_at ,is_deleted)

@@ -1,23 +1,24 @@
 package com.blesk.accountservice.Model;
 
-import com.blesk.accountservice.Service.Privileges.PrivilegesService;
-import com.blesk.accountservice.Validator.Table.Unique.Unique;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
+@DynamicInsert
+@DynamicUpdate
 @Entity(name = "Privileges")
-@Table(name = "privileges", uniqueConstraints = {@UniqueConstraint(columnNames = {"privilege_id"})})
+@Table(name = "privileges", uniqueConstraints = {@UniqueConstraint(name = "privilege_id", columnNames = "privilege_id"), @UniqueConstraint(name = "privilege_name", columnNames = "name")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Privileges.class)
 @JsonIgnoreProperties(value = {"roles"})
 public class Privileges implements Serializable {
@@ -32,13 +33,13 @@ public class Privileges implements Serializable {
 
     @NotNull(message = Messages.PRIVILEGES_NULL)
     @Size(min = 3, max = 255, message = Messages.PRIVILEGES_SIZE)
-    @Unique(service = PrivilegesService.class, fieldName = "name", message = Messages.PRIVILEGES_UNIQUE)
     @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
+    @NotNull(message = Messages.ENTITY_CREATOR_ID)
     @Column(name = "created_by", updatable = false, nullable = false)
     private Long createdBy;
 
@@ -149,10 +150,9 @@ public class Privileges implements Serializable {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
-    }
-
-    @PreRemove
-    protected void preRemove() {
-        this.deletedAt = new Timestamp(System.currentTimeMillis());
+        if(this.deletedBy != null){
+            this.deletedAt = new Timestamp(System.currentTimeMillis());
+            this.isDeleted = true;
+        }
     }
 }

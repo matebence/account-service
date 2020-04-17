@@ -1,15 +1,14 @@
 package com.blesk.accountservice.Model;
 
-import com.blesk.accountservice.Model.Preferences.AccountPreferenceItems;
-import com.blesk.accountservice.Service.Accounts.AccountsService;
-import com.blesk.accountservice.Validator.Table.Match.FieldMatch;
-import com.blesk.accountservice.Validator.Table.Password.EncryptionAware;
-import com.blesk.accountservice.Validator.Table.Unique.Unique;
-import com.blesk.accountservice.Validator.Table.Password.Password;
+import com.blesk.accountservice.Validator.Match.FieldMatch;
+import com.blesk.accountservice.Validator.Password.EncryptionAware;
+import com.blesk.accountservice.Validator.Password.Password;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -19,8 +18,10 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.*;
 
+@DynamicInsert
+@DynamicUpdate
 @Entity(name = "Accounts")
-@Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"account_id"})})
+@Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(name = "account_id", columnNames = "account_id"), @UniqueConstraint(name = "account_username", columnNames = "user_name"), @UniqueConstraint(name = "account_email", columnNames = "email")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Accounts.class)
 @JsonIgnoreProperties(value = {"accountPreferenceItems"})
 @FieldMatch(first = "password", second = "confirmPassword", message = Messages.ACCOUNTS_PASWORD_MATCH, groups = Accounts.validationWithEncryption.class)
@@ -53,19 +54,14 @@ public class Accounts implements Serializable, EncryptionAware {
     @JoinTable(name = "account_role_items", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Roles> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "preferences", fetch = FetchType.EAGER)
-    private Set<AccountPreferenceItems> accountPreferenceItems = new HashSet<>();
-
     @NotNull(message = Messages.ACCOUNTS_USER_NAME_NULL, groups = validationWithEncryption.class)
     @Size(min = 5, max = 255, message = Messages.ACCOUNTS_USER_NAME_LENGHT, groups = validationWithEncryption.class)
-    @Unique(service = AccountsService.class, fieldName = "userName", message = Messages.ACCOUNTS_USER_NAME_UNIQUE, groups = validationWithEncryption.class)
     @Column(name = "user_name", nullable = false)
     private String userName;
 
     @NotNull(message = Messages.ACCOUNTS_EMAIL_NULL, groups = validationWithEncryption.class)
     @Email(message = Messages.ACCOUNTS_EMAIL, groups = validationWithEncryption.class)
     @Size(min = 5, max = 255, message = Messages.ACCOUNTS_EMAIL_LENGHT, groups = validationWithEncryption.class)
-    @Unique(service = AccountsService.class, fieldName = "email", message = Messages.ACCOUNTS_EMAIL_UNIQUE, groups = validationWithEncryption.class)
     @Column(name = "email", nullable = false)
     private String email;
 
@@ -83,6 +79,7 @@ public class Accounts implements Serializable, EncryptionAware {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
+    @NotNull(message = Messages.ENTITY_CREATOR_ID, groups = validationWithoutEncryption.class)
     @Column(name = "created_by", updatable = false, nullable = false)
     private Long createdBy;
 
@@ -147,14 +144,6 @@ public class Accounts implements Serializable, EncryptionAware {
         this.roles = roles;
     }
 
-    public Set<AccountPreferenceItems> getAccountPreferenceItems() {
-        return this.accountPreferenceItems;
-    }
-
-    public void setAccountPreferenceItems(Set<AccountPreferenceItems> accountPreferenceItems) {
-        this.accountPreferenceItems = accountPreferenceItems;
-    }
-
     public String getUserName() {
         return this.userName;
     }
@@ -175,18 +164,8 @@ public class Accounts implements Serializable, EncryptionAware {
         this.password = password;
     }
 
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
-
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
-    }
-
-    @Override
-    public String getConfirmPassword() {
-        return this.confirmPassword;
     }
 
     public Boolean getActivated() {
@@ -261,6 +240,16 @@ public class Accounts implements Serializable, EncryptionAware {
         this.validations = validations;
     }
 
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getConfirmPassword() {
+        return this.confirmPassword;
+    }
+
     @PrePersist
     protected void prePersist() {
         this.isActivated = false;
@@ -271,10 +260,9 @@ public class Accounts implements Serializable, EncryptionAware {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
-    }
-
-    @PreRemove
-    protected void preRemove() {
-        this.deletedAt = new Timestamp(System.currentTimeMillis());
+        if(this.deletedBy != null){
+            this.deletedAt = new Timestamp(System.currentTimeMillis());
+            this.isDeleted = true;
+        }
     }
 }

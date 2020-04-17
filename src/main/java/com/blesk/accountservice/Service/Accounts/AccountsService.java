@@ -2,13 +2,12 @@ package com.blesk.accountservice.Service.Accounts;
 
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Activations;
-import com.blesk.accountservice.Validator.Service.FieldValueExists;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public interface AccountsService extends FieldValueExists {
+public interface AccountsService {
 
     Activations createAccount(Accounts accounts, String[] allowedRoles);
 
