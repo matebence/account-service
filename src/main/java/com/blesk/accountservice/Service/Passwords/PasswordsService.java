@@ -2,6 +2,10 @@ package com.blesk.accountservice.Service.Passwords;
 
 import com.blesk.accountservice.Model.Passwords;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public interface PasswordsService {
 
     Passwords createPasswordToken(Passwords passwords);
@@ -11,6 +15,12 @@ public interface PasswordsService {
     Boolean updatePasswordToken(Passwords passwords);
 
     Passwords getPasswordToken(Long passwordResetTokenId);
+
+    Passwords findPasswordToken(String token);
+
+    List<Passwords> getAllPasswordTokens(int pageNumber, int pageSize);
+
+    Map<String, Object> searchForPasswordToken(HashMap<String, HashMap<String, String>> criteria);
 
     Boolean validatePasswordToken(long accountId, String token);
 }

@@ -25,9 +25,9 @@ public class Logins implements Serializable {
     @Column(name = "login_id")
     private Long loginId;
 
-    @OneToOne(cascade = CascadeType.REFRESH)
+    @OneToOne
     @JoinColumn(name = "account_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Accounts accounts;
 
     @NotNull(message = Messages.LOGIN_TIMESTAMP_NULL)

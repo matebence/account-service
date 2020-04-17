@@ -2,14 +2,17 @@ package com.blesk.accountservice.Service.Roles;
 
 import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
 import com.blesk.accountservice.Exception.AccountServiceException;
-import com.blesk.accountservice.Model.Privileges;
+import com.blesk.accountservice.Model.RolePrivilegeItems.RolePrivileges;
 import com.blesk.accountservice.Model.Roles;
+import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -25,9 +28,10 @@ public class RolesServiceImpl implements RolesService {
     @Override
     @Transactional
     public Roles createRole(Roles roles) {
-        if (this.roleDAO.save(roles) == null)
+        Roles role = this.roleDAO.save(roles);
+        if (role == null)
             throw new AccountServiceException(Messages.CREATE_ROLE);
-        return roles;
+        return role;
     }
 
     @Override
@@ -60,6 +64,24 @@ public class RolesServiceImpl implements RolesService {
 
     @Override
     @Transactional
+    public Roles findRoleByName(String name) {
+        Roles role = this.roleDAO.getItemByColumn(Roles.class, "name", name);
+        if (role == null)
+            throw new AccountServiceException(Messages.GET_ROLE);
+        return role;
+    }
+
+    @Override
+    @Transactional
+    public Set<RolePrivileges> findPrivilegesByRoleName(String name) {
+        Set<RolePrivileges> rolePrivileges = this.roleDAO.getItemByColumn(Roles.class, "name", name).getRolePrivileges();
+        if (rolePrivileges.isEmpty())
+            throw new AccountServiceException(String.format(Messages.GET_ROLE_PRIVILEGES, name));
+        return rolePrivileges;
+    }
+
+    @Override
+    @Transactional
     public List<Roles> getAllRoles(int pageNumber, int pageSize) {
         List<Roles> roles = this.roleDAO.getAll(Roles.class, pageNumber, pageSize);
         if (roles == null)
@@ -69,19 +91,15 @@ public class RolesServiceImpl implements RolesService {
 
     @Override
     @Transactional
-    public Roles getRoleByName(String roleName) {
-        Roles role = this.roleDAO.getRoleByName(roleName);
-        if (role == null)
-            throw new AccountServiceException(Messages.GET_ROLE_BY_NAME);
-        return role;
-    }
+    public Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criteria) {
+        if (criteria.get(Keys.PAGINATION) == null)
+            throw new AccountServiceException(Messages.PAGINATION_ERROR);
 
-    @Override
-    @Transactional
-    public Set<Privileges> getRolePrivileges(String roleName) {
-        Set<Privileges> privileges = this.roleDAO.getPrivilegesAssignedToRole(roleName);
-        if (privileges.isEmpty())
-            throw new AccountServiceException(String.format(Messages.GET_ROLE_PRIVILEGES, roleName));
-        return privileges;
+        Map<String, Object> roles = this.roleDAO.searchBy(Roles.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+
+        if (roles == null || roles.isEmpty())
+            throw new AccountServiceException(Messages.SEARCH_ERROR);
+
+        return roles;
     }
 }

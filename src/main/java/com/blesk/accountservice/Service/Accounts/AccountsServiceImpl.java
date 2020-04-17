@@ -1,9 +1,9 @@
 package com.blesk.accountservice.Service.Accounts;
 
 import com.blesk.accountservice.DAO.Accounts.AccountsDAOImpl;
-import com.blesk.accountservice.DAO.Activations.ActivationsDAOImpl;
 import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
 import com.blesk.accountservice.Exception.AccountServiceException;
+import com.blesk.accountservice.Model.AccountRoleItems.AccountRoles;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Activations;
 import com.blesk.accountservice.Model.Roles;
@@ -22,59 +22,24 @@ public class AccountsServiceImpl implements AccountsService {
 
     private AccountsDAOImpl accountDAO;
 
-    private RolesDAOImpl roleDAO;
-
-    private ActivationsDAOImpl activationsDAO;
+    private RolesDAOImpl rolesDAO;
 
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountsServiceImpl(AccountsDAOImpl accountDAO, RolesDAOImpl roleDAO, ActivationsDAOImpl activationsDAO, PasswordEncoder passwordEncoder) {
+    public AccountsServiceImpl(AccountsDAOImpl accountDAO, RolesDAOImpl rolesDAO, PasswordEncoder passwordEncoder) {
         this.accountDAO = accountDAO;
-        this.roleDAO = roleDAO;
-        this.activationsDAO = activationsDAO;
+        this.rolesDAO = rolesDAO;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    private boolean checkForAllowedRoles(Set<Roles> roles, String[] allowedRoles) {
-        Iterator<Roles> it = roles.iterator();
-        while (it.hasNext()) {
-            Roles role = it.next();
-            for (String allowedRole : allowedRoles) {
-                if (role.getName().equals(allowedRole)) {
-                    it.remove();
-                }
-            }
-        }
-        return roles.isEmpty();
     }
 
     @Override
     @Transactional
-    public Activations createAccount(@Validated(Accounts.validationWithoutEncryption.class) Accounts accounts, String[] allowedRoles) {
-        Set<Roles> roles = new HashSet<>(accounts.getRoles());
-        if (!checkForAllowedRoles(roles, allowedRoles))
-            throw new AccountServiceException(Messages.ACCOUNT_NEW_ERROR);
-        Set<Roles> assignedRoles = this.roleDAO.getListOfRoles(accounts.getRoles());
-        if (assignedRoles.isEmpty())
-            throw new AccountServiceException(Messages.CREATE_GET_ACCOUNT);
-
-        accounts.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
-        accounts.setRoles(assignedRoles);
-        Activations activations = new Activations(UUID.randomUUID().toString());
-        accounts.setActivations(activations);
+    public Accounts createAccount(@Validated(Accounts.validationWithoutEncryption.class) Accounts accounts) {
         Accounts account = this.accountDAO.save(accounts);
-
         if (account == null)
             throw new AccountServiceException(Messages.CREATE_ACCOUNT);
-
-        activations.setAccounts(account);
-        Activations activation = this.activationsDAO.save(activations);
-
-        if (activation == null)
-            throw new AccountServiceException(Messages.ACTIVATION_TOKEN_ACCOUNT);
-
-        return activation;
+        return account;
     }
 
     @Override
@@ -107,6 +72,26 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
+    public Accounts findAccountByEmail(String email) {
+        Accounts accounts = this.accountDAO.getItemByColumn(Accounts.class, "email", email);
+        if (accounts == null)
+            throw new AccountServiceException(Messages.GET_ACCOUNT);
+
+        return accounts;
+    }
+
+    @Override
+    @Transactional
+    public Accounts findAccountByUsername(String userName) {
+        Accounts accounts = this.accountDAO.getItemByColumn(Accounts.class, "userName", userName);
+        if (accounts == null)
+            throw new AccountServiceException(Messages.GET_ACCOUNT);
+
+        return accounts;
+    }
+
+    @Override
+    @Transactional
     public List<Accounts> getAllAccounts(int pageNumber, int pageSize) {
         List<Accounts> accounts = this.accountDAO.getAll(Accounts.class, pageNumber, pageSize);
         if (accounts.isEmpty())
@@ -116,37 +101,14 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
-    public Accounts getAccountInformations(String userName) {
-        Accounts accounts = this.accountDAO.getAccountInformations(userName);
-        if (accounts == null)
-            throw new AccountServiceException(Messages.GET_ACCOUNT_INFORMATION);
-        if (accounts.getRoles().isEmpty()) {
-            throw new AccountServiceException(Messages.GET_ROLES_TO_ACCOUNT);
-        }
-
-        return accounts;
-    }
-
-    @Override
-    @Transactional
-    public Accounts findAccountByEmail(String email) {
-        Accounts accounts = this.accountDAO.findAccountByEmail(email);
-        if (accounts == null)
-            throw new AccountServiceException(Messages.FIND_ACCOUNT_BY_EMAIL);
-
-        return accounts;
-    }
-
-    @Override
-    @Transactional
     public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria) {
         if (criteria.get(Keys.PAGINATION) == null)
-            throw new AccountServiceException(Messages.PAGINATION_EXCEPTION);
+            throw new AccountServiceException(Messages.PAGINATION_ERROR);
 
-        Map<String, Object> accounts = this.accountDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+        Map<String, Object> accounts = this.accountDAO.searchBy(Accounts.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
 
         if (accounts == null || accounts.isEmpty())
-            throw new AccountServiceException(Messages.SEARCH_FOR_ACCOUNT);
+            throw new AccountServiceException(Messages.SEARCH_ERROR);
 
         return accounts;
     }

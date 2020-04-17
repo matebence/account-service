@@ -72,7 +72,7 @@ public class Authorization {
         try {
             Accounts accounts = this.accountsService.getAccount(logins.getAccounts().getAccountId());
             if (accounts.getPasswords() != null)
-                this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordResetTokenId());
+                this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordTokenId());
 
             return this.loginsService.updateLogin(logins);
         } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {

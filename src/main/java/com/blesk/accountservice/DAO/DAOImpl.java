@@ -1,5 +1,6 @@
 package com.blesk.accountservice.DAO;
 
+import com.blesk.accountservice.Value.Keys;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.Query;
@@ -8,9 +9,8 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.util.*;
 
 @Repository
@@ -92,8 +92,8 @@ public class DAOImpl<T> implements DAO<T> {
                 (pageNumber == 0) && (pageNumber == Math.floor(total / pageSize))) {
 
             CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(c);
-            Root select = criteriaQuery.from(c);
-            CriteriaQuery entity = criteriaQuery.select(select).orderBy(criteriaBuilder.asc(select.get("createdAt")));
+            Root<T> select = criteriaQuery.from(c);
+            CriteriaQuery<T> entity = criteriaQuery.select(select).orderBy(criteriaBuilder.asc(select.get("createdAt")));
 
             Query typedQuery = session.createQuery(entity);
             typedQuery.setFirstResult(pageNumber);
@@ -108,6 +108,96 @@ public class DAOImpl<T> implements DAO<T> {
             }
         } else {
             return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public T getItemByColumn(Class c, String column, String value) {
+        Session session = this.entityManager.unwrap(Session.class);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(c);
+        Root<T> root = criteriaQuery.from(c);
+
+        try {
+            return session.createQuery(criteriaQuery.where(criteriaBuilder.equal(root.get(column), value))).getSingleResult();
+        } catch (NoResultException ex) {
+            session.clear();
+            session.close();
+            return null;
+        }
+    }
+
+    @Override
+    public Map<String, Object> searchBy(Class c, HashMap<String, HashMap<String, String>> criterias, int pageNumber) {
+        final int PAGE_SIZE = 10;
+        Session session = this.entityManager.unwrap(Session.class);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(c);
+        Root<T> root = criteriaQuery.from(c);
+
+        List<Predicate> predicates = new ArrayList<Predicate>();
+        CriteriaQuery<T> select = criteriaQuery.select(root);
+
+        if (criterias.get(Keys.ORDER_BY) != null) {
+            List<Order> orderList = new ArrayList();
+
+            for (Object o : criterias.get(Keys.ORDER_BY).entrySet()) {
+                Map.Entry pair = (Map.Entry) o;
+                if (pair.getValue().toString().toLowerCase().equals("asc")) {
+                    orderList.add(criteriaBuilder.asc(root.get(pair.getKey().toString())));
+                } else if (pair.getValue().toString().toLowerCase().equals("desc")) {
+                    orderList.add(criteriaBuilder.desc(root.get(pair.getKey().toString())));
+                }
+            }
+            select.orderBy(orderList);
+        }
+
+        if (criterias.get(Keys.SEARCH) != null) {
+            for (Object o : criterias.get(Keys.SEARCH).entrySet()) {
+                Map.Entry pair = (Map.Entry) o;
+                predicates.add(criteriaBuilder.like(root.get(pair.getKey().toString()), "%" + pair.getValue().toString() + "%"));
+            }
+            select.where(predicates.toArray(new Predicate[]{}));
+        }
+
+        TypedQuery<T> typedQuery = session.createQuery(select);
+        if (criterias.get(Keys.PAGINATION) != null) {
+            typedQuery.setFirstResult(pageNumber);
+            typedQuery.setMaxResults(PAGE_SIZE);
+
+            HashMap<String, Object> map = new HashMap<>();
+            List<T> result = typedQuery.getResultList();
+
+            int total = result.size();
+
+            if ((pageNumber > 0) && (pageNumber < (Math.floor(total / PAGE_SIZE)))) {
+                map.put("hasPrev", true);
+                map.put("hasNext", true);
+            } else if ((pageNumber == 0) && (pageNumber < (Math.floor(total / PAGE_SIZE)))) {
+                map.put("hasPrev", false);
+                map.put("hasNext", true);
+            } else if ((pageNumber > 0) && (pageNumber == Math.floor(total / PAGE_SIZE))) {
+                map.put("hasPrev", true);
+                map.put("hasNext", false);
+            } else if ((pageNumber == 0) && (pageNumber == Math.floor(total / PAGE_SIZE))) {
+                map.put("hasPrev", false);
+                map.put("hasNext", false);
+            } else {
+                return Collections.<String, Object>emptyMap();
+            }
+
+            map.put("results", result);
+            return map;
+        }
+
+        try {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("results", typedQuery.getResultList());
+            return map;
+        } catch (NoResultException ex) {
+            session.clear();
+            session.close();
+            return null;
         }
     }
 }

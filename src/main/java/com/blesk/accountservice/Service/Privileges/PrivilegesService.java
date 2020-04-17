@@ -2,7 +2,9 @@ package com.blesk.accountservice.Service.Privileges;
 
 import com.blesk.accountservice.Model.Privileges;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface PrivilegesService {
 
@@ -14,7 +16,9 @@ public interface PrivilegesService {
 
     Privileges getPrivilege(Long privilegeId);
 
+    Privileges findPrivilegeByName(String name);
+
     List<Privileges> getAllPrivileges(int pageNumber, int pageSize);
 
-    Privileges getPrivilegeByName(String privilegeName);
+    Map<String, Object> searchForPrivileges(HashMap<String, HashMap<String, String>> criteria);
 }

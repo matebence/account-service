@@ -3,12 +3,15 @@ package com.blesk.accountservice.Service.Privileges;
 import com.blesk.accountservice.DAO.Privileges.PrivilegesDAOImpl;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Privileges;
+import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PrivilegesServiceImpl implements PrivilegesService {
@@ -23,9 +26,10 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Override
     @Transactional
     public Privileges createPrivilege(Privileges privileges) {
-        if (this.privilegeDAO.save(privileges) == null)
+        Privileges privilege = this.privilegeDAO.save(privileges);
+        if (privilege == null)
             throw new AccountServiceException(Messages.CREATE_PRIVILEGE);
-        return privileges;
+        return privilege;
     }
 
     @Override
@@ -58,6 +62,15 @@ public class PrivilegesServiceImpl implements PrivilegesService {
 
     @Override
     @Transactional
+    public Privileges findPrivilegeByName(String name) {
+        Privileges privilege = this.privilegeDAO.getItemByColumn(Privileges.class, "name", name);
+        if (privilege == null)
+            throw new AccountServiceException(Messages.GET_PRIVILEGE);
+        return privilege;
+    }
+
+    @Override
+    @Transactional
     public List<Privileges> getAllPrivileges(int pageNumber, int pageSize) {
         List<Privileges> privileges = this.privilegeDAO.getAll(Privileges.class, pageNumber, pageSize);
         if (privileges == null)
@@ -67,10 +80,15 @@ public class PrivilegesServiceImpl implements PrivilegesService {
 
     @Override
     @Transactional
-    public Privileges getPrivilegeByName(String privilegeName) {
-        Privileges privilege = this.privilegeDAO.getPrivilegeByName(privilegeName);
-        if (privilege == null)
-            throw new AccountServiceException(Messages.GET_PRIVILEGE_BY_NAME);
-        return privilege;
+    public Map<String, Object> searchForPrivileges(HashMap<String, HashMap<String, String>> criteria) {
+        if (criteria.get(Keys.PAGINATION) == null)
+            throw new AccountServiceException(Messages.PAGINATION_ERROR);
+
+        Map<String, Object> privileges = this.privilegeDAO.searchBy(Privileges.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+
+        if (privileges == null || privileges.isEmpty())
+            throw new AccountServiceException(Messages.SEARCH_ERROR);
+
+        return privileges;
     }
 }

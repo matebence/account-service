@@ -1,7 +1,6 @@
 package com.blesk.accountservice.Service.Accounts;
 
 import com.blesk.accountservice.Model.Accounts;
-import com.blesk.accountservice.Model.Activations;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.Map;
 
 public interface AccountsService {
 
-    Activations createAccount(Accounts accounts, String[] allowedRoles);
+    Accounts createAccount(Accounts accounts);
 
     Boolean deleteAccount(Long accountId);
 
@@ -17,11 +16,11 @@ public interface AccountsService {
 
     Accounts getAccount(Long accountId);
 
-    List<Accounts> getAllAccounts(int pageNumber, int pageSize);
-
-    Accounts getAccountInformations(String userName);
-
     Accounts findAccountByEmail(String email);
+
+    Accounts findAccountByUsername(String userName);
+
+    List<Accounts> getAllAccounts(int pageNumber, int pageSize);
 
     Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria);
 }

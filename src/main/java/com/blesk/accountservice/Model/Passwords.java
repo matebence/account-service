@@ -18,26 +18,26 @@ import java.util.Date;
 
 @DynamicInsert
 @DynamicUpdate
-@Entity(name = "PasswordResetToken")
-@Table(name = "password_reset_token", uniqueConstraints = {@UniqueConstraint(columnNames = {"password_reset_token_id"})})
+@Entity(name = "Passwords")
+@Table(name = "passwords", uniqueConstraints = {@UniqueConstraint(columnNames = {"password_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Passwords.class)
 public class Passwords implements Serializable {
 
     private static final int EXPIRATION = 60 * 24;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "password_reset_token_id")
-    private Long passwordResetTokenId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "password_id")
+    private Long passwordTokenId;
+
+    @OneToOne
+    @JoinColumn(name = "account_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Accounts accounts;
 
     @NotNull(message = Messages.PASSWORDS_TOKEN_NULL)
     @Column(name = "token", nullable = false)
     private String token;
-
-    @OneToOne(cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "account_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private Accounts accounts;
 
     @FutureOrPresent(message = Messages.PASSWORDS_DATE_VALID)
     @NotNull(message = Messages.PASSWORDS_DATE_NULL)
@@ -61,12 +61,12 @@ public class Passwords implements Serializable {
     public Passwords() {
     }
 
-    public Long getPasswordResetTokenId() {
-        return this.passwordResetTokenId;
+    public Long getPasswordTokenId() {
+        return this.passwordTokenId;
     }
 
-    public void setPasswordResetTokenId(Long passwordResetTokenId) {
-        this.passwordResetTokenId = passwordResetTokenId;
+    public void setPasswordTokenId(Long passwordTokenId) {
+        this.passwordTokenId = passwordTokenId;
     }
 
     public String getToken() {

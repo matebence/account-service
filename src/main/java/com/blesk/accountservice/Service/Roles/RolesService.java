@@ -1,9 +1,11 @@
 package com.blesk.accountservice.Service.Roles;
 
-import com.blesk.accountservice.Model.Privileges;
+import com.blesk.accountservice.Model.RolePrivilegeItems.RolePrivileges;
 import com.blesk.accountservice.Model.Roles;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface RolesService {
@@ -16,9 +18,11 @@ public interface RolesService {
 
     Roles getRole(Long roleId);
 
+    Roles findRoleByName(String roleName);
+
+    Set<RolePrivileges> findPrivilegesByRoleName(String name);
+
     List<Roles> getAllRoles(int pageNumber, int pageSize);
 
-    Roles getRoleByName(String roleName);
-
-    Set<Privileges> getRolePrivileges(String roleName);
+    Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criteria);
 }

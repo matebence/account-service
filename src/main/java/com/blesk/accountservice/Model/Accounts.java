@@ -1,5 +1,7 @@
 package com.blesk.accountservice.Model;
 
+import com.blesk.accountservice.Model.AccountPreferenceItems.AccountPreferences;
+import com.blesk.accountservice.Model.AccountRoleItems.AccountRoles;
 import com.blesk.accountservice.Validator.Match.FieldMatch;
 import com.blesk.accountservice.Validator.Password.EncryptionAware;
 import com.blesk.accountservice.Validator.Password.Password;
@@ -22,8 +24,8 @@ import java.util.*;
 @DynamicUpdate
 @Entity(name = "Accounts")
 @Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(name = "account_id", columnNames = "account_id"), @UniqueConstraint(name = "account_username", columnNames = "user_name"), @UniqueConstraint(name = "account_email", columnNames = "email")})
+@JsonIgnoreProperties(value = {"accountPreferences"})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Accounts.class)
-@JsonIgnoreProperties(value = {"accountPreferenceItems"})
 @FieldMatch(first = "password", second = "confirmPassword", message = Messages.ACCOUNTS_PASWORD_MATCH, groups = Accounts.validationWithEncryption.class)
 public class Accounts implements Serializable, EncryptionAware {
 
@@ -38,21 +40,22 @@ public class Accounts implements Serializable, EncryptionAware {
     @Column(name = "account_id")
     private Long accountId;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "accounts")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accounts")
     private Logins login;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "accounts")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accounts")
     private Passwords passwords;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.EAGER, mappedBy = "accounts")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accounts")
     private Activations activations;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "account_role_items", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Roles> roles = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accountRoleIds.accounts")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<AccountRoles> accountRoles = new HashSet<AccountRoles>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accountPreferenceIds.accounts")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<AccountPreferences> accountPreferences = new HashSet<AccountPreferences>();
 
     @NotNull(message = Messages.ACCOUNTS_USER_NAME_NULL, groups = validationWithEncryption.class)
     @Size(min = 5, max = 255, message = Messages.ACCOUNTS_USER_NAME_LENGHT, groups = validationWithEncryption.class)
@@ -104,6 +107,31 @@ public class Accounts implements Serializable, EncryptionAware {
     public Accounts() {
     }
 
+    public Accounts(String userName, String email, String password, String confirmPassword, Boolean isActivated, Boolean isDeleted, Long createdBy, Long updatedBy, Long deletedBy, HashMap<String, String> validations) {
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+        this.isActivated = isActivated;
+        this.isDeleted = isDeleted;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+        this.deletedBy = deletedBy;
+        this.validations = validations;
+    }
+
+    public Accounts(String userName, String email, String password, String confirmPassword, Boolean isActivated, Boolean isDeleted, Long createdBy, Long updatedBy, Long deletedBy) {
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+        this.isActivated = isActivated;
+        this.isDeleted = isDeleted;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+        this.deletedBy = deletedBy;
+    }
+
     public Long getAccountId() {
         return this.accountId;
     }
@@ -136,12 +164,36 @@ public class Accounts implements Serializable, EncryptionAware {
         this.activations = activations;
     }
 
-    public Set<Roles> getRoles() {
-        return this.roles;
+    public void addRole(AccountRoles accountRoles) {
+        this.accountRoles.add(accountRoles);
     }
 
-    public void setRoles(Set<Roles> roles) {
-        this.roles = roles;
+    public Set<AccountRoles> getAccountRoles() {
+        return this.accountRoles;
+    }
+
+    public void setAccountRoles(Set<AccountRoles> roles) {
+        this.accountRoles = roles;
+    }
+
+    public void addAccountRoles(AccountRoles accountRoles) {
+        this.accountRoles.add(accountRoles);
+    }
+
+    public void addPreference(AccountPreferences accountPreferences) {
+        this.accountPreferences.add(accountPreferences);
+    }
+
+    public Set<AccountPreferences> getAccountPreferences() {
+        return this.accountPreferences;
+    }
+
+    public void setAccountPreferences(Set<AccountPreferences> preferences) {
+        this.accountPreferences = preferences;
+    }
+
+    public void addAccountPreferences(AccountPreferences accountPreferences) {
+        this.accountPreferences.add(accountPreferences);
     }
 
     public String getUserName() {
@@ -260,7 +312,7 @@ public class Accounts implements Serializable, EncryptionAware {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
-        if(this.deletedBy != null){
+        if (this.deletedBy != null) {
             this.deletedAt = new Timestamp(System.currentTimeMillis());
             this.isDeleted = true;
         }

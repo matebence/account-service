@@ -1,5 +1,6 @@
 package com.blesk.accountservice.Model;
 
+import com.blesk.accountservice.Model.RolePrivilegeItems.RolePrivileges;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -28,8 +29,8 @@ public class Privileges implements Serializable {
     @Column(name = "privilege_id")
     private Long privilegeId;
 
-    @ManyToMany(mappedBy = "privileges", fetch = FetchType.EAGER)
-    private Set<Roles> roles = new HashSet<Roles>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "rolePrivilegeIds.privileges")
+    private Set<RolePrivileges> rolePrivileges = new HashSet<RolePrivileges>();
 
     @NotNull(message = Messages.PRIVILEGES_NULL)
     @Size(min = 3, max = 255, message = Messages.PRIVILEGES_SIZE)
@@ -61,6 +62,14 @@ public class Privileges implements Serializable {
     public Privileges() {
     }
 
+    public Privileges(String name, Boolean isDeleted, Long createdBy, Long updatedBy, Long deletedBy) {
+        this.name = name;
+        this.isDeleted = isDeleted;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+        this.deletedBy = deletedBy;
+    }
+
     public Long getPrivilegeId() {
         return this.privilegeId;
     }
@@ -69,12 +78,16 @@ public class Privileges implements Serializable {
         this.privilegeId = privilegeId;
     }
 
-    public Set<Roles> getRoles() {
-        return this.roles;
+    public Set<RolePrivileges> getRolePrivileges() {
+        return this.rolePrivileges;
     }
 
-    public void setRoles(Set<Roles> roles) {
-        this.roles = roles;
+    public void setRolePrivileges(Set<RolePrivileges> roles) {
+        this.rolePrivileges = roles;
+    }
+
+    public void addRolePrivileges(RolePrivileges rolePrivileges) {
+        this.rolePrivileges.add(rolePrivileges);
     }
 
     public String getName() {
@@ -150,7 +163,7 @@ public class Privileges implements Serializable {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
-        if(this.deletedBy != null){
+        if (this.deletedBy != null) {
             this.deletedAt = new Timestamp(System.currentTimeMillis());
             this.isDeleted = true;
         }

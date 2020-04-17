@@ -14,24 +14,24 @@ import java.io.Serializable;
 
 @DynamicInsert
 @DynamicUpdate
-@Entity(name = "AccountActivations")
-@Table(name = "account_activations", uniqueConstraints = {@UniqueConstraint(columnNames = {"account_activation_id"})})
+@Entity(name = "Activations")
+@Table(name = "activations", uniqueConstraints = {@UniqueConstraint(columnNames = {"activation_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Activations.class)
 public class Activations implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "account_activation_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "activation_id")
     private Long accountActivationId;
+
+    @OneToOne
+    @JoinColumn(name = "account_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Accounts accounts;
 
     @NotNull(message = Messages.ACTIVATIONS_TOKEN_NULL)
     @Column(name = "token", nullable = false)
     private String token;
-
-    @OneToOne(cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "account_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private Accounts accounts;
 
     public Activations(Accounts accounts, String token) {
         this.accounts = accounts;

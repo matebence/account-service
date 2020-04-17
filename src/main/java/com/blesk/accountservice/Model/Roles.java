@@ -1,5 +1,7 @@
 package com.blesk.accountservice.Model;
 
+import com.blesk.accountservice.Model.AccountRoleItems.AccountRoles;
+import com.blesk.accountservice.Model.RolePrivilegeItems.RolePrivileges;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -28,12 +30,11 @@ public class Roles implements Serializable {
     @Column(name = "role_id")
     private Long roleId;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "role_privilege_items", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "privilege_id"))
-    private Set<Privileges> privileges = new HashSet<Privileges>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accountRoleIds.roles")
+    private Set<AccountRoles> accountRoles = new HashSet<AccountRoles>();
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
-    private Set<Accounts> accounts = new HashSet<Accounts>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "rolePrivilegeIds.roles")
+    private Set<RolePrivileges> rolePrivileges = new HashSet<RolePrivileges>();
 
     @NotNull(message = Messages.ROLES_NULL)
     @Size(min = 3, max = 255, message = Messages.ROLES_SIZE)
@@ -65,6 +66,14 @@ public class Roles implements Serializable {
     public Roles() {
     }
 
+    public Roles(String name, Boolean isDeleted, Long createdBy, Long updatedBy, Long deletedBy) {
+        this.name = name;
+        this.isDeleted = isDeleted;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+        this.deletedBy = deletedBy;
+    }
+
     public Long getRoleId() {
         return this.roleId;
     }
@@ -73,20 +82,32 @@ public class Roles implements Serializable {
         this.roleId = roleId;
     }
 
-    public Set<Privileges> getPrivileges() {
-        return this.privileges;
+    public void addPrivilege(RolePrivileges rolePrivileges) {
+        this.rolePrivileges.add(rolePrivileges);
     }
 
-    public void setPrivileges(Set<Privileges> privileges) {
-        this.privileges = privileges;
+    public Set<RolePrivileges> getRolePrivileges() {
+        return this.rolePrivileges;
     }
 
-    public Set<Accounts> getAccounts() {
-        return this.accounts;
+    public void setRolePrivileges(Set<RolePrivileges> privileges) {
+        this.rolePrivileges = privileges;
     }
 
-    public void setAccounts(Set<Accounts> accounts) {
-        this.accounts = accounts;
+    public void addRolePrivileges(RolePrivileges rolePrivileges) {
+        this.rolePrivileges.add(rolePrivileges);
+    }
+
+    public Set<AccountRoles> getAccountRoles() {
+        return this.accountRoles;
+    }
+
+    public void setAccountRoles(Set<AccountRoles> accounts) {
+        this.accountRoles = accounts;
+    }
+
+    public void addAccountRoles(AccountRoles accountRoles) {
+        this.accountRoles.add(accountRoles);
     }
 
     public String getName() {
