@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @DynamicInsert
 @DynamicUpdate
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @Table(name = "role_privilege_items")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = RolePrivileges.class)
 @AssociationOverrides({@AssociationOverride(name = "rolePrivilegeIds.roles", joinColumns = @JoinColumn(name = "role_id")), @AssociationOverride(name = "rolePrivilegeIds.privileges", joinColumns = @JoinColumn(name = "privilege_id"))})
-public class RolePrivileges {
+public class RolePrivileges implements Serializable {
 
     @EmbeddedId
     private RolePrivilegeIds rolePrivilegeIds = new RolePrivilegeIds();

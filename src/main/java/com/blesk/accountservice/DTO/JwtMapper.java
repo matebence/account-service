@@ -1,68 +1,26 @@
 package com.blesk.accountservice.DTO;
 
+import java.util.Collection;
+
 public class JwtMapper {
-
-    private String access_token;
-
-    private String token_type;
-
-    private String refresh_token;
-
-    private Integer expires_in;
-
-    private Integer account_id;
 
     private Integer login_id;
 
+    private Integer account_id;
+
     private String user_name;
 
-    private Double balance;
-
-    private Boolean activated;
+    private Long exp;
 
     private String jti;
 
+    private String client_id;
+
+    private Boolean activated;
+
+    private Collection<String> grantedPrivileges;
+
     public JwtMapper() {
-    }
-
-    public String getAccess_token() {
-        return this.access_token;
-    }
-
-    public void setAccess_token(String access_token) {
-        this.access_token = access_token;
-    }
-
-    public String getToken_type() {
-        return this.token_type;
-    }
-
-    public void setToken_type(String token_type) {
-        this.token_type = token_type;
-    }
-
-    public String getRefresh_token() {
-        return this.refresh_token;
-    }
-
-    public void setRefresh_token(String refresh_token) {
-        this.refresh_token = refresh_token;
-    }
-
-    public Integer getExpires_in() {
-        return this.expires_in;
-    }
-
-    public void setExpires_in(Integer expires_in) {
-        this.expires_in = expires_in;
-    }
-
-    public Integer getAccount_id() {
-        return this.account_id;
-    }
-
-    public void setAccount_id(Integer account_id) {
-        this.account_id = account_id;
     }
 
     public Integer getLogin_id() {
@@ -73,6 +31,14 @@ public class JwtMapper {
         this.login_id = login_id;
     }
 
+    public Integer getAccount_id() {
+        return this.account_id;
+    }
+
+    public void setAccount_id(Integer account_id) {
+        this.account_id = account_id;
+    }
+
     public String getUser_name() {
         return this.user_name;
     }
@@ -81,20 +47,12 @@ public class JwtMapper {
         this.user_name = user_name;
     }
 
-    public Double getBalance() {
-        return this.balance;
+    public Long getExp() {
+        return this.exp;
     }
 
-    public void setBalance(Double balance) {
-        this.balance = balance;
-    }
-
-    public Boolean getActivated() {
-        return this.activated;
-    }
-
-    public void setActivated(Boolean activated) {
-        this.activated = activated;
+    public void setExp(Long exp) {
+        this.exp = exp;
     }
 
     public String getJti() {
@@ -105,18 +63,41 @@ public class JwtMapper {
         this.jti = jti;
     }
 
+    public String getClient_id() {
+        return this.client_id;
+    }
+
+    public void setClient_id(String client_id) {
+        this.client_id = client_id;
+    }
+
+    public Boolean getActivated() {
+        return this.activated;
+    }
+
+    public void setActivated(Boolean activated) {
+        this.activated = activated;
+    }
+
+    public Collection<String> getGrantedPrivileges() {
+        return grantedPrivileges;
+    }
+
+    public void setGrantedPrivileges(Collection<String> grantedPrivileges) {
+        this.grantedPrivileges = grantedPrivileges;
+    }
+
     @Override
     public String toString() {
         return "JwtMapper{" +
-                "access_token='" + access_token + '\'' +
-                ", token_type='" + token_type + '\'' +
-                ", refresh_token='" + refresh_token + '\'' +
-                ", expires_in=" + expires_in +
+                "login_id=" + login_id +
                 ", account_id=" + account_id +
                 ", user_name='" + user_name + '\'' +
-                ", balance=" + balance +
-                ", activated=" + activated +
+                ", exp=" + exp +
                 ", jti='" + jti + '\'' +
+                ", client_id='" + client_id + '\'' +
+                ", activated=" + activated +
+                ", grantedPrivileges=" + grantedPrivileges +
                 '}';
     }
 }

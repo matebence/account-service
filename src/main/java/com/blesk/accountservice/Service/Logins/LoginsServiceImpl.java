@@ -38,7 +38,7 @@ public class LoginsServiceImpl implements LoginsService {
         Logins logins = this.loginsDAO.get(Logins.class, loginId);
         if (logins == null)
             throw new AccountServiceException(Messages.DELETE_GET_LOGIN);
-        if (!this.loginsDAO.delete(logins))
+        if (!this.loginsDAO.delete("logins", "login_id", loginId))
             throw new AccountServiceException(Messages.DELETE_LOGIN);
         return true;
     }

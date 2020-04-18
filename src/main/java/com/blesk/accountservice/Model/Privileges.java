@@ -5,10 +5,12 @@ import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -20,8 +22,11 @@ import java.util.Set;
 @DynamicUpdate
 @Entity(name = "Privileges")
 @Table(name = "privileges", uniqueConstraints = {@UniqueConstraint(name = "privilege_id", columnNames = "privilege_id"), @UniqueConstraint(name = "privilege_name", columnNames = "name")})
+@SQLDelete(sql = "UPDATE privileges SET is_deleted = TRUE, deleted_at = NOW() WHERE privilege_id = ?")
+@FilterDef(name = "deletedPrivilegeFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
+@Filter(name = "deletedPrivilegeFilter", condition = "is_deleted = :isDeleted")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Privileges.class)
-@JsonIgnoreProperties(value = {"roles"})
+@JsonIgnoreProperties(value = {"rolePrivileges"})
 public class Privileges implements Serializable {
 
     @Id
@@ -40,34 +45,21 @@ public class Privileges implements Serializable {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
-    @NotNull(message = Messages.ENTITY_CREATOR_ID)
-    @Column(name = "created_by", updatable = false, nullable = false)
-    private Long createdBy;
-
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
-
-    @Column(name = "updated_by")
-    private Long updatedBy;
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @Column(name = "deleted_by")
-    private Long deletedBy;
-
-    @Column(name = "deleted_at")
+    @Column(name = "deleted_at", updatable = false)
     private Timestamp deletedAt;
 
     public Privileges() {
     }
 
-    public Privileges(String name, Boolean isDeleted, Long createdBy, Long updatedBy, Long deletedBy) {
+    public Privileges(String name, Boolean isDeleted) {
         this.name = name;
         this.isDeleted = isDeleted;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-        this.deletedBy = deletedBy;
     }
 
     public Long getPrivilegeId() {
@@ -76,6 +68,11 @@ public class Privileges implements Serializable {
 
     public void setPrivilegeId(Long privilegeId) {
         this.privilegeId = privilegeId;
+    }
+
+    public void addRole(RolePrivileges rolePrivileges) {
+        rolePrivileges.setPrivileges(this);
+        this.rolePrivileges.add(rolePrivileges);
     }
 
     public Set<RolePrivileges> getRolePrivileges() {
@@ -106,14 +103,6 @@ public class Privileges implements Serializable {
         isDeleted = deleted;
     }
 
-    public Long getCreatedBy() {
-        return this.createdBy;
-    }
-
-    public void setCreatedBy(Long createdBy) {
-        this.createdBy = createdBy;
-    }
-
     public Timestamp getCreatedAt() {
         return this.createdAt;
     }
@@ -122,28 +111,12 @@ public class Privileges implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Long getUpdatedBy() {
-        return this.updatedBy;
-    }
-
-    public void setUpdatedBy(Long updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
     public Timestamp getUpdatedAt() {
         return this.updatedAt;
     }
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Long getDeletedBy() {
-        return this.deletedBy;
-    }
-
-    public void setDeletedBy(Long deletedBy) {
-        this.deletedBy = deletedBy;
     }
 
     public Timestamp getDeletedAt() {
@@ -163,9 +136,5 @@ public class Privileges implements Serializable {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
-        if (this.deletedBy != null) {
-            this.deletedAt = new Timestamp(System.currentTimeMillis());
-            this.isDeleted = true;
-        }
     }
 }

@@ -35,11 +35,11 @@ public class PasswordsServiceImpl implements PasswordsService {
 
     @Override
     @Transactional
-    public Boolean deletePasswordToken(Long passwordResetTokenId) {
-        Passwords passwords = this.passwordsDAO.get(Passwords.class, passwordResetTokenId);
+    public Boolean deletePasswordToken(Long passwordTokenId) {
+        Passwords passwords = this.passwordsDAO.get(Passwords.class, passwordTokenId);
         if (passwords == null)
             throw new AccountServiceException(Messages.DELETE_GET_PASSWORD_TOKEN);
-        if (!this.passwordsDAO.delete(passwords))
+        if (!this.passwordsDAO.delete("passwords", "password_id", passwordTokenId))
             throw new AccountServiceException(Messages.DELETE_PASSWORD_TOKEN);
         return true;
     }
@@ -54,8 +54,8 @@ public class PasswordsServiceImpl implements PasswordsService {
 
     @Override
     @Transactional
-    public Passwords getPasswordToken(Long passwordResetTokenId) {
-        Passwords passwords = this.passwordsDAO.get(Passwords.class, passwordResetTokenId);
+    public Passwords getPasswordToken(Long passwordTokenId) {
+        Passwords passwords = this.passwordsDAO.get(Passwords.class, passwordTokenId);
         if (passwords == null)
             throw new AccountServiceException(Messages.GET_PASSWORD_TOKEN);
         return passwords;

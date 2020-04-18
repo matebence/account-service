@@ -7,14 +7,15 @@ import com.blesk.accountservice.Validator.Password.EncryptionAware;
 import com.blesk.accountservice.Validator.Password.Password;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -24,8 +25,11 @@ import java.util.*;
 @DynamicUpdate
 @Entity(name = "Accounts")
 @Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(name = "account_id", columnNames = "account_id"), @UniqueConstraint(name = "account_username", columnNames = "user_name"), @UniqueConstraint(name = "account_email", columnNames = "email")})
-@JsonIgnoreProperties(value = {"accountPreferences"})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Accounts.class)
+@JsonIgnoreProperties(value={ "login", "passwords", "activations" }, allowGetters=true)
+@SQLDelete(sql = "UPDATE accounts SET is_deleted = TRUE, deleted_at = NOW() WHERE account_id = ?")
+@FilterDef(name = "deletedAccountFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
+@Filter(name = "deletedAccountFilter", condition = "is_deleted = :isDeleted")
 @FieldMatch(first = "password", second = "confirmPassword", message = Messages.ACCOUNTS_PASWORD_MATCH, groups = Accounts.validationWithEncryption.class)
 public class Accounts implements Serializable, EncryptionAware {
 
@@ -53,6 +57,7 @@ public class Accounts implements Serializable, EncryptionAware {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<AccountRoles> accountRoles = new HashSet<AccountRoles>();
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accountPreferenceIds.accounts")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<AccountPreferences> accountPreferences = new HashSet<AccountPreferences>();
@@ -82,23 +87,13 @@ public class Accounts implements Serializable, EncryptionAware {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @NotNull(message = Messages.ENTITY_CREATOR_ID, groups = validationWithoutEncryption.class)
-    @Column(name = "created_by", updatable = false, nullable = false)
-    private Long createdBy;
-
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
-
-    @Column(name = "updated_by")
-    private Long updatedBy;
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @Column(name = "deleted_by")
-    private Long deletedBy;
-
-    @Column(name = "deleted_at")
+    @Column(name = "deleted_at", updatable = false)
     private Timestamp deletedAt;
 
     @Transient
@@ -107,29 +102,23 @@ public class Accounts implements Serializable, EncryptionAware {
     public Accounts() {
     }
 
-    public Accounts(String userName, String email, String password, String confirmPassword, Boolean isActivated, Boolean isDeleted, Long createdBy, Long updatedBy, Long deletedBy, HashMap<String, String> validations) {
+    public Accounts(String userName, String email, String password, String confirmPassword, Boolean isActivated, Boolean isDeleted, HashMap<String, String> validations) {
         this.userName = userName;
         this.email = email;
         this.password = password;
         this.confirmPassword = confirmPassword;
         this.isActivated = isActivated;
         this.isDeleted = isDeleted;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-        this.deletedBy = deletedBy;
         this.validations = validations;
     }
 
-    public Accounts(String userName, String email, String password, String confirmPassword, Boolean isActivated, Boolean isDeleted, Long createdBy, Long updatedBy, Long deletedBy) {
+    public Accounts(String userName, String email, String password, String confirmPassword, Boolean isActivated, Boolean isDeleted) {
         this.userName = userName;
         this.email = email;
         this.password = password;
         this.confirmPassword = confirmPassword;
         this.isActivated = isActivated;
         this.isDeleted = isDeleted;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-        this.deletedBy = deletedBy;
     }
 
     public Long getAccountId() {
@@ -146,6 +135,7 @@ public class Accounts implements Serializable, EncryptionAware {
 
     public void setLogin(Logins login) {
         this.login = login;
+        this.login.setAccounts(this);
     }
 
     public Passwords getPasswords() {
@@ -154,6 +144,7 @@ public class Accounts implements Serializable, EncryptionAware {
 
     public void setPasswords(Passwords passwords) {
         this.passwords = passwords;
+        this.passwords.setAccounts(this);
     }
 
     public Activations getActivations() {
@@ -162,9 +153,11 @@ public class Accounts implements Serializable, EncryptionAware {
 
     public void setActivations(Activations activations) {
         this.activations = activations;
+        this.activations.setAccounts(this);
     }
 
     public void addRole(AccountRoles accountRoles) {
+        accountRoles.setAccounts(this);
         this.accountRoles.add(accountRoles);
     }
 
@@ -181,6 +174,7 @@ public class Accounts implements Serializable, EncryptionAware {
     }
 
     public void addPreference(AccountPreferences accountPreferences) {
+        accountPreferences.setAccounts(this);
         this.accountPreferences.add(accountPreferences);
     }
 
@@ -236,14 +230,6 @@ public class Accounts implements Serializable, EncryptionAware {
         isDeleted = deleted;
     }
 
-    public Long getCreatedBy() {
-        return this.createdBy;
-    }
-
-    public void setCreatedBy(Long createdBy) {
-        this.createdBy = createdBy;
-    }
-
     public Timestamp getCreatedAt() {
         return this.createdAt;
     }
@@ -252,28 +238,12 @@ public class Accounts implements Serializable, EncryptionAware {
         this.createdAt = createdAt;
     }
 
-    public Long getUpdatedBy() {
-        return this.updatedBy;
-    }
-
-    public void setUpdatedBy(Long updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
     public Timestamp getUpdatedAt() {
         return this.updatedAt;
     }
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Long getDeletedBy() {
-        return this.deletedBy;
-    }
-
-    public void setDeletedBy(Long deletedBy) {
-        this.deletedBy = deletedBy;
     }
 
     public Timestamp getDeletedAt() {
@@ -312,9 +282,5 @@ public class Accounts implements Serializable, EncryptionAware {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
-        if (this.deletedBy != null) {
-            this.deletedAt = new Timestamp(System.currentTimeMillis());
-            this.isDeleted = true;
-        }
     }
 }

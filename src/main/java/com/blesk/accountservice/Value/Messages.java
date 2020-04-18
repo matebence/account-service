@@ -22,8 +22,6 @@ public class Messages {
     public static final String PASSWORD_FIELD_DEFAULT = "Heslo nie je dostačne bezpecné";
     public static final String FIELD_MATCH_DEFAULT = "Dve zvolené stlpce sa nezhodujú";
 
-    public static final String ENTITY_CREATOR_ID = "Identifikačné číslo vytvárajúcého používateľa nebol zadaní";
-
     public static final String ACCOUNTS_USER_NAME_NULL = "Nezadali ste používateľské meno";
     public static final String ACCOUNTS_USER_NAME_LENGHT = "Používateľské meno je príliž krátké alebo dlhé";
     public static final String ACCOUNTS_USER_NAME_UNIQUE = "Používatelské meno už existuje";
@@ -68,7 +66,6 @@ public class Messages {
     public static final String GET_ALL_ACCOUNTS = "Nenašiel sa žiadný účet";
 
     public static final String CREATE_ACTIVATION_TOKEN = "Vytvorenie kľúču pre aktiváciu účtu sa nepodarilo";
-    public static final String DELETE_GET_ACTIVATION_TOKEN = "Ľutujeme, ale kľúč pre aktiváciu účtu neexistuje";
     public static final String DELETE_ACTIVATION_TOKEN = "Odstránenie kľúču pre aktiváciu účtu sa nepodarilo";
     public static final String UPDATE_ACTIVATION_TOKEN = "Kľúč pre aktiváciu účtu sa nepodarilo aktualizovať";
     public static final String GET_ACTIVATION_TOKEN = "Ľutujeme, kľúč pre aktiváciu účtu neexistuje";

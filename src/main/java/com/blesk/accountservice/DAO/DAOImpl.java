@@ -3,13 +3,9 @@ package com.blesk.accountservice.DAO;
 import com.blesk.accountservice.Value.Keys;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.*;
 import java.util.*;
 
@@ -38,7 +34,7 @@ public class DAOImpl<T> implements DAO<T> {
     public Boolean update(T t) {
         Session session = this.entityManager.unwrap(Session.class);
         try {
-            session.saveOrUpdate(t);
+            session.update(t);
         } catch (ConstraintViolationException e) {
             throw e;
         } catch (Exception e) {
@@ -50,10 +46,11 @@ public class DAOImpl<T> implements DAO<T> {
     }
 
     @Override
-    public Boolean delete(T t) {
+    public Boolean delete(String entity, String IdColumn, Long id) {
         Session session = this.entityManager.unwrap(Session.class);
         try {
-            session.delete(t);
+            Query query = session.createSQLQuery(String.format("DELETE FROM %s WHERE %s = :%s", entity, IdColumn, IdColumn)).setParameter(IdColumn, 1L);
+            query.executeUpdate();
         } catch (Exception e) {
             session.clear();
             session.close();
@@ -75,7 +72,7 @@ public class DAOImpl<T> implements DAO<T> {
     }
 
     @Override
-    public List getAll(Class c, int pageNumber, int pageSize) {
+    public List<T> getAll(Class c, int pageNumber, int pageSize) {
         Session session = this.entityManager.unwrap(Session.class);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
 

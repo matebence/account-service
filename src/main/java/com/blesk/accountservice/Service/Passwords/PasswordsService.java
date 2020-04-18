@@ -10,11 +10,11 @@ public interface PasswordsService {
 
     Passwords createPasswordToken(Passwords passwords);
 
-    Boolean deletePasswordToken(Long passwordResetTokenId);
+    Boolean deletePasswordToken(Long passwordTokenId);
 
     Boolean updatePasswordToken(Passwords passwords);
 
-    Passwords getPasswordToken(Long passwordResetTokenId);
+    Passwords getPasswordToken(Long passwordTokenId);
 
     Passwords findPasswordToken(String token);
 

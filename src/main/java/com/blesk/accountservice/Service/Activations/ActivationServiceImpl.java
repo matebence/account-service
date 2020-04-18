@@ -35,10 +35,7 @@ public class ActivationServiceImpl implements ActivationService {
     @Override
     @Transactional
     public Boolean deleteActivationToken(Long activationTokenId) {
-        Activations activations = this.activationsDAO.get(Activations.class, activationTokenId);
-        if (activations == null)
-            throw new AccountServiceException(Messages.DELETE_GET_ACTIVATION_TOKEN);
-        if (!this.activationsDAO.delete(activations))
+        if (!this.activationsDAO.delete("activations", "activation_id", activationTokenId))
             throw new AccountServiceException(Messages.DELETE_ACTIVATION_TOKEN);
         return true;
     }

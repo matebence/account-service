@@ -1,6 +1,7 @@
 package com.blesk.accountservice.Service.Preferences;
 
 import com.blesk.accountservice.DAO.Preferences.PreferencesDAOImpl;
+import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Value.Keys;
@@ -25,7 +26,7 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
-    public Preferences createPreference(Preferences preferences) {
+    public Preferences createPreference(Preferences preferences, JwtMapper jwtMapper) {
         Preferences preference = this.preferencesDAO.save(preferences);
         if (preference == null)
             throw new AccountServiceException(Messages.CREATE_PREFERENCE);
@@ -34,18 +35,29 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
-    public Boolean deletePreference(Long preferenceId) {
-        Preferences preferences = this.preferencesDAO.get(Preferences.class, preferenceId);
+    public Boolean softDeletePreference(Long preferenceId, JwtMapper jwtMapper) {
+        Preferences preferences = this.preferencesDAO.get(preferenceId, false);
         if (preferences == null)
             throw new AccountServiceException(Messages.DELETE_GET_PREFERENCE);
-        if (!this.preferencesDAO.delete(preferences))
+        if (!this.preferencesDAO.softDelete(preferences))
             throw new AccountServiceException(Messages.DELETE_PREFERENCE);
         return true;
     }
 
     @Override
     @Transactional
-    public Boolean updatePreference(Preferences preferences) {
+    public Boolean deletePreference(Long preferenceId) {
+        Preferences preferences = this.preferencesDAO.get(Preferences.class, preferenceId);
+        if (preferences == null)
+            throw new AccountServiceException(Messages.DELETE_GET_PREFERENCE);
+        if (!this.preferencesDAO.delete("preferences", "preference_id", preferenceId))
+            throw new AccountServiceException(Messages.DELETE_PREFERENCE);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public Boolean updatePreference(Preferences preferences, JwtMapper jwtMapper) {
         if (!this.preferencesDAO.update(preferences))
             throw new AccountServiceException(Messages.UPDATE_PREFERENCE);
         return true;
@@ -53,8 +65,8 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
-    public Preferences getPreference(Long preferenceId) {
-        Preferences preferences = this.preferencesDAO.get(Preferences.class, preferenceId);
+    public Preferences getPreference(Long preferenceId, boolean isDeleted) {
+        Preferences preferences = this.preferencesDAO.get(preferenceId, isDeleted);
         if (preferences == null)
             throw new AccountServiceException(Messages.GET_PREFERENCE);
         return preferences;
@@ -62,8 +74,8 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
-    public Preferences findPreferenceByName(String name) {
-        Preferences preferences = this.preferencesDAO.getItemByColumn(Preferences.class, "name", name);
+    public Preferences findPreferenceByName(String name, boolean isDeleted) {
+        Preferences preferences = this.preferencesDAO.getItemByColumn("name", name, isDeleted);
         if (preferences == null)
             throw new AccountServiceException(Messages.GET_PREFERENCE);
         return preferences;
@@ -71,8 +83,8 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
-    public List<Preferences> getAllPreferences(int pageNumber, int pageSize) {
-        List<Preferences> preferences = this.preferencesDAO.getAll(Preferences.class, pageNumber, pageSize);
+    public List<Preferences> getAllPreferences(int pageNumber, int pageSize, boolean isDeleted) {
+        List<Preferences> preferences = this.preferencesDAO.getAll(pageNumber, pageSize, isDeleted);
         if (preferences == null)
             throw new AccountServiceException(Messages.GET_ALL_PREFERENCES);
         return preferences;
@@ -80,11 +92,11 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
-    public Map<String, Object> searchForPreferences(HashMap<String, HashMap<String, String>> criteria) {
+    public Map<String, Object> searchForPreferences(HashMap<String, HashMap<String, String>> criteria, boolean isDeleted) {
         if (criteria.get(Keys.PAGINATION) == null)
             throw new AccountServiceException(Messages.PAGINATION_ERROR);
 
-        Map<String, Object> prefrences = this.preferencesDAO.searchBy(Preferences.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+        Map<String, Object> prefrences = this.preferencesDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)), isDeleted);
 
         if (prefrences == null || prefrences.isEmpty())
             throw new AccountServiceException(Messages.SEARCH_ERROR);

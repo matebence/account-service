@@ -1,13 +1,13 @@
-INSERT INTO accounts (user_name, email, password, is_activated, created_by, created_at, is_deleted)
-VALUES ('system', 'system@blesk.sk', '$2y$10$2V6Si2mzFJd9Q4x2LkUqgeEMmJKAbg6/bd9TjUWSnxltyemWBxJh6', TRUE, 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO accounts (user_name, email, password, is_activated, created_by, created_at, is_deleted)
-VALUES ('admin', 'admin@blesk.sk', '$2a$10$yglygEX/oNZuex6lh.1QTOeIwR5lbBqeROU.F7N9D8XSmrU9ReFYS', TRUE, 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO accounts (user_name, email, password, is_activated, created_by, created_at, is_deleted)
-VALUES ('jansiroky', 'jan.siroky@blesk.sk', '$2a$10$Vws9nU1mqlbo1KLVXaq7dOQUGd2BfSILJETt2zb50rCR0cRVdl5xu', TRUE, 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO accounts (user_name, email, password, is_activated, created_by, created_at, is_deleted)
-VALUES ('petervarga','peter.varga@gmail.com', '$2a$10$1oyamJIm8aSLaXnm/xhaRe6yxAWEKZeFjsMQ/wWXoINsGeuHd.c2S', TRUE, 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO accounts (user_name, email, password, is_activated, created_by, created_at, is_deleted)
-VALUES ('michalvelky', 'michal.velky@gmail.com', '$2a$10$Wi7MdTNoKKK7Iaf262bWLuVdzOViFXHRgR7siBaq8YRWkTpJtd5J.', TRUE, 1, CURRENT_TIMESTAMP, FALSE);
+INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_deleted)
+VALUES ('system', 'system@blesk.sk', '$2y$10$2V6Si2mzFJd9Q4x2LkUqgeEMmJKAbg6/bd9TjUWSnxltyemWBxJh6', TRUE, CURRENT_TIMESTAMP, FALSE);
+INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_deleted)
+VALUES ('admin', 'admin@blesk.sk', '$2a$10$yglygEX/oNZuex6lh.1QTOeIwR5lbBqeROU.F7N9D8XSmrU9ReFYS', TRUE, CURRENT_TIMESTAMP, FALSE);
+INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_deleted)
+VALUES ('jansiroky', 'jan.siroky@blesk.sk', '$2a$10$Vws9nU1mqlbo1KLVXaq7dOQUGd2BfSILJETt2zb50rCR0cRVdl5xu', TRUE, CURRENT_TIMESTAMP, FALSE);
+INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_deleted)
+VALUES ('petervarga','peter.varga@gmail.com', '$2a$10$1oyamJIm8aSLaXnm/xhaRe6yxAWEKZeFjsMQ/wWXoINsGeuHd.c2S', TRUE, CURRENT_TIMESTAMP, FALSE);
+INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_deleted)
+VALUES ('michalvelky', 'michal.velky@gmail.com', '$2a$10$Wi7MdTNoKKK7Iaf262bWLuVdzOViFXHRgR7siBaq8YRWkTpJtd5J.', TRUE, CURRENT_TIMESTAMP, FALSE);
 
 
 INSERT INTO logins (account_id, last_login, ip_address)
@@ -22,58 +22,58 @@ INSERT INTO logins (account_id, last_login, ip_address)
 VALUES (5, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0');
 
 
-INSERT INTO roles (name, created_by, created_at, is_deleted)
-VALUES ('ROLE_SYSTEM', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO roles (name, created_by, created_at, is_deleted)
-VALUES ('ROLE_ADMIN', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO roles (name, created_by, created_at, is_deleted)
-VALUES ('ROLE_MANAGER', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO roles (name, created_by, created_at, is_deleted)
-VALUES ('ROLE_CLIENT', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO roles (name, created_by, created_at, is_deleted)
-VALUES ('ROLE_COURIER', 1, CURRENT_TIMESTAMP, FALSE);
+INSERT INTO roles (name,  created_at, is_deleted)
+VALUES ('ROLE_SYSTEM',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO roles (name,  created_at, is_deleted)
+VALUES ('ROLE_ADMIN',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO roles (name,  created_at, is_deleted)
+VALUES ('ROLE_MANAGER',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO roles (name,  created_at, is_deleted)
+VALUES ('ROLE_CLIENT',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO roles (name,  created_at, is_deleted)
+VALUES ('ROLE_COURIER',  CURRENT_TIMESTAMP, FALSE);
 
 
-INSERT INTO privileges (name, created_by, created_at ,is_deleted)
-VALUES ('VIEW_ALL_ACCOUNTS', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('VIEW_ACCOUNTS', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('DELETE_ACCOUNTS', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('CREATE_ACCOUNTS', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('UPDATE_ACCOUNTS', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at ,is_deleted)
-VALUES ('VIEW_ALL_PREFERENCES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('VIEW_PREFERENCES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('DELETE_PREFERENCES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('CREATE_PREFERENCES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('UPDATE_PREFERENCES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at ,is_deleted)
-VALUES ('VIEW_ALL_PRIVILEGES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('VIEW_PRIVILEGES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('DELETE_PRIVILEGES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('CREATE_PRIVILEGES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('UPDATE_PRIVILEGES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at ,is_deleted)
-VALUES ('VIEW_ALL_ROLES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('VIEW_ROLES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('DELETE_ROLES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('CREATE_ROLES', 1, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO privileges (name, created_by, created_at, is_deleted)
-VALUES ('UPDATE_ROLES', 1, CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name, created_at ,is_deleted)
+VALUES ('VIEW_ALL_ACCOUNTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name, created_at, is_deleted)
+VALUES ('VIEW_ACCOUNTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('DELETE_ACCOUNTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('CREATE_ACCOUNTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('UPDATE_ACCOUNTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at ,is_deleted)
+VALUES ('VIEW_ALL_PREFERENCES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('VIEW_PREFERENCES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('DELETE_PREFERENCES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('CREATE_PREFERENCES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('UPDATE_PREFERENCES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at ,is_deleted)
+VALUES ('VIEW_ALL_PRIVILEGES', CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('VIEW_PRIVILEGES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('DELETE_PRIVILEGES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('CREATE_PRIVILEGES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('UPDATE_PRIVILEGES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at ,is_deleted)
+VALUES ('VIEW_ALL_ROLES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('VIEW_ROLES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('DELETE_ROLES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('CREATE_ROLES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('UPDATE_ROLES',  CURRENT_TIMESTAMP, FALSE);
 
 
 INSERT INTO role_privilege_items (role_id, privilege_id)

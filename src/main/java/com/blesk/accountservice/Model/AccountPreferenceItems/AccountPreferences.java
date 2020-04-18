@@ -2,14 +2,14 @@ package com.blesk.accountservice.Model.AccountPreferenceItems;
 
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Preferences;
-import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -36,36 +36,23 @@ public class AccountPreferences implements Serializable {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @NotNull(message = Messages.ENTITY_CREATOR_ID)
-    @Column(name = "created_by", updatable = false, nullable = false)
-    private Long createdBy;
-
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
-
-    @Column(name = "updated_by")
-    private Long updatedBy;
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @Column(name = "deleted_by")
-    private Long deletedBy;
-
-    @Column(name = "deleted_at")
+    @Column(name = "deleted_at", updatable = false)
     private Timestamp deletedAt;
 
     public AccountPreferences() {
     }
 
-    public AccountPreferences(boolean isSet, String content, int value, Boolean isDeleted, Long createdBy, Long updatedBy, Long deletedBy) {
+    public AccountPreferences(boolean isSet, String content, int value, Boolean isDeleted) {
         this.isSet = isSet;
         this.content = content;
         this.value = value;
         this.isDeleted = isDeleted;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-        this.deletedBy = deletedBy;
     }
 
     public AccountPreferenceIds getAccountPreferenceIds() {
@@ -76,6 +63,7 @@ public class AccountPreferences implements Serializable {
         this.accountPreferenceIds = accountPreferenceIds;
     }
 
+    @JsonIgnore
     @Transient
     public Accounts getAccounts() {
         return getAccountPreferenceIds().getAccounts();
@@ -85,6 +73,7 @@ public class AccountPreferences implements Serializable {
         getAccountPreferenceIds().setAccounts(accounts);
     }
 
+    @JsonIgnore
     @Transient
     public Preferences getPreferences() {
         return getAccountPreferenceIds().getPreferences();
@@ -126,14 +115,6 @@ public class AccountPreferences implements Serializable {
         this.isDeleted = deleted;
     }
 
-    public Long getCreatedBy() {
-        return this.createdBy;
-    }
-
-    public void setCreatedBy(Long createdBy) {
-        this.createdBy = createdBy;
-    }
-
     public Timestamp getCreatedAt() {
         return this.createdAt;
     }
@@ -142,28 +123,12 @@ public class AccountPreferences implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Long getUpdatedBy() {
-        return this.updatedBy;
-    }
-
-    public void setUpdatedBy(Long updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
     public Timestamp getUpdatedAt() {
         return this.updatedAt;
     }
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Long getDeletedBy() {
-        return this.deletedBy;
-    }
-
-    public void setDeletedBy(Long deletedBy) {
-        this.deletedBy = deletedBy;
     }
 
     public Timestamp getDeletedAt() {
@@ -183,9 +148,5 @@ public class AccountPreferences implements Serializable {
     @PreUpdate
     protected void preUpdate() {
         this.updatedAt = new Timestamp(System.currentTimeMillis());
-        if (this.deletedBy != null) {
-            this.deletedAt = new Timestamp(System.currentTimeMillis());
-            this.isDeleted = true;
-        }
     }
 }

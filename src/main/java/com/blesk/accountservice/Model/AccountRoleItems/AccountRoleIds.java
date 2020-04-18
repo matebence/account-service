@@ -6,9 +6,10 @@ import com.blesk.accountservice.Model.Roles;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 @Embeddable
-public class AccountRoleIds {
+public class AccountRoleIds implements Serializable {
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Accounts accounts;

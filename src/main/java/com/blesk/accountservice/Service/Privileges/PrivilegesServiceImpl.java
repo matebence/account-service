@@ -1,6 +1,7 @@
 package com.blesk.accountservice.Service.Privileges;
 
 import com.blesk.accountservice.DAO.Privileges.PrivilegesDAOImpl;
+import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Privileges;
 import com.blesk.accountservice.Value.Keys;
@@ -25,7 +26,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
 
     @Override
     @Transactional
-    public Privileges createPrivilege(Privileges privileges) {
+    public Privileges createPrivilege(Privileges privileges, JwtMapper jwtMapper) {
         Privileges privilege = this.privilegeDAO.save(privileges);
         if (privilege == null)
             throw new AccountServiceException(Messages.CREATE_PRIVILEGE);
@@ -34,18 +35,29 @@ public class PrivilegesServiceImpl implements PrivilegesService {
 
     @Override
     @Transactional
-    public Boolean deletePrivilege(Long privilegeId) {
-        Privileges privileges = this.privilegeDAO.get(Privileges.class, privilegeId);
+    public Boolean softDeletePrivilege(Long privilegeId, JwtMapper jwtMapper) {
+        Privileges privileges = this.privilegeDAO.get(privilegeId, false);
         if (privileges == null)
             throw new AccountServiceException(Messages.DELETE_GET_PRIVILEGE);
-        if (!this.privilegeDAO.delete(privileges))
+        if (!this.privilegeDAO.softDelete(privileges))
             throw new AccountServiceException(Messages.DELETE_PRIVILEGE);
         return true;
     }
 
     @Override
     @Transactional
-    public Boolean updatePrivilege(Privileges privileges) {
+    public Boolean deletePrivilege(Long privilegeId) {
+        Privileges privileges = this.privilegeDAO.get(Privileges.class, privilegeId);
+        if (privileges == null)
+            throw new AccountServiceException(Messages.DELETE_GET_PRIVILEGE);
+        if (!this.privilegeDAO.delete("privileges", "privilege_id", privilegeId))
+            throw new AccountServiceException(Messages.DELETE_PRIVILEGE);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public Boolean updatePrivilege(Privileges privileges, JwtMapper jwtMapper) {
         if (!this.privilegeDAO.update(privileges))
             throw new AccountServiceException(Messages.UPDATE_PRIVILEGE);
         return true;
@@ -53,8 +65,8 @@ public class PrivilegesServiceImpl implements PrivilegesService {
 
     @Override
     @Transactional
-    public Privileges getPrivilege(Long privilegeId) {
-        Privileges privilege = this.privilegeDAO.get(Privileges.class, privilegeId);
+    public Privileges getPrivilege(Long privilegeId, boolean isDeleted) {
+        Privileges privilege = this.privilegeDAO.get(privilegeId, isDeleted);
         if (privilege == null)
             throw new AccountServiceException(Messages.GET_PRIVILEGE);
         return privilege;
@@ -62,8 +74,8 @@ public class PrivilegesServiceImpl implements PrivilegesService {
 
     @Override
     @Transactional
-    public Privileges findPrivilegeByName(String name) {
-        Privileges privilege = this.privilegeDAO.getItemByColumn(Privileges.class, "name", name);
+    public Privileges findPrivilegeByName(String name, boolean isDeleted) {
+        Privileges privilege = this.privilegeDAO.getItemByColumn("name", name, isDeleted);
         if (privilege == null)
             throw new AccountServiceException(Messages.GET_PRIVILEGE);
         return privilege;
@@ -71,8 +83,8 @@ public class PrivilegesServiceImpl implements PrivilegesService {
 
     @Override
     @Transactional
-    public List<Privileges> getAllPrivileges(int pageNumber, int pageSize) {
-        List<Privileges> privileges = this.privilegeDAO.getAll(Privileges.class, pageNumber, pageSize);
+    public List<Privileges> getAllPrivileges(int pageNumber, int pageSize, boolean isDeleted) {
+        List<Privileges> privileges = this.privilegeDAO.getAll(pageNumber, pageSize, isDeleted);
         if (privileges == null)
             throw new AccountServiceException(Messages.GET_ALL_PRIVILEGES);
         return privileges;
@@ -80,11 +92,11 @@ public class PrivilegesServiceImpl implements PrivilegesService {
 
     @Override
     @Transactional
-    public Map<String, Object> searchForPrivileges(HashMap<String, HashMap<String, String>> criteria) {
+    public Map<String, Object> searchForPrivileges(HashMap<String, HashMap<String, String>> criteria, boolean isDeleted) {
         if (criteria.get(Keys.PAGINATION) == null)
             throw new AccountServiceException(Messages.PAGINATION_ERROR);
 
-        Map<String, Object> privileges = this.privilegeDAO.searchBy(Privileges.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+        Map<String, Object> privileges = this.privilegeDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)), isDeleted);
 
         if (privileges == null || privileges.isEmpty())
             throw new AccountServiceException(Messages.SEARCH_ERROR);
