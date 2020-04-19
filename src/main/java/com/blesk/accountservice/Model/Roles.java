@@ -24,8 +24,6 @@ import java.util.Set;
 @Entity(name = "Roles")
 @Table(name = "roles", uniqueConstraints = {@UniqueConstraint(name = "role_id", columnNames = "role_id"), @UniqueConstraint(name = "role_name", columnNames = "name")})
 @SQLDelete(sql = "UPDATE roles SET is_deleted = TRUE, deleted_at = NOW() WHERE role_id = ?")
-@FilterDef(name = "deletedRoleFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
-@Filter(name = "deletedRoleFilter", condition = "is_deleted = :isDeleted")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Roles.class)
 @JsonIgnoreProperties(value = {"accountRoles"})
 public class Roles implements Serializable {
@@ -84,7 +82,8 @@ public class Roles implements Serializable {
     }
 
     public void setRolePrivileges(Set<RolePrivileges> privileges) {
-        this.rolePrivileges = privileges;
+        this.rolePrivileges.retainAll(privileges);
+        this.rolePrivileges.addAll(privileges);
     }
 
     public void addRolePrivileges(RolePrivileges rolePrivileges) {
@@ -101,7 +100,8 @@ public class Roles implements Serializable {
     }
 
     public void setAccountRoles(Set<AccountRoles> accounts) {
-        this.accountRoles = accounts;
+        this.accountRoles.retainAll(accounts);
+        this.accountRoles.addAll(accounts);
     }
 
     public void addAccountRoles(AccountRoles accountRoles) {

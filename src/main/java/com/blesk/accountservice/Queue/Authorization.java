@@ -1,7 +1,6 @@
 package com.blesk.accountservice.Queue;
 
 import com.blesk.accountservice.Exception.AccountServiceException;
-import com.blesk.accountservice.Model.AccountRoleItems.AccountRoles;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Logins;
 import com.blesk.accountservice.Model.Passwords;
@@ -10,7 +9,6 @@ import com.blesk.accountservice.Service.Activations.ActivationServiceImpl;
 import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
 import com.blesk.accountservice.Service.Logins.LoginsServiceImpl;
 import com.blesk.accountservice.Service.Passwords.PasswordsServiceImpl;
-import com.blesk.accountservice.Service.Roles.RolesServiceImpl;
 import com.blesk.accountservice.Value.Messages;
 import org.hibernate.TransientPropertyValueException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -39,8 +37,6 @@ public class Authorization {
 
     private AccountsServiceImpl accountsService;
 
-    private RolesServiceImpl rolesService;
-
     private LoginsServiceImpl loginsService;
 
     private ActivationServiceImpl activationService;
@@ -50,9 +46,8 @@ public class Authorization {
     private EmailsServiceImpl emailsService;
 
     @Autowired
-    public Authorization(AccountsServiceImpl accountsService, RolesServiceImpl rolesService, LoginsServiceImpl loginsService, ActivationServiceImpl activationService, PasswordsServiceImpl passwordsService, EmailsServiceImpl emailsService) {
+    public Authorization(AccountsServiceImpl accountsService, LoginsServiceImpl loginsService, ActivationServiceImpl activationService, PasswordsServiceImpl passwordsService, EmailsServiceImpl emailsService) {
         this.accountsService = accountsService;
-        this.rolesService = rolesService;
         this.loginsService = loginsService;
         this.activationService = activationService;
         this.passwordsService = passwordsService;
@@ -63,7 +58,7 @@ public class Authorization {
     public Accounts verifyAccountForSigningIn(String userName) throws ListenerExecutionFailedException {
         try {
             return this.accountsService.findAccountByUsername(userName, false);
-        } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return new Accounts();
         }
     }
@@ -76,7 +71,7 @@ public class Authorization {
                 this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordTokenId());
 
             return this.loginsService.updateLogin(logins);
-        } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
         }
     }
@@ -98,13 +93,7 @@ public class Authorization {
 
         try {
             final String[] allowedRoles = {"ROLE_COURIER", "ROLE_CLIENT"};
-            for(AccountRoles accountRoles : accounts.getAccountRoles()){
-                if(Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())){
-                    accounts.addRole(new AccountRoles(this.rolesService.findRoleByName(accountRoles.getRoles().getName(), false)));
-                }
-            }
-
-            Accounts account = this.accountsService.createAccount(accounts, null);
+            Accounts account = this.accountsService.createAccount(accounts, allowedRoles);
 
             Map<String, Object> variables = new HashMap<>();
             variables.put("activationUrl", String.format(this.activationUrl, account.getAccountId(), account.getActivations().getToken()));
@@ -128,7 +117,7 @@ public class Authorization {
             accounts.setValidations(unique);
             return accounts;
 
-        } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return new Accounts();
         }
     }
@@ -141,11 +130,11 @@ public class Authorization {
                 Accounts account = this.accountsService.getAccount(accounts.getAccountId(), false);
                 account.setActivated(result);
 
-                if (this.accountsService.updateAccount(account, null))
+                if (this.accountsService.updateAccount(account, new String[]{}))
                     return result;
             }
             return Boolean.FALSE;
-        } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
         }
     }
@@ -160,7 +149,7 @@ public class Authorization {
             this.emailsService.sendHtmlMesseage("Zabudnuté heslo", "forgetpassword", variables, passwords.getAccounts());
 
             return passwords;
-        } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return new Passwords();
         }
     }
@@ -169,7 +158,7 @@ public class Authorization {
     public Boolean verifyPasswordTokenForForgetPassword(Accounts accounts) throws ListenerExecutionFailedException {
         try {
             return this.passwordsService.validatePasswordToken(accounts.getAccountId(), accounts.getPasswords().getToken());
-        } catch (AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
         }
     }

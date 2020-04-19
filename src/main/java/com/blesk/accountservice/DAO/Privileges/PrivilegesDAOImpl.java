@@ -1,9 +1,9 @@
 package com.blesk.accountservice.DAO.Privileges;
 
 import com.blesk.accountservice.DAO.DAOImpl;
+import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Privileges;
 import com.blesk.accountservice.Value.Keys;
-import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
@@ -30,15 +30,13 @@ public class PrivilegesDAOImpl extends DAOImpl<Privileges> implements Privileges
     @Override
     public Privileges get(Long id, boolean isDeleted) {
         Session session = this.entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedPrivilegeFilter");
-        filter.setParameter("isDeleted", isDeleted);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Privileges> criteriaQuery = criteriaBuilder.createQuery(Privileges.class);
+        Root<Privileges> root = criteriaQuery.from(Privileges.class);
 
         try {
-            Privileges privileges = (Privileges) session.get(Privileges.class, id);
-            session.disableFilter("deletedPrivilegeFilter");
-            return privileges;
-        } catch (Exception e) {
-            session.disableFilter("deletedPrivilegeFilter");
+            return session.createQuery(criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(root.get("privilegeId"), id), criteriaBuilder.equal(root.get("isDeleted"), isDeleted)))).getSingleResult();
+        } catch (NoResultException ex) {
             session.clear();
             session.close();
             return null;
@@ -48,8 +46,6 @@ public class PrivilegesDAOImpl extends DAOImpl<Privileges> implements Privileges
     @Override
     public List<Privileges> getAll(int pageNumber, int pageSize, boolean isDeleted) {
         Session session = this.entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedPrivilegeFilter");
-        filter.setParameter("isDeleted", isDeleted);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
 
         CriteriaQuery<Long> countCriteria = criteriaBuilder.createQuery(Long.class);
@@ -66,18 +62,15 @@ public class PrivilegesDAOImpl extends DAOImpl<Privileges> implements Privileges
 
             CriteriaQuery<Privileges> criteriaQuery = criteriaBuilder.createQuery(Privileges.class);
             Root<Privileges> select = criteriaQuery.from(Privileges.class);
-            CriteriaQuery<Privileges> entity = criteriaQuery.select(select).orderBy(criteriaBuilder.asc(select.get("createdAt")));
+            CriteriaQuery<Privileges> entity = criteriaQuery.select(select).where(criteriaBuilder.equal(select.get("isDeleted"), isDeleted)).orderBy(criteriaBuilder.asc(select.get("createdAt")));
 
             TypedQuery<Privileges> typedQuery = session.createQuery(entity);
             typedQuery.setFirstResult(pageNumber);
             typedQuery.setMaxResults(pageSize);
 
             try {
-                List<Privileges> list = typedQuery.getResultList();
-                session.disableFilter("deletedPrivilegeFilter");
-                return list;
+                return typedQuery.getResultList();
             } catch (NoResultException ex) {
-                session.disableFilter("deletedPrivilegeFilter");
                 session.clear();
                 session.close();
                 return null;
@@ -90,18 +83,13 @@ public class PrivilegesDAOImpl extends DAOImpl<Privileges> implements Privileges
     @Override
     public Privileges getItemByColumn(String column, String value, boolean isDeleted) {
         Session session = this.entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedPrivilegeFilter");
-        filter.setParameter("isDeleted", isDeleted);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Privileges> criteriaQuery = criteriaBuilder.createQuery(Privileges.class);
         Root<Privileges> root = criteriaQuery.from(Privileges.class);
 
         try {
-            Privileges privileges = session.createQuery(criteriaQuery.where(criteriaBuilder.equal(root.get(column), value))).getSingleResult();
-            session.disableFilter("deletedPrivilegeFilter");
-            return privileges;
+            return session.createQuery(criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(root.get(column), value), criteriaBuilder.equal(root.get("isDeleted"), isDeleted)))).getSingleResult();
         } catch (NoResultException ex) {
-            session.disableFilter("deletedPrivilegeFilter");
             session.clear();
             session.close();
             return null;
@@ -112,13 +100,12 @@ public class PrivilegesDAOImpl extends DAOImpl<Privileges> implements Privileges
     public Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias, int pageNumber, boolean isDeleted) {
         final int PAGE_SIZE = 10;
         Session session = this.entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedPrivilegeFilter");
-        filter.setParameter("isDeleted", isDeleted);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Privileges> criteriaQuery = criteriaBuilder.createQuery(Privileges.class);
         Root<Privileges> root = criteriaQuery.from(Privileges.class);
 
         List<Predicate> predicates = new ArrayList<Predicate>();
+        predicates.add(criteriaBuilder.equal(root.get("isDeleted"), isDeleted));
         CriteriaQuery<Privileges> select = criteriaQuery.select(root);
 
         if (criterias.get(Keys.ORDER_BY) != null) {
@@ -170,17 +157,14 @@ public class PrivilegesDAOImpl extends DAOImpl<Privileges> implements Privileges
             }
 
             map.put("results", result);
-            session.disableFilter("deletedPrivilegeFilter");
             return map;
         }
 
         try {
             HashMap<String, Object> map = new HashMap<>();
             map.put("results", typedQuery.getResultList());
-            session.disableFilter("deletedPrivilegeFilter");
             return map;
         } catch (NoResultException ex) {
-            session.disableFilter("deletedPrivilegeFilter");
             session.clear();
             session.close();
             return null;

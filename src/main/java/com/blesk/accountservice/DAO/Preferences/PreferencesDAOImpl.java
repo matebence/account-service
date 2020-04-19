@@ -1,9 +1,9 @@
 package com.blesk.accountservice.DAO.Preferences;
 
 import com.blesk.accountservice.DAO.DAOImpl;
+import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Value.Keys;
-import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
@@ -31,15 +31,13 @@ public class PreferencesDAOImpl extends DAOImpl<Preferences> implements Preferen
     @Override
     public Preferences get(Long id, boolean isDeleted) {
         Session session = this.entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedPreferenceFilter");
-        filter.setParameter("isDeleted", isDeleted);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Preferences> criteriaQuery = criteriaBuilder.createQuery(Preferences.class);
+        Root<Preferences> root = criteriaQuery.from(Preferences.class);
 
         try {
-            Preferences preferences = (Preferences) session.get(Preferences.class, id);
-            session.disableFilter("deletedPreferenceFilter");
-            return preferences;
-        } catch (Exception e) {
-            session.disableFilter("deletedPreferenceFilter");
+            return session.createQuery(criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(root.get("preferenceId"), id), criteriaBuilder.equal(root.get("isDeleted"), isDeleted)))).getSingleResult();
+        } catch (NoResultException ex) {
             session.clear();
             session.close();
             return null;
@@ -49,8 +47,6 @@ public class PreferencesDAOImpl extends DAOImpl<Preferences> implements Preferen
     @Override
     public List<Preferences> getAll(int pageNumber, int pageSize, boolean isDeleted) {
         Session session = this.entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedPreferenceFilter");
-        filter.setParameter("isDeleted", isDeleted);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
 
         CriteriaQuery<Long> countCriteria = criteriaBuilder.createQuery(Long.class);
@@ -67,18 +63,15 @@ public class PreferencesDAOImpl extends DAOImpl<Preferences> implements Preferen
 
             CriteriaQuery<Preferences> criteriaQuery = criteriaBuilder.createQuery(Preferences.class);
             Root<Preferences> select = criteriaQuery.from(Preferences.class);
-            CriteriaQuery<Preferences> entity = criteriaQuery.select(select).orderBy(criteriaBuilder.asc(select.get("createdAt")));
+            CriteriaQuery<Preferences> entity = criteriaQuery.select(select).where(criteriaBuilder.equal(select.get("isDeleted"), isDeleted)).orderBy(criteriaBuilder.asc(select.get("createdAt")));
 
             TypedQuery<Preferences> typedQuery = session.createQuery(entity);
             typedQuery.setFirstResult(pageNumber);
             typedQuery.setMaxResults(pageSize);
 
             try {
-                List<Preferences> list = typedQuery.getResultList();
-                session.disableFilter("deletedPreferenceFilter");
-                return list;
+                return typedQuery.getResultList();
             } catch (NoResultException ex) {
-                session.disableFilter("deletedPreferenceFilter");
                 session.clear();
                 session.close();
                 return null;
@@ -91,18 +84,13 @@ public class PreferencesDAOImpl extends DAOImpl<Preferences> implements Preferen
     @Override
     public Preferences getItemByColumn(String column, String value, boolean isDeleted) {
         Session session = this.entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedPreferenceFilter");
-        filter.setParameter("isDeleted", isDeleted);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Preferences> criteriaQuery = criteriaBuilder.createQuery(Preferences.class);
         Root<Preferences> root = criteriaQuery.from(Preferences.class);
 
         try {
-            Preferences preferences = session.createQuery(criteriaQuery.where(criteriaBuilder.equal(root.get(column), value))).getSingleResult();
-            session.disableFilter("deletedPreferenceFilter");
-            return preferences;
+            return session.createQuery(criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(root.get(column), value), criteriaBuilder.equal(root.get("isDeleted"), isDeleted)))).getSingleResult();
         } catch (NoResultException ex) {
-            session.disableFilter("deletedPreferenceFilter");
             session.clear();
             session.close();
             return null;
@@ -113,13 +101,12 @@ public class PreferencesDAOImpl extends DAOImpl<Preferences> implements Preferen
     public Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias, int pageNumber, boolean isDeleted) {
         final int PAGE_SIZE = 10;
         Session session = this.entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedPreferenceFilter");
-        filter.setParameter("isDeleted", isDeleted);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Preferences> criteriaQuery = criteriaBuilder.createQuery(Preferences.class);
         Root<Preferences> root = criteriaQuery.from(Preferences.class);
 
         List<Predicate> predicates = new ArrayList<Predicate>();
+        predicates.add(criteriaBuilder.equal(root.get("isDeleted"), isDeleted));
         CriteriaQuery<Preferences> select = criteriaQuery.select(root);
 
         if (criterias.get(Keys.ORDER_BY) != null) {
@@ -171,17 +158,14 @@ public class PreferencesDAOImpl extends DAOImpl<Preferences> implements Preferen
             }
 
             map.put("results", result);
-            session.disableFilter("deletedPreferenceFilter");
             return map;
         }
 
         try {
             HashMap<String, Object> map = new HashMap<>();
             map.put("results", typedQuery.getResultList());
-            session.disableFilter("deletedPreferenceFilter");
             return map;
         } catch (NoResultException ex) {
-            session.disableFilter("deletedPreferenceFilter");
             session.clear();
             session.close();
             return null;

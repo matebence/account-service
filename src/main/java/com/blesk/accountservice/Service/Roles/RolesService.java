@@ -1,6 +1,5 @@
 package com.blesk.accountservice.Service.Roles;
 
-import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Model.RolePrivilegeItems.RolePrivileges;
 import com.blesk.accountservice.Model.Roles;
 
@@ -11,21 +10,21 @@ import java.util.Set;
 
 public interface RolesService {
 
-    Roles createRole(Roles roles, JwtMapper jwtMapper);
+    Roles createRole(Roles roles);
 
-    Boolean softDeleteRole(Long roleId, JwtMapper jwtMapper);
+    Boolean softDeleteRole(Long roleId);
 
     Boolean deleteRole(Long roleId);
 
-    Boolean updateRole(Roles roles, JwtMapper jwtMapper);
+    Boolean updateRole(Roles roles);
 
-    Roles getRole(Long roleId, boolean isDeleted);
+    Roles getRole(Long roleId);
 
-    Roles findRoleByName(String roleName, boolean isDeleted);
+    Roles findRoleByName(String roleName);
 
-    Set<RolePrivileges> findPrivilegesByRoleName(String name, boolean isDeleted);
+    Set<RolePrivileges> findPrivilegesByRoleName(String name);
 
-    List<Roles> getAllRoles(int pageNumber, int pageSize, boolean isDeleted);
+    List<Roles> getAllRoles(int pageNumber, int pageSize);
 
-    Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criteria, boolean isDeleted);
+    Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criteria);
 }

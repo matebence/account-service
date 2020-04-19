@@ -7,7 +7,6 @@ import com.blesk.accountservice.Validator.Password.EncryptionAware;
 import com.blesk.accountservice.Validator.Password.Password;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.*;
@@ -26,10 +25,8 @@ import java.util.*;
 @Entity(name = "Accounts")
 @Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(name = "account_id", columnNames = "account_id"), @UniqueConstraint(name = "account_username", columnNames = "user_name"), @UniqueConstraint(name = "account_email", columnNames = "email")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Accounts.class)
-@JsonIgnoreProperties(value={ "login", "passwords", "activations" }, allowGetters=true)
+@JsonIgnoreProperties(value={ "accountPreferences"})
 @SQLDelete(sql = "UPDATE accounts SET is_deleted = TRUE, deleted_at = NOW() WHERE account_id = ?")
-@FilterDef(name = "deletedAccountFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
-@Filter(name = "deletedAccountFilter", condition = "is_deleted = :isDeleted")
 @FieldMatch(first = "password", second = "confirmPassword", message = Messages.ACCOUNTS_PASWORD_MATCH, groups = Accounts.validationWithEncryption.class)
 public class Accounts implements Serializable, EncryptionAware {
 
@@ -57,7 +54,6 @@ public class Accounts implements Serializable, EncryptionAware {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<AccountRoles> accountRoles = new HashSet<AccountRoles>();
 
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accountPreferenceIds.accounts")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<AccountPreferences> accountPreferences = new HashSet<AccountPreferences>();
@@ -135,7 +131,8 @@ public class Accounts implements Serializable, EncryptionAware {
 
     public void setLogin(Logins login) {
         this.login = login;
-        this.login.setAccounts(this);
+        if (this.login != null)
+            this.login.setAccounts(this);
     }
 
     public Passwords getPasswords() {
@@ -144,7 +141,8 @@ public class Accounts implements Serializable, EncryptionAware {
 
     public void setPasswords(Passwords passwords) {
         this.passwords = passwords;
-        this.passwords.setAccounts(this);
+        if (this.passwords != null)
+            this.passwords.setAccounts(this);
     }
 
     public Activations getActivations() {
@@ -153,7 +151,8 @@ public class Accounts implements Serializable, EncryptionAware {
 
     public void setActivations(Activations activations) {
         this.activations = activations;
-        this.activations.setAccounts(this);
+        if (this.activations != null)
+            this.activations.setAccounts(this);
     }
 
     public void addRole(AccountRoles accountRoles) {
@@ -166,7 +165,8 @@ public class Accounts implements Serializable, EncryptionAware {
     }
 
     public void setAccountRoles(Set<AccountRoles> roles) {
-        this.accountRoles = roles;
+        this.accountRoles.retainAll(roles);
+        this.accountRoles.addAll(roles);
     }
 
     public void addAccountRoles(AccountRoles accountRoles) {
@@ -183,7 +183,8 @@ public class Accounts implements Serializable, EncryptionAware {
     }
 
     public void setAccountPreferences(Set<AccountPreferences> preferences) {
-        this.accountPreferences = preferences;
+        this.accountPreferences.retainAll(preferences);
+        this.accountPreferences.addAll(preferences);
     }
 
     public void addAccountPreferences(AccountPreferences accountPreferences) {

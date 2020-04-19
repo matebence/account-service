@@ -1,10 +1,12 @@
 package com.blesk.accountservice.Service.Accounts;
 
 import com.blesk.accountservice.DAO.Accounts.AccountsDAOImpl;
-import com.blesk.accountservice.DTO.JwtMapper;
+import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
 import com.blesk.accountservice.Exception.AccountServiceException;
+import com.blesk.accountservice.Model.AccountRoleItems.AccountRoles;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Activations;
+import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,39 +22,48 @@ public class AccountsServiceImpl implements AccountsService {
 
     private AccountsDAOImpl accountDAO;
 
+    private RolesDAOImpl rolesDAO;
+
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountsServiceImpl(AccountsDAOImpl accountDAO, PasswordEncoder passwordEncoder) {
+    public AccountsServiceImpl(AccountsDAOImpl accountDAO, RolesDAOImpl rolesDAO, PasswordEncoder passwordEncoder) {
         this.accountDAO = accountDAO;
+        this.rolesDAO = rolesDAO;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     @Transactional
-    public Accounts createAccount(@Validated(Accounts.validationWithoutEncryption.class) Accounts accounts, JwtMapper jwtMapper) {
+    public Accounts createAccount(@Validated(Accounts.validationWithoutEncryption.class) Accounts accounts, String[] allowedRoles) {
+        Set<AccountRoles> assignedRoles = new HashSet<>(accounts.getAccountRoles());
+        for (AccountRoles accountRoles : assignedRoles) {
+            if (Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
+                accounts.getAccountRoles().remove(accountRoles);
+                accounts.addRole(new AccountRoles(this.rolesDAO.getItemByColumn("name", accountRoles.getRoles().getName(), false)));
+            }
+        }
+
         accounts.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
         accounts.setActivations(new Activations(UUID.randomUUID().toString()));
-        Accounts account = this.accountDAO.save(accounts);
-        if (account == null)
-            throw new AccountServiceException(Messages.CREATE_ACCOUNT);
-        return account;
+        return this.accountDAO.save(accounts);
     }
 
     @Override
     @Transactional
-    public Boolean softDeleteAccount(Long accountId, JwtMapper jwtMapper) {
+    public Boolean softDeleteAccount(Long accountId) {
         Accounts accounts = this.accountDAO.get(accountId, false);
         if (accounts == null)
-            throw new AccountServiceException(Messages.DELETE_GET_ACCOUNT);
-        if (!this.accountDAO.softDelete(accounts))
-            throw new AccountServiceException(Messages.DELETE_ACCOUNT);
-        return true;
+            throw new AccountServiceException(Messages.GET_ACCOUNT);
+        return this.accountDAO.softDelete(accounts);
     }
 
     @Override
     @Transactional
     public Boolean deleteAccount(Long accountId) {
+        Accounts accounts = this.accountDAO.get(Accounts.class, accountId);
+        if (accounts == null)
+            throw new AccountServiceException(Messages.GET_ACCOUNT);
         if (!this.accountDAO.delete("accounts", "account_id", accountId))
             throw new AccountServiceException(Messages.DELETE_ACCOUNT);
         return true;
@@ -60,19 +71,19 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
-    public Boolean updateAccount(Accounts accounts, JwtMapper jwtMapper) {
-        if (!this.accountDAO.update(accounts))
-            throw new AccountServiceException(Messages.UPDATE_ACCOUNT);
-        return true;
+    public Boolean updateAccount(Accounts accounts, String[] allowedRoles) {
+        accounts.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
+        return this.accountDAO.update(accounts);
     }
 
     @Override
     @Transactional
-    public Accounts getAccount(Long accountId, boolean isDeleted) {
-        Accounts accounts = this.accountDAO.get(accountId, isDeleted);
-        if (accounts == null)
-            throw new AccountServiceException(Messages.GET_ACCOUNT);
-        return accounts;
+    public Accounts getAccount(Long accountId, boolean su) {
+        if(su){
+            return this.accountDAO.get(Accounts.class, accountId);
+        } else{
+            return this.accountDAO.get(accountId, false);
+        }
     }
 
     @Override
@@ -97,24 +108,21 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
-    public List<Accounts> getAllAccounts(int pageNumber, int pageSize, boolean isDeleted) {
-        List<Accounts> accounts = this.accountDAO.getAll(pageNumber, pageSize, isDeleted);
-        if (accounts.isEmpty())
-            throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS);
-        return accounts;
+    public List<Accounts> getAllAccounts(int pageNumber, int pageSize, boolean su) {
+        if(su){
+            return this.accountDAO.getAll(Accounts.class, pageNumber, pageSize);
+        } else{
+            return this.accountDAO.getAll(pageNumber, pageSize, false);
+        }
     }
 
     @Override
     @Transactional
-    public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria, boolean isDeleted) {
-        if (criteria.get(Keys.PAGINATION) == null)
-            throw new AccountServiceException(Messages.PAGINATION_ERROR);
-
-        Map<String, Object> accounts = this.accountDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)), isDeleted);
-
-        if (accounts == null || accounts.isEmpty())
-            throw new AccountServiceException(Messages.SEARCH_ERROR);
-
-        return accounts;
+    public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria, boolean su) {
+        if(su){
+            return this.accountDAO.searchBy(Accounts.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+        } else{
+            return this.accountDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)), false);
+        }
     }
 }

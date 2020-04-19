@@ -23,6 +23,10 @@ public class JwtMapper {
     public JwtMapper() {
     }
 
+    public JwtMapper(Collection<String> grantedPrivileges) {
+        this.grantedPrivileges = grantedPrivileges;
+    }
+
     public Integer getLogin_id() {
         return this.login_id;
     }

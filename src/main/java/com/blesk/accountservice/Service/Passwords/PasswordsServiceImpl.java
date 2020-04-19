@@ -38,7 +38,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     public Boolean deletePasswordToken(Long passwordTokenId) {
         Passwords passwords = this.passwordsDAO.get(Passwords.class, passwordTokenId);
         if (passwords == null)
-            throw new AccountServiceException(Messages.DELETE_GET_PASSWORD_TOKEN);
+            throw new AccountServiceException(Messages.GET_PASSWORD_TOKEN);
         if (!this.passwordsDAO.delete("passwords", "password_id", passwordTokenId))
             throw new AccountServiceException(Messages.DELETE_PASSWORD_TOKEN);
         return true;

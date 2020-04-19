@@ -22,8 +22,6 @@ import java.util.Set;
 @Table(name = "preferences", uniqueConstraints = {@UniqueConstraint(name = "preference_id", columnNames = "preference_id"), @UniqueConstraint(name = "preference_name", columnNames = "name")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Preferences.class)
 @SQLDelete(sql = "UPDATE account_preference_items SET is_deleted = TRUE, deleted_at = NOW() WHERE preference_id = ?")
-@FilterDef(name = "deletedPreferenceFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
-@Filter(name = "deletedPreferenceFilter", condition = "is_deleted = :isDeleted")
 public class Preferences implements Serializable {
 
     @Id
@@ -64,7 +62,8 @@ public class Preferences implements Serializable {
     }
 
     public void setAccountPreferences(Set<AccountPreferences> preferences) {
-        this.accountPreferences = preferences;
+        this.accountPreferences.retainAll(preferences);
+        this.accountPreferences.addAll(preferences);
     }
 
     public void addAccountPreferences(AccountPreferences accountPreferences) {

@@ -3,7 +3,6 @@ package com.blesk.accountservice.DAO.Accounts;
 import com.blesk.accountservice.DAO.DAOImpl;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Value.Keys;
-import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
@@ -31,15 +30,13 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
     @Override
     public Accounts get(Long id, boolean isDeleted) {
         Session session = this.entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedAccountFilter");
-        filter.setParameter("isDeleted", isDeleted);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Accounts> criteriaQuery = criteriaBuilder.createQuery(Accounts.class);
+        Root<Accounts> root = criteriaQuery.from(Accounts.class);
 
         try {
-            Accounts accounts = (Accounts) session.get(Accounts.class, id);
-            session.disableFilter("deletedAccountFilter");
-            return accounts;
-        } catch (Exception e) {
-            session.disableFilter("deletedAccountFilter");
+            return session.createQuery(criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(root.get("accountId"), id), criteriaBuilder.equal(root.get("isDeleted"), isDeleted)))).getSingleResult();
+        } catch (NoResultException ex) {
             session.clear();
             session.close();
             return null;
@@ -49,8 +46,6 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
     @Override
     public List<Accounts> getAll(int pageNumber, int pageSize, boolean isDeleted) {
         Session session = this.entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedAccountFilter");
-        filter.setParameter("isDeleted", isDeleted);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
 
         CriteriaQuery<Long> countCriteria = criteriaBuilder.createQuery(Long.class);
@@ -67,18 +62,15 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
 
             CriteriaQuery<Accounts> criteriaQuery = criteriaBuilder.createQuery(Accounts.class);
             Root<Accounts> select = criteriaQuery.from(Accounts.class);
-            CriteriaQuery<Accounts> entity = criteriaQuery.select(select).orderBy(criteriaBuilder.asc(select.get("createdAt")));
+            CriteriaQuery<Accounts> entity = criteriaQuery.select(select).where(criteriaBuilder.equal(select.get("isDeleted"), isDeleted)).orderBy(criteriaBuilder.asc(select.get("createdAt")));
 
             TypedQuery<Accounts> typedQuery = session.createQuery(entity);
             typedQuery.setFirstResult(pageNumber);
             typedQuery.setMaxResults(pageSize);
 
             try {
-                List<Accounts> list = typedQuery.getResultList();
-                session.disableFilter("deletedAccountFilter");
-                return list;
+                return typedQuery.getResultList();
             } catch (NoResultException ex) {
-                session.disableFilter("deletedAccountFilter");
                 session.clear();
                 session.close();
                 return null;
@@ -91,18 +83,13 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
     @Override
     public Accounts getItemByColumn(String column, String value, boolean isDeleted) {
         Session session = this.entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedAccountFilter");
-        filter.setParameter("isDeleted", isDeleted);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Accounts> criteriaQuery = criteriaBuilder.createQuery(Accounts.class);
         Root<Accounts> root = criteriaQuery.from(Accounts.class);
 
         try {
-            Accounts accounts = session.createQuery(criteriaQuery.where(criteriaBuilder.equal(root.get(column), value))).getSingleResult();
-            session.disableFilter("deletedAccountFilter");
-            return accounts;
+            return session.createQuery(criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(root.get(column), value), criteriaBuilder.equal(root.get("isDeleted"), isDeleted)))).getSingleResult();
         } catch (NoResultException ex) {
-            session.disableFilter("deletedAccountFilter");
             session.clear();
             session.close();
             return null;
@@ -113,13 +100,12 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
     public Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias, int pageNumber, boolean isDeleted) {
         final int PAGE_SIZE = 10;
         Session session = this.entityManager.unwrap(Session.class);
-        Filter filter = session.enableFilter("deletedAccountFilter");
-        filter.setParameter("isDeleted", isDeleted);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Accounts> criteriaQuery = criteriaBuilder.createQuery(Accounts.class);
         Root<Accounts> root = criteriaQuery.from(Accounts.class);
 
         List<Predicate> predicates = new ArrayList<Predicate>();
+        predicates.add(criteriaBuilder.equal(root.get("isDeleted"), isDeleted));
         CriteriaQuery<Accounts> select = criteriaQuery.select(root);
 
         if (criterias.get(Keys.ORDER_BY) != null) {
@@ -171,17 +157,14 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
             }
 
             map.put("results", result);
-            session.disableFilter("deletedAccountFilter");
             return map;
         }
 
         try {
             HashMap<String, Object> map = new HashMap<>();
             map.put("results", typedQuery.getResultList());
-            session.disableFilter("deletedAccountFilter");
             return map;
         } catch (NoResultException ex) {
-            session.disableFilter("deletedAccountFilter");
             session.clear();
             session.close();
             return null;

@@ -1,6 +1,5 @@
 package com.blesk.accountservice.Service.Accounts;
 
-import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Model.Accounts;
 
 import java.util.HashMap;
@@ -9,21 +8,21 @@ import java.util.Map;
 
 public interface AccountsService {
 
-    Accounts createAccount(Accounts accounts, JwtMapper jwtMapper);
+    Accounts createAccount(Accounts accounts, String[] allowedRoles);
 
-    Boolean softDeleteAccount(Long accountId, JwtMapper jwtMapper);
+    Boolean softDeleteAccount(Long accountId);
 
     Boolean deleteAccount(Long accountId);
 
-    Boolean updateAccount(Accounts accounts, JwtMapper jwtMapper);
+    Boolean updateAccount(Accounts accounts, String[] allowedRoles);
 
-    Accounts getAccount(Long accountId, boolean isDeleted);
+    Accounts getAccount(Long accountId, boolean su);
 
     Accounts findAccountByEmail(String email, boolean isDeleted);
 
     Accounts findAccountByUsername(String userName, boolean isDeleted);
 
-    List<Accounts> getAllAccounts(int pageNumber, int pageSize, boolean isDeleted);
+    List<Accounts> getAllAccounts(int pageNumber, int pageSize, boolean su);
 
-    Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria, boolean isDeleted);
+    Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria, boolean su);
 }

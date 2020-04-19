@@ -1,6 +1,5 @@
 package com.blesk.accountservice.Service.Privileges;
 
-import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Model.Privileges;
 
 import java.util.HashMap;
@@ -9,19 +8,19 @@ import java.util.Map;
 
 public interface PrivilegesService {
 
-    Privileges createPrivilege(Privileges privileges, JwtMapper jwtMapper);
+    Privileges createPrivilege(Privileges privileges);
 
-    Boolean softDeletePrivilege(Long privilegeId, JwtMapper jwtMapper);
+    Boolean softDeletePrivilege(Long privilegeId);
 
     Boolean deletePrivilege(Long privilegeId);
 
-    Boolean updatePrivilege(Privileges privileges, JwtMapper jwtMapper);
+    Boolean updatePrivilege(Privileges privileges);
 
-    Privileges getPrivilege(Long privilegeId, boolean isDeleted);
+    Privileges getPrivilege(Long privilegeId);
 
-    Privileges findPrivilegeByName(String name, boolean isDeleted);
+    Privileges findPrivilegeByName(String name);
 
-    List<Privileges> getAllPrivileges(int pageNumber, int pageSize, boolean isDeleted);
+    List<Privileges> getAllPrivileges(int pageNumber, int pageSize);
 
-    Map<String, Object> searchForPrivileges(HashMap<String, HashMap<String, String>> criteria, boolean isDeleted);
+    Map<String, Object> searchForPrivileges(HashMap<String, HashMap<String, String>> criteria);
 }
