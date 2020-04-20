@@ -4,10 +4,12 @@ import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Preferences;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -16,13 +18,23 @@ import java.sql.Timestamp;
 @DynamicInsert
 @DynamicUpdate
 @Entity(name = "AccountPreferencesItems")
-@Table(name = "account_preference_items")
+@Table(name = "account_preference_items", uniqueConstraints = {@UniqueConstraint(name = "account_preference_id", columnNames = "account_preference_id"), @UniqueConstraint(name = "account_preference_account_id", columnNames = "account_id"), @UniqueConstraint(name = "account_preference_preference_id", columnNames = "preference_id")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = AccountPreferences.class)
-@AssociationOverrides({@AssociationOverride(name = "accountPreferenceIds.accounts", joinColumns = @JoinColumn(name = "account_id")), @AssociationOverride(name = "accountPreferenceIds.preferences", joinColumns = @JoinColumn(name = "preference_id"))})
+@JsonIgnoreProperties(value = {"accountPreferenceId", "accounts", "preferences"})
 public class AccountPreferences implements Serializable {
 
-    @EmbeddedId
-    private AccountPreferenceIds accountPreferenceIds = new AccountPreferenceIds();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "account_preference_id")
+    private Long accountPreferenceId;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id", nullable = false)
+    private Accounts accounts;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "preference_id", nullable = false)
+    private Preferences preferences;
 
     @Column(name = "is_set", nullable = true)
     private boolean isSet;
@@ -55,32 +67,31 @@ public class AccountPreferences implements Serializable {
         this.isDeleted = isDeleted;
     }
 
-    public AccountPreferenceIds getAccountPreferenceIds() {
-        return this.accountPreferenceIds;
+    @Transient
+    public Long getAccountPreferenceId() {
+        return accountPreferenceId;
     }
 
-    public void setAccountPreferenceIds(AccountPreferenceIds accountPreferenceIds) {
-        this.accountPreferenceIds = accountPreferenceIds;
+    public void setAccountPreferenceId(Long accountPreferenceId) {
+        this.accountPreferenceId = accountPreferenceId;
     }
 
-    @JsonIgnore
     @Transient
     public Accounts getAccounts() {
-        return getAccountPreferenceIds().getAccounts();
+        return this.accounts;
     }
 
     public void setAccounts(Accounts accounts) {
-        getAccountPreferenceIds().setAccounts(accounts);
+        this.accounts = accounts;
     }
 
-    @JsonIgnore
     @Transient
     public Preferences getPreferences() {
-        return getAccountPreferenceIds().getPreferences();
+        return this.getPreferences();
     }
 
     public void setPreferences(Preferences preferences) {
-        getAccountPreferenceIds().setPreferences(preferences);
+        this.preferences = preferences;
     }
 
     public boolean isSet() {

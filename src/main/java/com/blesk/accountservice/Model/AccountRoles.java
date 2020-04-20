@@ -13,53 +13,54 @@ import java.io.Serializable;
 @DynamicInsert
 @DynamicUpdate
 @Entity(name = "AccountRoleItems")
-@Table(name = "account_role_items")
+@Table(name = "account_role_items", uniqueConstraints = {@UniqueConstraint(name = "account_role_id", columnNames = "account_role_id"), @UniqueConstraint(name = "account_role_account_id", columnNames = "account_id"), @UniqueConstraint(name = "account_role_role_id", columnNames = "role_id")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = AccountRoles.class)
-@AssociationOverrides({@AssociationOverride(name = "accountRoleIds.accounts", joinColumns = @JoinColumn(name = "account_id")), @AssociationOverride(name = "accountRoleIds.roles", joinColumns = @JoinColumn(name = "role_id"))})
 public class AccountRoles implements Serializable {
 
-    @EmbeddedId
-    private AccountRoleIds accountRoleIds = new AccountRoleIds();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "account_role_id")
+    private Long accountRoleId;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id", nullable = false)
+    private Accounts accounts;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Roles roles;
 
     public AccountRoles(Accounts accounts, Roles roles) {
-        getAccountRoleIds().setAccounts(accounts);
-        getAccountRoleIds().setRoles(roles);
+        this.accounts = accounts;
+        this.roles = roles;
     }
 
     public AccountRoles(Accounts accounts) {
-        getAccountRoleIds().setAccounts(accounts);
+        this.accounts = accounts;
     }
 
     public AccountRoles(Roles roles) {
-        getAccountRoleIds().setRoles(roles);
+        this.roles = roles;
     }
 
     public AccountRoles() {
     }
 
-    public AccountRoleIds getAccountRoleIds() {
-        return this.accountRoleIds;
-    }
-
-    public void setAccountRoleIds(AccountRoleIds accountRoleIds) {
-        this.accountRoleIds = accountRoleIds;
-    }
-
     @Transient
     public Accounts getAccounts() {
-        return getAccountRoleIds().getAccounts();
+        return this.accounts;
     }
 
     public void setAccounts(Accounts accounts) {
-        getAccountRoleIds().setAccounts(accounts);
+        this.accounts = accounts;
     }
 
     @Transient
     public Roles getRoles() {
-        return getAccountRoleIds().getRoles();
+        return this.roles;
     }
 
     public void setRoles(Roles roles) {
-        getAccountRoleIds().setRoles(roles);
+        this.roles = roles;
     }
 }
