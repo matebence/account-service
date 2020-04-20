@@ -2,7 +2,7 @@ package com.blesk.accountservice.Controller;
 
 import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Exception.AccountServiceException;
-import com.blesk.accountservice.Model.AccountRoleItems.AccountRoles;
+import com.blesk.accountservice.Model.AccountRoles;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Activations;
 import com.blesk.accountservice.Service.Accounts.AccountsServiceImpl;
@@ -123,6 +123,17 @@ public class AccountsResource {
         account.setUserName(accounts.getUserName());
         account.setEmail(accounts.getEmail());
         account.setPassword(accounts.getPassword());
+        account.setConfirmPassword(accounts.getConfirmPassword());
+
+        for (AccountRoles accountRole : account.getAccountRoles()) {
+            for (AccountRoles accountRoles : accounts.getAccountRoles()) {
+                if (accountRoles.getDeleted()) {
+                    account.removeRole(accountRole);
+                } else {
+                    accountRole.setRoles(accountRoles.getRoles());
+                }
+            }
+        }
 
         if (!this.accountsService.updateAccount(account, new String[]{"ROLE_SYSTEM", "ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CLIENT", "ROLE_COURIER"})) {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);

@@ -20,7 +20,6 @@ import java.util.Date;
 @Entity(name = "Passwords")
 @Table(name = "passwords", uniqueConstraints = {@UniqueConstraint(columnNames = {"password_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Passwords.class)
-@SQLDelete(sql = "UPDATE accounts SET is_deleted = TRUE, deleted_at = NOW() WHERE account_id = ?")
 public class Passwords implements Serializable {
 
     private static final int EXPIRATION = 60 * 24;

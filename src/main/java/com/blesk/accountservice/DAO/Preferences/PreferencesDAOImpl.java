@@ -1,10 +1,10 @@
 package com.blesk.accountservice.DAO.Preferences;
 
 import com.blesk.accountservice.DAO.DAOImpl;
-import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Value.Keys;
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
@@ -14,6 +14,21 @@ import java.util.*;
 
 @Repository
 public class PreferencesDAOImpl extends DAOImpl<Preferences> implements PreferencesDAO {
+
+    @Override
+    public Boolean update(Preferences preferences) {
+        Session session = this.entityManager.unwrap(Session.class);
+        try {
+            session.merge(preferences);
+        } catch (ConstraintViolationException e) {
+            throw e;
+        } catch (Exception e) {
+            session.clear();
+            session.close();
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public Boolean softDelete(Preferences preferences) {
@@ -126,7 +141,7 @@ public class PreferencesDAOImpl extends DAOImpl<Preferences> implements Preferen
         if (criterias.get(Keys.SEARCH) != null) {
             for (Object o : criterias.get(Keys.SEARCH).entrySet()) {
                 Map.Entry pair = (Map.Entry) o;
-                predicates.add(criteriaBuilder.like(root.get(pair.getKey().toString()), "%" + pair.getValue().toString() + "%"));
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get(pair.getKey().toString())), "%" + pair.getValue().toString().toLowerCase() + "%"));
             }
             select.where(predicates.toArray(new Predicate[]{}));
         }

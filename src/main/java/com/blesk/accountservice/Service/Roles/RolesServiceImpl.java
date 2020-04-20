@@ -2,7 +2,7 @@ package com.blesk.accountservice.Service.Roles;
 
 import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
 import com.blesk.accountservice.Exception.AccountServiceException;
-import com.blesk.accountservice.Model.RolePrivilegeItems.RolePrivileges;
+import com.blesk.accountservice.Model.RolePrivileges;
 import com.blesk.accountservice.Model.Roles;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;

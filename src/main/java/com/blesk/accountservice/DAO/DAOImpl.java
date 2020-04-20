@@ -49,7 +49,7 @@ public class DAOImpl<T> implements DAO<T> {
     public Boolean delete(String entity, String IdColumn, Long id) {
         Session session = this.entityManager.unwrap(Session.class);
         try {
-            Query query = session.createSQLQuery(String.format("DELETE FROM %s WHERE %s = :%s", entity, IdColumn, IdColumn)).setParameter(IdColumn, 1L);
+            Query query = session.createSQLQuery(String.format("DELETE FROM %s WHERE %s = :%s", entity, IdColumn, IdColumn)).setParameter(IdColumn, id);
             query.executeUpdate();
         } catch (Exception e) {
             session.clear();
@@ -152,7 +152,7 @@ public class DAOImpl<T> implements DAO<T> {
         if (criterias.get(Keys.SEARCH) != null) {
             for (Object o : criterias.get(Keys.SEARCH).entrySet()) {
                 Map.Entry pair = (Map.Entry) o;
-                predicates.add(criteriaBuilder.like(root.get(pair.getKey().toString()), "%" + pair.getValue().toString() + "%"));
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get(pair.getKey().toString())), "%" + pair.getValue().toString().toLowerCase() + "%"));
             }
             select.where(predicates.toArray(new Predicate[]{}));
         }

@@ -1,8 +1,7 @@
-package com.blesk.accountservice.Model.AccountRoleItems;
+package com.blesk.accountservice.Model;
 
-import com.blesk.accountservice.Model.Accounts;
-import com.blesk.accountservice.Model.Roles;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -13,8 +12,9 @@ import java.io.Serializable;
 @DynamicInsert
 @DynamicUpdate
 @Entity(name = "AccountRoleItems")
-@Table(name = "account_role_items", uniqueConstraints = {@UniqueConstraint(name = "account_role_id", columnNames = "account_role_id"), @UniqueConstraint(name = "account_role_account_id", columnNames = "account_id"), @UniqueConstraint(name = "account_role_role_id", columnNames = "role_id")})
+@Table(name = "account_role_items", uniqueConstraints = {@UniqueConstraint(name = "account_role_id", columnNames = "account_role_id")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = AccountRoles.class)
+@JsonIgnoreProperties(value = {"accountRoleId"})
 public class AccountRoles implements Serializable {
 
     @Id
@@ -22,13 +22,16 @@ public class AccountRoles implements Serializable {
     @Column(name = "account_role_id")
     private Long accountRoleId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "account_id")
     private Accounts accounts;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "role_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "role_id")
     private Roles roles;
+
+    @Transient
+    private Boolean isDeleted;
 
     public AccountRoles(Accounts accounts, Roles roles) {
         this.accounts = accounts;
@@ -46,7 +49,14 @@ public class AccountRoles implements Serializable {
     public AccountRoles() {
     }
 
-    @Transient
+    public Long getAccountRoleId() {
+        return this.accountRoleId;
+    }
+
+    public void setAccountRoleId(Long accountRoleId) {
+        this.accountRoleId = accountRoleId;
+    }
+
     public Accounts getAccounts() {
         return this.accounts;
     }
@@ -55,12 +65,19 @@ public class AccountRoles implements Serializable {
         this.accounts = accounts;
     }
 
-    @Transient
     public Roles getRoles() {
         return this.roles;
     }
 
     public void setRoles(Roles roles) {
         this.roles = roles;
+    }
+
+    public Boolean getDeleted() {
+        return this.isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.isDeleted = deleted;
     }
 }

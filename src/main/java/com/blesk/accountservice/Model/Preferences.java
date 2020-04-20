@@ -1,8 +1,8 @@
 package com.blesk.accountservice.Model;
 
-import com.blesk.accountservice.Model.AccountPreferenceItems.AccountPreferences;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.*;
 
@@ -21,6 +21,7 @@ import java.util.Set;
 @Entity(name = "Preferences")
 @Table(name = "preferences", uniqueConstraints = {@UniqueConstraint(name = "preference_id", columnNames = "preference_id"), @UniqueConstraint(name = "preference_name", columnNames = "name")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Preferences.class)
+@JsonIgnoreProperties(value = {"accountPreferences"})
 @SQLDelete(sql = "UPDATE account_preference_items SET is_deleted = TRUE, deleted_at = NOW() WHERE preference_id = ?")
 public class Preferences implements Serializable {
 
@@ -29,7 +30,7 @@ public class Preferences implements Serializable {
     @Column(name = "preference_id")
     private Long preferenceId;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accountPreferenceIds.preferences")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "preferences")
     private Set<AccountPreferences> accountPreferences = new HashSet<AccountPreferences>();
 
     @NotNull(message = Messages.PREFERENCES_NULL)
@@ -37,11 +38,11 @@ public class Preferences implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    public Preferences() {
-    }
-
     public Preferences(String name) {
         this.name = name;
+    }
+
+    public Preferences() {
     }
 
     public Long getPreferenceId() {
@@ -57,17 +58,15 @@ public class Preferences implements Serializable {
         this.accountPreferences.add(accountPreferences);
     }
 
+    public void removeAccount(AccountPreferences accountPreferences) {
+        accountPreferences.getAccounts().getAccountPreferences().remove(accountPreferences);
+        this.accountPreferences.remove(accountPreferences);
+        accountPreferences.setPreferences(null);
+        accountPreferences.setAccounts(null);
+    }
+
     public Set<AccountPreferences> getAccountPreferences() {
         return this.accountPreferences;
-    }
-
-    public void setAccountPreferences(Set<AccountPreferences> preferences) {
-        this.accountPreferences.retainAll(preferences);
-        this.accountPreferences.addAll(preferences);
-    }
-
-    public void addAccountPreferences(AccountPreferences accountPreferences) {
-        this.accountPreferences.add(accountPreferences);
     }
 
     public String getName() {

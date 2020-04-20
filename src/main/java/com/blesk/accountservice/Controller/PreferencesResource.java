@@ -2,6 +2,7 @@ package com.blesk.accountservice.Controller;
 
 import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Exception.AccountServiceException;
+import com.blesk.accountservice.Model.AccountPreferences;
 import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Service.Preferences.PreferencesServiceImpl;
 import com.blesk.accountservice.Value.Keys;
@@ -105,7 +106,16 @@ public class PreferencesResource {
         }
 
         preference.setName(preferences.getName());
-        preference.setAccountPreferences(preferences.getAccountPreferences());
+
+        for (AccountPreferences accountPreference : preference.getAccountPreferences()) {
+            for (AccountPreferences accountPreferencs : preferences.getAccountPreferences()) {
+                if (accountPreferencs.getDeleted()) {
+                    preference.removeAccount(accountPreference);
+                } else {
+                    accountPreference.setAccounts(accountPreferencs.getAccounts());
+                }
+            }
+        }
 
         if (!this.preferencesService.updatePreference(preference)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);

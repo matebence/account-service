@@ -1,12 +1,10 @@
 package com.blesk.accountservice.Service.Accounts;
 
 import com.blesk.accountservice.DAO.Accounts.AccountsDAOImpl;
-import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
 import com.blesk.accountservice.Exception.AccountServiceException;
-import com.blesk.accountservice.Model.AccountRoleItems.AccountRoles;
+import com.blesk.accountservice.Model.AccountRoles;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Activations;
-import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +20,11 @@ public class AccountsServiceImpl implements AccountsService {
 
     private AccountsDAOImpl accountDAO;
 
-    private RolesDAOImpl rolesDAO;
-
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountsServiceImpl(AccountsDAOImpl accountDAO, RolesDAOImpl rolesDAO, PasswordEncoder passwordEncoder) {
+    public AccountsServiceImpl(AccountsDAOImpl accountDAO, PasswordEncoder passwordEncoder) {
         this.accountDAO = accountDAO;
-        this.rolesDAO = rolesDAO;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -38,9 +33,11 @@ public class AccountsServiceImpl implements AccountsService {
     public Accounts createAccount(@Validated(Accounts.validationWithoutEncryption.class) Accounts accounts, String[] allowedRoles) {
         Set<AccountRoles> assignedRoles = new HashSet<>(accounts.getAccountRoles());
         for (AccountRoles accountRoles : assignedRoles) {
-            if (Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
+            if (!Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
                 accounts.getAccountRoles().remove(accountRoles);
-                accounts.addRole(new AccountRoles(this.rolesDAO.getItemByColumn("name", accountRoles.getRoles().getName(), false)));
+            } else {
+                accounts.getAccountRoles().remove(accountRoles);
+                accounts.addRole(accountRoles);
             }
         }
 
@@ -79,9 +76,9 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     public Accounts getAccount(Long accountId, boolean su) {
-        if(su){
+        if (su) {
             return this.accountDAO.get(Accounts.class, accountId);
-        } else{
+        } else {
             return this.accountDAO.get(accountId, false);
         }
     }
@@ -109,9 +106,9 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     public List<Accounts> getAllAccounts(int pageNumber, int pageSize, boolean su) {
-        if(su){
+        if (su) {
             return this.accountDAO.getAll(Accounts.class, pageNumber, pageSize);
-        } else{
+        } else {
             return this.accountDAO.getAll(pageNumber, pageSize, false);
         }
     }
@@ -119,9 +116,9 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria, boolean su) {
-        if(su){
+        if (su) {
             return this.accountDAO.searchBy(Accounts.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
-        } else{
+        } else {
             return this.accountDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)), false);
         }
     }

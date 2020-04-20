@@ -1,6 +1,5 @@
 package com.blesk.accountservice.Model;
 
-import com.blesk.accountservice.Model.RolePrivilegeItems.RolePrivileges;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -32,7 +31,7 @@ public class Privileges implements Serializable {
     @Column(name = "privilege_id")
     private Long privilegeId;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "rolePrivilegeIds.privileges")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "privileges")
     private Set<RolePrivileges> rolePrivileges = new HashSet<RolePrivileges>();
 
     @NotNull(message = Messages.PRIVILEGES_NULL)
@@ -52,12 +51,12 @@ public class Privileges implements Serializable {
     @Column(name = "deleted_at", updatable = false)
     private Timestamp deletedAt;
 
-    public Privileges() {
-    }
-
     public Privileges(String name, Boolean isDeleted) {
         this.name = name;
         this.isDeleted = isDeleted;
+    }
+
+    public Privileges() {
     }
 
     public Long getPrivilegeId() {
@@ -73,17 +72,15 @@ public class Privileges implements Serializable {
         this.rolePrivileges.add(rolePrivileges);
     }
 
+    public void removeRole(RolePrivileges rolePrivileges) {
+        rolePrivileges.getRoles().getRolePrivileges().remove(rolePrivileges);
+        this.rolePrivileges.remove(rolePrivileges);
+        rolePrivileges.setPrivileges(null);
+        rolePrivileges.setRoles(null);
+    }
+
     public Set<RolePrivileges> getRolePrivileges() {
         return this.rolePrivileges;
-    }
-
-    public void setRolePrivileges(Set<RolePrivileges> roles) {
-        this.rolePrivileges.retainAll(roles);
-        this.rolePrivileges.addAll(roles);
-    }
-
-    public void addRolePrivileges(RolePrivileges rolePrivileges) {
-        this.rolePrivileges.add(rolePrivileges);
     }
 
     public String getName() {
@@ -99,7 +96,7 @@ public class Privileges implements Serializable {
     }
 
     public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
+        this.isDeleted = deleted;
     }
 
     public Timestamp getCreatedAt() {

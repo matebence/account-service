@@ -16,7 +16,6 @@ import java.io.Serializable;
 @Entity(name = "Activations")
 @Table(name = "activations", uniqueConstraints = {@UniqueConstraint(columnNames = {"activation_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Activations.class)
-@SQLDelete(sql = "UPDATE accounts SET is_deleted = TRUE, deleted_at = NOW() WHERE account_id = ?")
 public class Activations implements Serializable {
 
     @Id

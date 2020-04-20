@@ -1,6 +1,6 @@
 package com.blesk.accountservice.Service.Roles;
 
-import com.blesk.accountservice.Model.RolePrivilegeItems.RolePrivileges;
+import com.blesk.accountservice.Model.RolePrivileges;
 import com.blesk.accountservice.Model.Roles;
 
 import java.util.HashMap;

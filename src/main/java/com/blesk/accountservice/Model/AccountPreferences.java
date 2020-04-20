@@ -1,15 +1,11 @@
-package com.blesk.accountservice.Model.AccountPreferenceItems;
+package com.blesk.accountservice.Model;
 
-import com.blesk.accountservice.Model.Accounts;
-import com.blesk.accountservice.Model.Preferences;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -18,9 +14,9 @@ import java.sql.Timestamp;
 @DynamicInsert
 @DynamicUpdate
 @Entity(name = "AccountPreferencesItems")
-@Table(name = "account_preference_items", uniqueConstraints = {@UniqueConstraint(name = "account_preference_id", columnNames = "account_preference_id"), @UniqueConstraint(name = "account_preference_account_id", columnNames = "account_id"), @UniqueConstraint(name = "account_preference_preference_id", columnNames = "preference_id")})
+@Table(name = "account_preference_items", uniqueConstraints = {@UniqueConstraint(name = "account_preference_id", columnNames = "account_preference_id")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = AccountPreferences.class)
-@JsonIgnoreProperties(value = {"accountPreferenceId", "accounts", "preferences"})
+@JsonIgnoreProperties(value = {"accountPreferenceId"})
 public class AccountPreferences implements Serializable {
 
     @Id
@@ -28,21 +24,21 @@ public class AccountPreferences implements Serializable {
     @Column(name = "account_preference_id")
     private Long accountPreferenceId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "account_id")
     private Accounts accounts;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "preference_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "preference_id")
     private Preferences preferences;
 
-    @Column(name = "is_set", nullable = true)
+    @Column(name = "is_set")
     private boolean isSet;
 
-    @Column(name = "content", nullable = true)
+    @Column(name = "content")
     private String content;
 
-    @Column(name = "value", nullable = true)
+    @Column(name = "value")
     private int value;
 
     @Column(name = "is_deleted", nullable = false)
@@ -57,7 +53,17 @@ public class AccountPreferences implements Serializable {
     @Column(name = "deleted_at", updatable = false)
     private Timestamp deletedAt;
 
-    public AccountPreferences() {
+    public AccountPreferences(Accounts accounts, Preferences preferences) {
+        this.accounts = accounts;
+        this.preferences = preferences;
+    }
+
+    public AccountPreferences(Accounts accounts) {
+        this.accounts = accounts;
+    }
+
+    public AccountPreferences(Preferences preferences) {
+        this.preferences = preferences;
     }
 
     public AccountPreferences(boolean isSet, String content, int value, Boolean isDeleted) {
@@ -67,16 +73,26 @@ public class AccountPreferences implements Serializable {
         this.isDeleted = isDeleted;
     }
 
-    @Transient
+    public AccountPreferences(boolean isSet, String content, int value, Boolean isDeleted, Accounts accounts, Preferences preferences) {
+        this.isSet = isSet;
+        this.content = content;
+        this.value = value;
+        this.isDeleted = isDeleted;
+        this.accounts = accounts;
+        this.preferences = preferences;
+    }
+
+    public AccountPreferences() {
+    }
+
     public Long getAccountPreferenceId() {
-        return accountPreferenceId;
+        return this.accountPreferenceId;
     }
 
     public void setAccountPreferenceId(Long accountPreferenceId) {
         this.accountPreferenceId = accountPreferenceId;
     }
 
-    @Transient
     public Accounts getAccounts() {
         return this.accounts;
     }
@@ -85,9 +101,8 @@ public class AccountPreferences implements Serializable {
         this.accounts = accounts;
     }
 
-    @Transient
     public Preferences getPreferences() {
-        return this.getPreferences();
+        return this.preferences;
     }
 
     public void setPreferences(Preferences preferences) {

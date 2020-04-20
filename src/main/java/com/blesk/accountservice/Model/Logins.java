@@ -17,7 +17,6 @@ import java.sql.Timestamp;
 @Entity(name = "Logins")
 @Table(name = "logins", uniqueConstraints = {@UniqueConstraint(columnNames = {"login_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Logins.class)
-@SQLDelete(sql = "UPDATE accounts SET is_deleted = TRUE, deleted_at = NOW() WHERE account_id = ?")
 public class Logins implements Serializable {
 
     @Id

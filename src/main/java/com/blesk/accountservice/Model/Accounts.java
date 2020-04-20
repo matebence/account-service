@@ -1,7 +1,5 @@
 package com.blesk.accountservice.Model;
 
-import com.blesk.accountservice.Model.AccountPreferenceItems.AccountPreferences;
-import com.blesk.accountservice.Model.AccountRoleItems.AccountRoles;
 import com.blesk.accountservice.Validator.Match.FieldMatch;
 import com.blesk.accountservice.Validator.Password.EncryptionAware;
 import com.blesk.accountservice.Validator.Password.Password;
@@ -25,7 +23,7 @@ import java.util.*;
 @Entity(name = "Accounts")
 @Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(name = "account_id", columnNames = "account_id"), @UniqueConstraint(name = "account_username", columnNames = "user_name"), @UniqueConstraint(name = "account_email", columnNames = "email")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Accounts.class)
-@JsonIgnoreProperties(value={ "accountPreferences"})
+@JsonIgnoreProperties(value = {"accountPreferences"})
 @SQLDelete(sql = "UPDATE accounts SET is_deleted = TRUE, deleted_at = NOW() WHERE account_id = ?")
 @FieldMatch(first = "password", second = "confirmPassword", message = Messages.ACCOUNTS_PASWORD_MATCH, groups = Accounts.validationWithEncryption.class)
 public class Accounts implements Serializable, EncryptionAware {
@@ -41,20 +39,20 @@ public class Accounts implements Serializable, EncryptionAware {
     @Column(name = "account_id")
     private Long accountId;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accounts")
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "accounts")
     private Logins login;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accounts")
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "accounts")
     private Passwords passwords;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accounts")
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "accounts")
     private Activations activations;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accountRoleIds.accounts")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "accounts")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<AccountRoles> accountRoles = new HashSet<AccountRoles>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "accountPreferenceIds.accounts")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "accounts")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<AccountPreferences> accountPreferences = new HashSet<AccountPreferences>();
 
@@ -95,9 +93,6 @@ public class Accounts implements Serializable, EncryptionAware {
     @Transient
     private HashMap<String, String> validations = new HashMap<>();
 
-    public Accounts() {
-    }
-
     public Accounts(String userName, String email, String password, String confirmPassword, Boolean isActivated, Boolean isDeleted, HashMap<String, String> validations) {
         this.userName = userName;
         this.email = email;
@@ -115,6 +110,9 @@ public class Accounts implements Serializable, EncryptionAware {
         this.confirmPassword = confirmPassword;
         this.isActivated = isActivated;
         this.isDeleted = isDeleted;
+    }
+
+    public Accounts() {
     }
 
     public Long getAccountId() {
@@ -156,39 +154,35 @@ public class Accounts implements Serializable, EncryptionAware {
     }
 
     public void addRole(AccountRoles accountRoles) {
-        accountRoles.setAccounts(this);
         this.accountRoles.add(accountRoles);
+        accountRoles.setAccounts(this);
+    }
+
+    public void removeRole(AccountRoles accountRoles) {
+        accountRoles.getRoles().getAccountRoles().remove(accountRoles);
+        this.accountRoles.remove(accountRoles);
+        accountRoles.setAccounts(null);
+        accountRoles.setRoles(null);
     }
 
     public Set<AccountRoles> getAccountRoles() {
         return this.accountRoles;
     }
 
-    public void setAccountRoles(Set<AccountRoles> roles) {
-        this.accountRoles.retainAll(roles);
-        this.accountRoles.addAll(roles);
-    }
-
-    public void addAccountRoles(AccountRoles accountRoles) {
-        this.accountRoles.add(accountRoles);
-    }
-
     public void addPreference(AccountPreferences accountPreferences) {
-        accountPreferences.setAccounts(this);
         this.accountPreferences.add(accountPreferences);
+        accountPreferences.setAccounts(this);
+    }
+
+    public void removePreference(AccountPreferences accountPreferences) {
+        accountPreferences.getPreferences().getAccountPreferences().remove(accountPreferences);
+        this.accountPreferences.remove(accountPreferences);
+        accountPreferences.setAccounts(null);
+        accountPreferences.setPreferences(null);
     }
 
     public Set<AccountPreferences> getAccountPreferences() {
         return this.accountPreferences;
-    }
-
-    public void setAccountPreferences(Set<AccountPreferences> preferences) {
-        this.accountPreferences.retainAll(preferences);
-        this.accountPreferences.addAll(preferences);
-    }
-
-    public void addAccountPreferences(AccountPreferences accountPreferences) {
-        this.accountPreferences.add(accountPreferences);
     }
 
     public String getUserName() {
@@ -220,7 +214,7 @@ public class Accounts implements Serializable, EncryptionAware {
     }
 
     public void setActivated(Boolean activated) {
-        isActivated = activated;
+        this.isActivated = activated;
     }
 
     public Boolean getDeleted() {
@@ -228,7 +222,7 @@ public class Accounts implements Serializable, EncryptionAware {
     }
 
     public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
+        this.isDeleted = deleted;
     }
 
     public Timestamp getCreatedAt() {
