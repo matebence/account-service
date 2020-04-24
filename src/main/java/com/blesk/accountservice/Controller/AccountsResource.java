@@ -127,7 +127,9 @@ public class AccountsResource {
 
         for (AccountRoles accountRole : account.getAccountRoles()) {
             for (AccountRoles accountRoles : accounts.getAccountRoles()) {
-                if (accountRoles.getDeleted()) {
+                if (accountRoles.getDeleted() == null) {
+                    account.addRole(accountRoles);
+                } else if (accountRoles.getDeleted()) {
                     account.removeRole(accountRole);
                 } else {
                     accountRole.setRoles(accountRoles.getRoles());

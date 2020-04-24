@@ -108,11 +108,13 @@ public class PreferencesResource {
         preference.setName(preferences.getName());
 
         for (AccountPreferences accountPreference : preference.getAccountPreferences()) {
-            for (AccountPreferences accountPreferencs : preferences.getAccountPreferences()) {
-                if (accountPreferencs.getDeleted()) {
+            for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
+                if (accountPreferences.getDeleted() == null) {
+                    preference.addAccount(accountPreferences);
+                } else if (accountPreferences.getDeleted()) {
                     preference.removeAccount(accountPreference);
                 } else {
-                    accountPreference.setAccounts(accountPreferencs.getAccounts());
+                    accountPreference.setAccounts(accountPreferences.getAccounts());
                 }
             }
         }

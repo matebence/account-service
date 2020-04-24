@@ -2,6 +2,7 @@ package com.blesk.accountservice.Controller;
 
 import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Exception.AccountServiceException;
+import com.blesk.accountservice.Model.RolePrivileges;
 import com.blesk.accountservice.Model.Roles;
 import com.blesk.accountservice.Service.Roles.RolesServiceImpl;
 import com.blesk.accountservice.Value.Keys;
@@ -51,7 +52,7 @@ public class RolesResource {
         }
 
         Roles role = this.rolesService.createRole(roles);
-        if (role == null){
+        if (role == null) {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             throw new AccountServiceException(Messages.CREATE_ROLE);
         }
@@ -105,7 +106,18 @@ public class RolesResource {
         }
 
         role.setName(roles.getName());
-        if(!this.rolesService.updateRole(role)){
+        for (RolePrivileges rolePrivilege : role.getRolePrivileges()) {
+            for (RolePrivileges rolePrivileges : roles.getRolePrivileges()) {
+                if (rolePrivileges.getDeleted() == null) {
+                    role.addPrivilege(rolePrivileges);
+                } else if (rolePrivileges.getDeleted()) {
+                    role.removePrivilege(rolePrivilege);
+                } else {
+                    rolePrivilege.setPrivileges(rolePrivileges.getPrivileges());
+                }
+            }
+        }
+        if (!this.rolesService.updateRole(role)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             throw new AccountServiceException(Messages.UPDATE_ROLE);
         }

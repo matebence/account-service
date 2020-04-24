@@ -2,6 +2,7 @@ package com.blesk.accountservice.Service.Preferences;
 
 import com.blesk.accountservice.DAO.Preferences.PreferencesDAOImpl;
 import com.blesk.accountservice.Exception.AccountServiceException;
+import com.blesk.accountservice.Model.AccountPreferences;
 import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
@@ -26,6 +27,11 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Override
     @Transactional
     public Preferences createPreference(Preferences preferences) {
+        for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
+            preferences.getAccountPreferences().remove(accountPreferences);
+            preferences.addAccount(accountPreferences);
+        }
+
         return this.preferencesDAO.save(preferences);
     }
 
