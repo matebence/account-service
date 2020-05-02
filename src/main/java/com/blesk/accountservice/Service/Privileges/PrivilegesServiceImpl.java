@@ -78,7 +78,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
 
     @Override
     @Transactional
-    public Map<String, Object> searchForPrivileges(HashMap<String, HashMap<String, String>> criteria) {
+    public Map<String, Object> searchForPrivilege(HashMap<String, HashMap<String, String>> criteria) {
         return this.privilegeDAO.searchBy(Privileges.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
     }
 }

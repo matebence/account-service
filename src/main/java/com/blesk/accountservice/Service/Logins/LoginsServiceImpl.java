@@ -72,7 +72,7 @@ public class LoginsServiceImpl implements LoginsService {
 
     @Override
     @Transactional
-    public Map<String, Object> searchForLogins(HashMap<String, HashMap<String, String>> criteria) {
+    public Map<String, Object> searchForLogin(HashMap<String, HashMap<String, String>> criteria) {
         if (criteria.get(Keys.PAGINATION) == null)
             throw new AccountServiceException(Messages.PAGINATION_ERROR);
 

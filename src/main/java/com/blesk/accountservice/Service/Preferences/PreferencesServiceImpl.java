@@ -92,7 +92,7 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
-    public Map<String, Object> searchForPreferences(HashMap<String, HashMap<String, String>> criteria, boolean su) {
+    public Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criteria, boolean su) {
         if (su) {
             return this.preferencesDAO.searchBy(Preferences.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
         } else {

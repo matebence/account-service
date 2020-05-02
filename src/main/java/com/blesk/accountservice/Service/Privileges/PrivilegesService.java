@@ -22,5 +22,5 @@ public interface PrivilegesService {
 
     List<Privileges> getAllPrivileges(int pageNumber, int pageSize);
 
-    Map<String, Object> searchForPrivileges(HashMap<String, HashMap<String, String>> criteria);
+    Map<String, Object> searchForPrivilege(HashMap<String, HashMap<String, String>> criteria);
 }

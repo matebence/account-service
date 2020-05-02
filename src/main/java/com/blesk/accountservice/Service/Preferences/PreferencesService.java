@@ -22,5 +22,5 @@ public interface PreferencesService {
 
     List<Preferences> getAllPreferences(int pageNumber, int pageSize, boolean su);
 
-    Map<String, Object> searchForPreferences(HashMap<String, HashMap<String, String>> criteria, boolean su);
+    Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criteria, boolean su);
 }
