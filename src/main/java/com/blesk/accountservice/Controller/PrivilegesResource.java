@@ -174,7 +174,7 @@ public class PrivilegesResource {
             throw new AccountServiceException(Messages.PAGINATION_ERROR);
         }
 
-        Map<String, Object> privileges = this.privilegesService.searchForPrivileges(search);
+        Map<String, Object> privileges = this.privilegesService.searchForPrivilege(search);
         if (privileges == null || privileges.isEmpty()) {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             throw new AccountServiceException(Messages.SEARCH_ERROR);

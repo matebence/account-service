@@ -188,7 +188,7 @@ public class PreferencesResource {
             throw new AccountServiceException(Messages.PAGINATION_ERROR);
         }
 
-        Map<String, Object> preferences = this.preferencesService.searchForPreferences(search, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
+        Map<String, Object> preferences = this.preferencesService.searchForPreference(search, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
         if (preferences == null || preferences.isEmpty()) {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             throw new AccountServiceException(Messages.SEARCH_ERROR);
