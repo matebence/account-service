@@ -47,14 +47,12 @@ public class PreferencesResource {
     public EntityModel<Preferences> createPreferences(@Valid @RequestBody Preferences preferences, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("CREATE_PREFERENCES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Preferences preference = this.preferencesService.createPreference(preferences);
         if (preference == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.CREATE_PREFERENCE);
+            throw new AccountServiceException(Messages.CREATE_PREFERENCE, HttpStatus.BAD_REQUEST);
         }
 
         EntityModel<Preferences> entityModel = new EntityModel<Preferences>(preference);
@@ -69,21 +67,19 @@ public class PreferencesResource {
     public ResponseEntity<Object> deletePreferences(@PathVariable long preferenceId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("DELETE_PREFERENCES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Boolean result;
         try {
             result = this.preferencesService.deletePreference(preferenceId, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
         } catch (AccountServiceException ex) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            ex.setHttpStatus(HttpStatus.BAD_REQUEST);
             throw ex;
         }
 
         if (!result) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.DELETE_PREFERENCE);
+            throw new AccountServiceException(Messages.DELETE_PREFERENCE, HttpStatus.BAD_REQUEST);
         }
 
         return ResponseEntity.noContent().build();
@@ -95,14 +91,12 @@ public class PreferencesResource {
     public ResponseEntity<Object> updatePreferences(@Valid @RequestBody Preferences preferences, @PathVariable long preferenceId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("UPDATE_PREFERENCES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Preferences preference = this.preferencesService.getPreference(preferenceId, false);
         if (preference == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.GET_PREFERENCE);
+            throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.BAD_REQUEST);
         }
 
         preference.setName(preferences.getName());
@@ -120,8 +114,7 @@ public class PreferencesResource {
         }
 
         if (!this.preferencesService.updatePreference(preference)) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.UPDATE_PREFERENCE);
+            throw new AccountServiceException(Messages.UPDATE_PREFERENCE, HttpStatus.BAD_REQUEST);
         }
 
         return ResponseEntity.noContent().build();
@@ -133,14 +126,12 @@ public class PreferencesResource {
     public EntityModel<Preferences> retrievePreferences(@PathVariable long preferenceId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("VIEW_PREFERENCES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Preferences preferences = this.preferencesService.getPreference(preferenceId, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
         if (preferences == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.GET_PREFERENCE);
+            throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.BAD_REQUEST);
         }
 
         EntityModel<Preferences> entityModel = new EntityModel<Preferences>(preferences);
@@ -156,14 +147,12 @@ public class PreferencesResource {
     public CollectionModel<List<Preferences>> retrieveAllPreferences(@PathVariable int pageNumber, @PathVariable int pageSize, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("VIEW_ALL_PREFERENCES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         List<Preferences> preferences = this.preferencesService.getAllPreferences(pageNumber, pageSize, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
         if (preferences.isEmpty()) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.GET_ALL_PREFERENCES);
+            throw new AccountServiceException(Messages.GET_ALL_PREFERENCES, HttpStatus.BAD_REQUEST);
         }
 
         CollectionModel<List<Preferences>> collectionModel = new CollectionModel(preferences);
@@ -179,19 +168,16 @@ public class PreferencesResource {
     public CollectionModel<List<Preferences>> searchForPreferences(@RequestBody HashMap<String, HashMap<String, String>> search, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("VIEW_ALL_PREFERENCES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         if (search.get(Keys.PAGINATION) == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.PAGINATION_ERROR);
+            throw new AccountServiceException(Messages.PAGINATION_ERROR, HttpStatus.BAD_REQUEST);
         }
 
         Map<String, Object> preferences = this.preferencesService.searchForPreference(search, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
         if (preferences == null || preferences.isEmpty()) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.SEARCH_ERROR);
+            throw new AccountServiceException(Messages.SEARCH_ERROR, HttpStatus.BAD_REQUEST);
         }
 
         CollectionModel<List<Preferences>> collectionModel = new CollectionModel((List<Preferences>) preferences.get("results"));

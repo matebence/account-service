@@ -46,14 +46,12 @@ public class PrivilegesResource {
     public EntityModel<Privileges> createPrivileges(@Valid @RequestBody Privileges privileges, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("CREATE_PRIVILEGES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Privileges privilege = this.privilegesService.createPrivilege(privileges);
         if (privilege == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.CREATE_PRIVILEGE);
+            throw new AccountServiceException(Messages.CREATE_PRIVILEGE, HttpStatus.BAD_REQUEST);
         }
 
         EntityModel<Privileges> entityModel = new EntityModel<Privileges>(privilege);
@@ -68,21 +66,19 @@ public class PrivilegesResource {
     public ResponseEntity<Object> deletePrivileges(@PathVariable long privilegeId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("DELETE_PRIVILEGES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Boolean result;
         try {
             result = this.privilegesService.deletePrivilege(privilegeId);
         } catch (AccountServiceException ex) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            ex.setHttpStatus(HttpStatus.BAD_REQUEST);
             throw ex;
         }
 
         if (!result) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.DELETE_PRIVILEGE);
+            throw new AccountServiceException(Messages.DELETE_PRIVILEGE, HttpStatus.BAD_REQUEST);
         }
 
         return ResponseEntity.noContent().build();
@@ -94,20 +90,17 @@ public class PrivilegesResource {
     public ResponseEntity<Object> updatePrivileges(@Valid @RequestBody Privileges privileges, @PathVariable long privilegeId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("UPDATE_PRIVILEGES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Privileges privilege = this.privilegesService.getPrivilege(privilegeId);
         if (privilege == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.GET_PRIVILEGE);
+            throw new AccountServiceException(Messages.GET_PRIVILEGE, HttpStatus.BAD_REQUEST);
         }
 
         privilege.setName(privileges.getName());
         if (!this.privilegesService.updatePrivilege(privilege)) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.UPDATE_PRIVILEGE);
+            throw new AccountServiceException(Messages.UPDATE_PRIVILEGE, HttpStatus.BAD_REQUEST);
         }
 
         return ResponseEntity.noContent().build();
@@ -119,14 +112,12 @@ public class PrivilegesResource {
     public EntityModel<Privileges> retrievePrivileges(@PathVariable long privilegeId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("VIEW_PRIVILEGES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Privileges privileges = this.privilegesService.getPrivilege(privilegeId);
         if (privileges == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.GET_PRIVILEGE);
+            throw new AccountServiceException(Messages.GET_PRIVILEGE, HttpStatus.BAD_REQUEST);
         }
 
         EntityModel<Privileges> entityModel = new EntityModel<Privileges>(privileges);
@@ -142,14 +133,12 @@ public class PrivilegesResource {
     public CollectionModel<List<Privileges>> retrieveAllPrivileges(@PathVariable int pageNumber, @PathVariable int pageSize, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("VIEW_ALL_PRIVILEGES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         List<Privileges> privileges = this.privilegesService.getAllPrivileges(pageNumber, pageSize);
         if (privileges.isEmpty()) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.GET_ALL_PRIVILEGES);
+            throw new AccountServiceException(Messages.GET_ALL_PRIVILEGES, HttpStatus.BAD_REQUEST);
         }
 
         CollectionModel<List<Privileges>> collectionModel = new CollectionModel(privileges);
@@ -165,19 +154,16 @@ public class PrivilegesResource {
     public CollectionModel<List<Privileges>> searchForPrivileges(@RequestBody HashMap<String, HashMap<String, String>> search, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("VIEW_ALL_PRIVILEGES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         if (search.get(Keys.PAGINATION) == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.PAGINATION_ERROR);
+            throw new AccountServiceException(Messages.PAGINATION_ERROR, HttpStatus.BAD_REQUEST);
         }
 
         Map<String, Object> privileges = this.privilegesService.searchForPrivilege(search);
         if (privileges == null || privileges.isEmpty()) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.SEARCH_ERROR);
+            throw new AccountServiceException(Messages.SEARCH_ERROR, HttpStatus.BAD_REQUEST);
         }
 
         CollectionModel<List<Privileges>> collectionModel = new CollectionModel((List<Privileges>) privileges.get("results"));

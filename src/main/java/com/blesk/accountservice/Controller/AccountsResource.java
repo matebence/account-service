@@ -57,15 +57,13 @@ public class AccountsResource {
     public EntityModel<Accounts> createAccounts(@Validated(Accounts.validationWithEncryption.class) @RequestBody Accounts accounts, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("CREATE_ACCOUNTS")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         accounts.setActivations(new Activations(UUID.randomUUID().toString()));
         Accounts account = this.accountsService.createAccount(accounts, new String[]{"ROLE_SYSTEM", "ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CLIENT", "ROLE_COURIER"});
         if (account == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.CREATE_ACCOUNT);
+            throw new AccountServiceException(Messages.CREATE_ACCOUNT, HttpStatus.BAD_REQUEST);
         }
 
         EntityModel<Accounts> entityModel = new EntityModel<Accounts>(account);
@@ -84,21 +82,19 @@ public class AccountsResource {
     public ResponseEntity<Object> deleteAccounts(@PathVariable long accountId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("DELETE_ACCOUNTS")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Boolean result;
         try {
             result = this.accountsService.deleteAccount(accountId, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
         } catch (AccountServiceException ex) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            ex.setHttpStatus(HttpStatus.BAD_REQUEST);
             throw ex;
         }
 
         if (!result) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.DELETE_ACCOUNT);
+            throw new AccountServiceException(Messages.DELETE_ACCOUNT, HttpStatus.BAD_REQUEST);
         }
 
         return ResponseEntity.noContent().build();
@@ -110,14 +106,12 @@ public class AccountsResource {
     public ResponseEntity<Object> updateAccounts(@Validated(Accounts.validationWithEncryption.class) @RequestBody Accounts accounts, @PathVariable long accountId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("UPDATE_ACCOUNTS")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Accounts account = this.accountsService.getAccount(accountId, false);
         if (account == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.GET_ACCOUNT);
+            throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.BAD_REQUEST);
         }
 
         account.setUserName(accounts.getUserName());
@@ -138,8 +132,7 @@ public class AccountsResource {
         }
 
         if (!this.accountsService.updateAccount(account, new String[]{"ROLE_SYSTEM", "ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CLIENT", "ROLE_COURIER"})) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.UPDATE_ACCOUNT);
+            throw new AccountServiceException(Messages.UPDATE_ACCOUNT, HttpStatus.BAD_REQUEST);
         }
 
         return ResponseEntity.noContent().build();
@@ -151,14 +144,12 @@ public class AccountsResource {
     public EntityModel<Accounts> retrieveAccounts(@PathVariable long accountId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("VIEW_ACCOUNTS")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Accounts accounts = this.accountsService.getAccount(accountId, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
         if (accounts == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.GET_ACCOUNT);
+            throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.BAD_REQUEST);
         }
 
         EntityModel<Accounts> entityModel = new EntityModel<Accounts>(accounts);
@@ -174,14 +165,12 @@ public class AccountsResource {
     public CollectionModel<List<Accounts>> retrieveAllAccounts(@PathVariable int pageNumber, @PathVariable int pageSize, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("VIEW_ALL_ACCOUNTS")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         List<Accounts> accounts = this.accountsService.getAllAccounts(pageNumber, pageSize, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
         if (accounts.isEmpty()) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS);
+            throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS, HttpStatus.BAD_REQUEST);
         }
 
         CollectionModel<List<Accounts>> collectionModel = new CollectionModel(accounts);
@@ -197,19 +186,16 @@ public class AccountsResource {
     public CollectionModel<List<Accounts>> searchForAccounts(@RequestBody HashMap<String, HashMap<String, String>> search, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("VIEW_ALL_ACCOUNTS")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         if (search.get(Keys.PAGINATION) == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.PAGINATION_ERROR);
+            throw new AccountServiceException(Messages.PAGINATION_ERROR, HttpStatus.BAD_REQUEST);
         }
 
         Map<String, Object> accounts = this.accountsService.searchForAccount(search, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
         if (accounts == null || accounts.isEmpty()) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.SEARCH_ERROR);
+            throw new AccountServiceException(Messages.SEARCH_ERROR, HttpStatus.BAD_REQUEST);
         }
 
         CollectionModel<List<Accounts>> collectionModel = new CollectionModel((List<Accounts>) accounts.get("results"));

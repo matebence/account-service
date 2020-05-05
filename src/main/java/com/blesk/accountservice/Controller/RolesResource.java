@@ -47,14 +47,12 @@ public class RolesResource {
     public EntityModel<Roles> createRoles(@Valid @RequestBody Roles roles, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("CREATE_ROLES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Roles role = this.rolesService.createRole(roles);
         if (role == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.CREATE_ROLE);
+            throw new AccountServiceException(Messages.CREATE_ROLE, HttpStatus.BAD_REQUEST);
         }
 
         EntityModel<Roles> entityModel = new EntityModel<Roles>(role);
@@ -69,21 +67,19 @@ public class RolesResource {
     public ResponseEntity<Object> deleteRoles(@PathVariable long roleId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("DELETE_ROLES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Boolean result;
         try {
             result = this.rolesService.deleteRole(roleId);
         } catch (AccountServiceException ex) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            ex.setHttpStatus(HttpStatus.BAD_REQUEST);
             throw ex;
         }
 
         if (!result) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.DELETE_ROLE);
+            throw new AccountServiceException(Messages.DELETE_ROLE, HttpStatus.BAD_REQUEST);
         }
 
         return ResponseEntity.noContent().build();
@@ -95,14 +91,12 @@ public class RolesResource {
     public ResponseEntity<Object> updateRoles(@Valid @RequestBody Roles roles, @PathVariable long roleId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("UPDATE_ROLES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Roles role = this.rolesService.getRole(roleId);
         if (role == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.GET_ROLE);
+            throw new AccountServiceException(Messages.GET_ROLE, HttpStatus.BAD_REQUEST);
         }
 
         role.setName(roles.getName());
@@ -118,8 +112,7 @@ public class RolesResource {
             }
         }
         if (!this.rolesService.updateRole(role)) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.UPDATE_ROLE);
+            throw new AccountServiceException(Messages.UPDATE_ROLE, HttpStatus.BAD_REQUEST);
         }
 
         return ResponseEntity.noContent().build();
@@ -131,14 +124,12 @@ public class RolesResource {
     public EntityModel<Roles> retrieveRoles(@PathVariable long roleId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("VIEW_ROLES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         Roles roles = this.rolesService.getRole(roleId);
         if (roles == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.GET_ROLE);
+            throw new AccountServiceException(Messages.GET_ROLE, HttpStatus.BAD_REQUEST);
         }
 
         EntityModel<Roles> entityModel = new EntityModel<Roles>(roles);
@@ -154,14 +145,12 @@ public class RolesResource {
     public CollectionModel<List<Roles>> retrieveAllRoles(@PathVariable int pageNumber, @PathVariable int pageSize, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("VIEW_ALL_ROLES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         List<Roles> roles = this.rolesService.getAllRoles(pageNumber, pageSize);
         if (roles.isEmpty()) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.GET_ALL_ROLES);
+            throw new AccountServiceException(Messages.GET_ALL_ROLES, HttpStatus.BAD_REQUEST);
         }
 
         CollectionModel<List<Roles>> collectionModel = new CollectionModel(roles);
@@ -177,19 +166,16 @@ public class RolesResource {
     public CollectionModel<List<Roles>> searchForRoles(@RequestBody HashMap<String, HashMap<String, String>> search, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("VIEW_ALL_ROLES")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new AccountServiceException(Messages.AUTH_EXCEPTION);
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         }
 
         if (search.get(Keys.PAGINATION) == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.PAGINATION_ERROR);
+            throw new AccountServiceException(Messages.PAGINATION_ERROR, HttpStatus.BAD_REQUEST);
         }
 
         Map<String, Object> roles = this.rolesService.searchForRole(search);
         if (roles == null || roles.isEmpty()) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            throw new AccountServiceException(Messages.SEARCH_ERROR);
+            throw new AccountServiceException(Messages.SEARCH_ERROR, HttpStatus.BAD_REQUEST);
         }
 
         CollectionModel<List<Roles>> collectionModel = new CollectionModel((List<Roles>) roles.get("results"));

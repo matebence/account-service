@@ -7,6 +7,7 @@ import com.blesk.accountservice.Model.Roles;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,9 +39,9 @@ public class RolesServiceImpl implements RolesService {
     public Boolean deleteRole(Long roleId) {
         Roles roles = this.roleDAO.get(Roles.class, roleId);
         if (roles == null)
-            throw new AccountServiceException(Messages.GET_ROLE);
+            throw new AccountServiceException(Messages.GET_ROLE, HttpStatus.NOT_FOUND);
         if (!this.roleDAO.delete("roles", "role_id", roleId))
-            throw new AccountServiceException(Messages.DELETE_ROLE);
+            throw new AccountServiceException(Messages.DELETE_ROLE, HttpStatus.NOT_FOUND);
         return true;
     }
 
@@ -61,7 +62,7 @@ public class RolesServiceImpl implements RolesService {
     public Roles findRoleByName(String name) {
         Roles role = this.roleDAO.getItemByColumn(Roles.class, "name", name);
         if (role == null)
-            throw new AccountServiceException(Messages.GET_ROLE);
+            throw new AccountServiceException(Messages.GET_ROLE, HttpStatus.NOT_FOUND);
         return role;
     }
 
@@ -70,7 +71,7 @@ public class RolesServiceImpl implements RolesService {
     public Set<RolePrivileges> findPrivilegesByRoleName(String name) {
         Set<RolePrivileges> rolePrivileges = this.roleDAO.getItemByColumn(Roles.class, "name", name).getRolePrivileges();
         if (rolePrivileges.isEmpty())
-            throw new AccountServiceException(String.format(Messages.GET_ROLE_PRIVILEGES, name));
+            throw new AccountServiceException(String.format(Messages.GET_ROLE_PRIVILEGES, name), HttpStatus.NOT_FOUND);
         return rolePrivileges;
     }
 

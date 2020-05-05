@@ -6,6 +6,7 @@ import com.blesk.accountservice.Model.Logins;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,7 @@ public class LoginsServiceImpl implements LoginsService {
     public Logins createLogin(Logins logins) {
         Logins login = this.loginsDAO.save(logins);
         if (login == null)
-            throw new AccountServiceException(Messages.CREATE_LOGIN);
+            throw new AccountServiceException(Messages.CREATE_LOGIN, HttpStatus.NOT_FOUND);
         return login;
     }
 
@@ -37,9 +38,9 @@ public class LoginsServiceImpl implements LoginsService {
     public Boolean deleteLogin(Long loginId) {
         Logins logins = this.loginsDAO.get(Logins.class, loginId);
         if (logins == null)
-            throw new AccountServiceException(Messages.GET_LOGIN);
+            throw new AccountServiceException(Messages.GET_LOGIN, HttpStatus.NOT_FOUND);
         if (!this.loginsDAO.delete("logins", "login_id", loginId))
-            throw new AccountServiceException(Messages.DELETE_LOGIN);
+            throw new AccountServiceException(Messages.DELETE_LOGIN, HttpStatus.NOT_FOUND);
         return true;
     }
 
@@ -47,7 +48,7 @@ public class LoginsServiceImpl implements LoginsService {
     @Transactional
     public Boolean updateLogin(Logins logins) {
         if (!this.loginsDAO.update(logins))
-            throw new AccountServiceException(Messages.UPDATE_LOGIN);
+            throw new AccountServiceException(Messages.UPDATE_LOGIN, HttpStatus.NOT_FOUND);
         return true;
     }
 
@@ -56,7 +57,7 @@ public class LoginsServiceImpl implements LoginsService {
     public Logins findLoginByIpAddress(String ipAddress) {
         Logins logins = this.loginsDAO.getItemByColumn(Logins.class, "ipAddress", ipAddress);
         if (logins == null)
-            throw new AccountServiceException(Messages.GET_LOGIN);
+            throw new AccountServiceException(Messages.GET_LOGIN, HttpStatus.NOT_FOUND);
 
         return logins;
     }
@@ -66,7 +67,7 @@ public class LoginsServiceImpl implements LoginsService {
     public List<Logins> getAllLogins(int pageNumber, int pageSize) {
         List<Logins> logins = this.loginsDAO.getAll(Logins.class, pageNumber, pageSize);
         if (logins.isEmpty())
-            throw new AccountServiceException(Messages.GET_ALL_LOGINS);
+            throw new AccountServiceException(Messages.GET_ALL_LOGINS, HttpStatus.NOT_FOUND);
         return logins;
     }
 
@@ -74,12 +75,12 @@ public class LoginsServiceImpl implements LoginsService {
     @Transactional
     public Map<String, Object> searchForLogin(HashMap<String, HashMap<String, String>> criteria) {
         if (criteria.get(Keys.PAGINATION) == null)
-            throw new AccountServiceException(Messages.PAGINATION_ERROR);
+            throw new AccountServiceException(Messages.PAGINATION_ERROR, HttpStatus.NOT_FOUND);
 
         Map<String, Object> logins = this.loginsDAO.searchBy(Logins.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
 
         if (logins == null || logins.isEmpty())
-            throw new AccountServiceException(Messages.SEARCH_ERROR);
+            throw new AccountServiceException(Messages.SEARCH_ERROR, HttpStatus.NOT_FOUND);
 
         return logins;
     }
@@ -89,7 +90,7 @@ public class LoginsServiceImpl implements LoginsService {
     public Logins getLogin(Long loginId) {
         Logins login = this.loginsDAO.get(Logins.class, loginId);
         if (login == null)
-            throw new AccountServiceException(Messages.GET_LOGIN);
+            throw new AccountServiceException(Messages.GET_LOGIN, HttpStatus.NOT_FOUND);
         return login;
     }
 }

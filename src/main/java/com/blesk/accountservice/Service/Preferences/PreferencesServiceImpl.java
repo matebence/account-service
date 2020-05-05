@@ -7,6 +7,7 @@ import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,14 +42,14 @@ public class PreferencesServiceImpl implements PreferencesService {
         if (su){
             Preferences preferences = this.preferencesDAO.get(Preferences.class, preferenceId);
             if (preferences == null)
-                throw new AccountServiceException(Messages.GET_PREFERENCE);
+                throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
             if (!this.preferencesDAO.delete("preferences", "preference_id", preferenceId))
-                throw new AccountServiceException(Messages.DELETE_PREFERENCE);
+                throw new AccountServiceException(Messages.DELETE_PREFERENCE, HttpStatus.NOT_FOUND);
             return true;
         } else {
             Preferences preferences = this.preferencesDAO.get(preferenceId, false);
             if (preferences == null)
-                throw new AccountServiceException(Messages.GET_PREFERENCE);
+                throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
             return this.preferencesDAO.softDelete(preferences);
         }
     }
@@ -74,7 +75,7 @@ public class PreferencesServiceImpl implements PreferencesService {
     public Preferences findPreferenceByName(String name, boolean isDeleted) {
         Preferences preferences = this.preferencesDAO.getItemByColumn("name", name, isDeleted);
         if (preferences == null)
-            throw new AccountServiceException(Messages.GET_PREFERENCE);
+            throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
         return preferences;
     }
 
