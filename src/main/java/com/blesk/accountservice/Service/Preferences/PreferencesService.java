@@ -10,9 +10,7 @@ public interface PreferencesService {
 
     Preferences createPreference(Preferences preferences);
 
-    Boolean softDeletePreference(Long preferenceId);
-
-    Boolean deletePreference(Long preferenceId);
+    Boolean deletePreference(Long preferenceId, boolean su);
 
     Boolean updatePreference(Preferences preferences);
 

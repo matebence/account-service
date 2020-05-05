@@ -75,7 +75,7 @@ public class RolesResource {
 
         Boolean result;
         try {
-            result = this.rolesService.softDeleteRole(roleId);
+            result = this.rolesService.deleteRole(roleId);
         } catch (AccountServiceException ex) {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             throw ex;

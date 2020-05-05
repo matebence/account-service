@@ -90,7 +90,7 @@ public class AccountsResource {
 
         Boolean result;
         try {
-            result = this.accountsService.softDeleteAccount(accountId);
+            result = this.accountsService.deleteAccount(accountId, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
         } catch (AccountServiceException ex) {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             throw ex;

@@ -31,15 +31,6 @@ public class PrivilegesServiceImpl implements PrivilegesService {
 
     @Override
     @Transactional
-    public Boolean softDeletePrivilege(Long privilegeId) {
-        Privileges privileges = this.privilegeDAO.get(privilegeId, false);
-        if (privileges == null)
-            throw new AccountServiceException(Messages.GET_PRIVILEGE);
-        return this.privilegeDAO.softDelete(privileges);
-    }
-
-    @Override
-    @Transactional
     public Boolean deletePrivilege(Long privilegeId) {
         Privileges privileges = this.privilegeDAO.get(Privileges.class, privilegeId);
         if (privileges == null)

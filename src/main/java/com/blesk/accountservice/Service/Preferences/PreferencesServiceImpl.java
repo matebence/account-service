@@ -37,22 +37,20 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
-    public Boolean softDeletePreference(Long preferenceId) {
-        Preferences preferences = this.preferencesDAO.get(preferenceId, false);
-        if (preferences == null)
-            throw new AccountServiceException(Messages.GET_PREFERENCE);
-        return this.preferencesDAO.softDelete(preferences);
-    }
-
-    @Override
-    @Transactional
-    public Boolean deletePreference(Long preferenceId) {
-        Preferences preferences = this.preferencesDAO.get(Preferences.class, preferenceId);
-        if (preferences == null)
-            throw new AccountServiceException(Messages.GET_PREFERENCE);
-        if (!this.preferencesDAO.delete("preferences", "preference_id", preferenceId))
-            throw new AccountServiceException(Messages.DELETE_PREFERENCE);
-        return true;
+    public Boolean deletePreference(Long preferenceId, boolean su) {
+        if (su){
+            Preferences preferences = this.preferencesDAO.get(Preferences.class, preferenceId);
+            if (preferences == null)
+                throw new AccountServiceException(Messages.GET_PREFERENCE);
+            if (!this.preferencesDAO.delete("preferences", "preference_id", preferenceId))
+                throw new AccountServiceException(Messages.DELETE_PREFERENCE);
+            return true;
+        } else {
+            Preferences preferences = this.preferencesDAO.get(preferenceId, false);
+            if (preferences == null)
+                throw new AccountServiceException(Messages.GET_PREFERENCE);
+            return this.preferencesDAO.softDelete(preferences);
+        }
     }
 
     @Override

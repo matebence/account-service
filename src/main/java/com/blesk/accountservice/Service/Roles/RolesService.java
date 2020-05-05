@@ -12,8 +12,6 @@ public interface RolesService {
 
     Roles createRole(Roles roles);
 
-    Boolean softDeleteRole(Long roleId);
-
     Boolean deleteRole(Long roleId);
 
     Boolean updateRole(Roles roles);

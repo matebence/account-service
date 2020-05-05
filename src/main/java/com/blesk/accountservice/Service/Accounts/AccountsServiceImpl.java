@@ -48,22 +48,20 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
-    public Boolean softDeleteAccount(Long accountId) {
-        Accounts accounts = this.accountDAO.get(accountId, false);
-        if (accounts == null)
-            throw new AccountServiceException(Messages.GET_ACCOUNT);
-        return this.accountDAO.softDelete(accounts);
-    }
-
-    @Override
-    @Transactional
-    public Boolean deleteAccount(Long accountId) {
-        Accounts accounts = this.accountDAO.get(Accounts.class, accountId);
-        if (accounts == null)
-            throw new AccountServiceException(Messages.GET_ACCOUNT);
-        if (!this.accountDAO.delete("accounts", "account_id", accountId))
-            throw new AccountServiceException(Messages.DELETE_ACCOUNT);
-        return true;
+    public Boolean deleteAccount(Long accountId, boolean su) {
+        if (su) {
+            Accounts accounts = this.accountDAO.get(Accounts.class, accountId);
+            if (accounts == null)
+                throw new AccountServiceException(Messages.GET_ACCOUNT);
+            if (!this.accountDAO.delete("accounts", "account_id", accountId))
+                throw new AccountServiceException(Messages.DELETE_ACCOUNT);
+            return true;
+        } else {
+            Accounts accounts = this.accountDAO.get(accountId, false);
+            if (accounts == null)
+                throw new AccountServiceException(Messages.GET_ACCOUNT);
+            return this.accountDAO.softDelete(accounts);
+        }
     }
 
     @Override

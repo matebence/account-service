@@ -75,7 +75,7 @@ public class PreferencesResource {
 
         Boolean result;
         try {
-            result = this.preferencesService.softDeletePreference(preferenceId);
+            result = this.preferencesService.deletePreference(preferenceId, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
         } catch (AccountServiceException ex) {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             throw ex;

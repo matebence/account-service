@@ -35,15 +35,6 @@ public class RolesServiceImpl implements RolesService {
 
     @Override
     @Transactional
-    public Boolean softDeleteRole(Long roleId) {
-        Roles roles = this.roleDAO.get(roleId, false);
-        if (roles == null)
-            throw new AccountServiceException(Messages.GET_ROLE);
-        return this.roleDAO.softDelete(roles);
-    }
-
-    @Override
-    @Transactional
     public Boolean deleteRole(Long roleId) {
         Roles roles = this.roleDAO.get(Roles.class, roleId);
         if (roles == null)

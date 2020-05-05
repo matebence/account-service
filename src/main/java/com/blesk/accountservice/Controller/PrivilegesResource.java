@@ -74,7 +74,7 @@ public class PrivilegesResource {
 
         Boolean result;
         try {
-            result = this.privilegesService.softDeletePrivilege(privilegeId);
+            result = this.privilegesService.deletePrivilege(privilegeId);
         } catch (AccountServiceException ex) {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             throw ex;
