@@ -39,9 +39,6 @@ public class Accounts implements Serializable, EncryptionAware {
     @Column(name = "account_id")
     private Long accountId;
 
-    @Version
-    private Long version;
-
     @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "accounts")
     private Logins login;
 

@@ -31,9 +31,6 @@ public class Privileges implements Serializable {
     @Column(name = "privilege_id")
     private Long privilegeId;
 
-    @Version
-    private Long version;
-
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "privileges")
     private Set<RolePrivileges> rolePrivileges = new HashSet<RolePrivileges>();
 
