@@ -149,7 +149,7 @@ public class RolesResource {
         }
 
         List<Roles> roles = this.rolesService.getAllRoles(pageNumber, pageSize);
-        if (roles.isEmpty()) {
+        if (roles == null || roles.isEmpty()) {
             throw new AccountServiceException(Messages.GET_ALL_ROLES, HttpStatus.BAD_REQUEST);
         }
 

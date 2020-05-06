@@ -125,6 +125,31 @@ public class DAOImpl<T> implements DAO<T> {
     }
 
     @Override
+    public List<T> getJoinValuesByColumn(Class c, List<Long> ids, String columName) {
+        Session session = this.entityManager.unwrap(Session.class);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(c);
+        Root<T> root = criteriaQuery.from(c);
+
+        List<Predicate> predicates = new ArrayList<Predicate>();
+        CriteriaQuery<T> select = criteriaQuery.select(root);
+
+        if (ids != null) {
+            for (Long id : ids) {
+                predicates.add(criteriaBuilder.equal(root.get(columName), id));
+            }
+            select.where(criteriaBuilder.or(predicates.toArray(new Predicate[]{})));
+        }
+        try {
+            return session.createQuery(select).getResultList();
+        } catch (Exception ex) {
+            session.clear();
+            session.close();
+            return null;
+        }
+    }
+
+    @Override
     public Map<String, Object> searchBy(Class c, HashMap<String, HashMap<String, String>> criterias, int pageNumber) {
         final int PAGE_SIZE = 10;
         Session session = this.entityManager.unwrap(Session.class);

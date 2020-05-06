@@ -151,7 +151,7 @@ public class PreferencesResource {
         }
 
         List<Preferences> preferences = this.preferencesService.getAllPreferences(pageNumber, pageSize, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
-        if (preferences.isEmpty()) {
+        if (preferences == null || preferences.isEmpty()) {
             throw new AccountServiceException(Messages.GET_ALL_PREFERENCES, HttpStatus.BAD_REQUEST);
         }
 

@@ -137,7 +137,7 @@ public class PrivilegesResource {
         }
 
         List<Privileges> privileges = this.privilegesService.getAllPrivileges(pageNumber, pageSize);
-        if (privileges.isEmpty()) {
+        if (privileges == null || privileges.isEmpty()) {
             throw new AccountServiceException(Messages.GET_ALL_PRIVILEGES, HttpStatus.BAD_REQUEST);
         }
 

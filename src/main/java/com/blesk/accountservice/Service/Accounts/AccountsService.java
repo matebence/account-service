@@ -22,5 +22,7 @@ public interface AccountsService {
 
     List<Accounts> getAllAccounts(int pageNumber, int pageSize, boolean su);
 
+    List<Accounts> getAccountsForJoin(List<Long> ids, String columName);
+
     Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria, boolean su);
 }

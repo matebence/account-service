@@ -169,7 +169,7 @@ public class AccountsResource {
         }
 
         List<Accounts> accounts = this.accountsService.getAllAccounts(pageNumber, pageSize, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
-        if (accounts.isEmpty()) {
+        if (accounts == null || accounts.isEmpty()) {
             throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS, HttpStatus.BAD_REQUEST);
         }
 
@@ -209,5 +209,22 @@ public class AccountsResource {
         }
 
         return collectionModel;
+    }
+
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
+    @PostMapping("/accounts/join/{columName}")
+    @ResponseStatus(HttpStatus.OK)
+    public CollectionModel<List<Accounts>> joinAccounts(@PathVariable String columName, @RequestBody List<Long> ids, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
+        if (!jwtMapper.getGrantedPrivileges().contains("VIEW_ALL_ACCOUNTS")) {
+            throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
+        }
+
+        List<Accounts> accounts = this.accountsService.getAccountsForJoin(ids, columName);
+        if (accounts == null || accounts.isEmpty()) {
+            throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS, HttpStatus.BAD_REQUEST);
+        }
+
+        return new CollectionModel(accounts);
     }
 }

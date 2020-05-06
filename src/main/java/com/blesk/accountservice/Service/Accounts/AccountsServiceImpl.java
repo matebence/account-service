@@ -114,6 +114,15 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
+    public List<Accounts> getAccountsForJoin(List<Long> ids, String columName) {
+        List<Accounts> accounts =  this.accountDAO.getJoinValuesByColumn(Accounts.class, ids, columName);
+        if (accounts == null)
+            throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS, HttpStatus.NOT_FOUND);
+        return accounts;
+    }
+
+    @Override
+    @Transactional
     public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria, boolean su) {
         if (su) {
             return this.accountDAO.searchBy(Accounts.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
