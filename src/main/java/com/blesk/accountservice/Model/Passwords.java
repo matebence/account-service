@@ -29,9 +29,6 @@ public class Passwords implements Serializable {
     @Column(name = "password_id")
     private Long passwordTokenId;
 
-    @Version
-    private Long version;
-
     @OneToOne
     @JoinColumn(name = "account_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

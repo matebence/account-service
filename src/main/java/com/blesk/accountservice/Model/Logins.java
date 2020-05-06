@@ -24,9 +24,6 @@ public class Logins implements Serializable {
     @Column(name = "login_id")
     private Long loginId;
 
-    @Version
-    private Long version;
-
     @OneToOne
     @JoinColumn(name = "account_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
