@@ -98,7 +98,7 @@ public class DAOImpl<T> implements DAO<T> {
 
             try {
                 return typedQuery.getResultList();
-            } catch (NoResultException ex) {
+            } catch (Exception ex) {
                 session.clear();
                 session.close();
                 return null;
@@ -117,7 +117,7 @@ public class DAOImpl<T> implements DAO<T> {
 
         try {
             return session.createQuery(criteriaQuery.where(criteriaBuilder.equal(root.get(column), value))).getSingleResult();
-        } catch (NoResultException ex) {
+        } catch (Exception ex) {
             session.clear();
             session.close();
             return null;
@@ -142,7 +142,7 @@ public class DAOImpl<T> implements DAO<T> {
         }
         try {
             return session.createQuery(select).getResultList();
-        } catch (NoResultException ex) {
+        } catch (Exception ex) {
             session.clear();
             session.close();
             return null;
@@ -216,7 +216,7 @@ public class DAOImpl<T> implements DAO<T> {
             HashMap<String, Object> map = new HashMap<>();
             map.put("results", typedQuery.getResultList());
             return map;
-        } catch (NoResultException ex) {
+        } catch (Exception ex) {
             session.clear();
             session.close();
             return null;
