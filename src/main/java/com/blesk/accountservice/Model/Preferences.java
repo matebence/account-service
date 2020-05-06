@@ -30,6 +30,9 @@ public class Preferences implements Serializable {
     @Column(name = "preference_id")
     private Long preferenceId;
 
+    @Version
+    private Long version;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "preferences")
     private Set<AccountPreferences> accountPreferences = new HashSet<AccountPreferences>();
 

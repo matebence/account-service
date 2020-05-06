@@ -23,6 +23,9 @@ public class Activations implements Serializable {
     @Column(name = "activation_id")
     private Long accountActivationId;
 
+    @Version
+    private Long version;
+
     @OneToOne
     @JoinColumn(name = "account_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

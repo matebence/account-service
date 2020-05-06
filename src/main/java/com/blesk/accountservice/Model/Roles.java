@@ -31,6 +31,9 @@ public class Roles implements Serializable {
     @Column(name = "role_id")
     private Long roleId;
 
+    @Version
+    private Long version;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "roles")
     private Set<AccountRoles> accountRoles = new HashSet<AccountRoles>();
 
