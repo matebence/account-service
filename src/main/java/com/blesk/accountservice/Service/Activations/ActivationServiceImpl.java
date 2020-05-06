@@ -6,10 +6,12 @@ import com.blesk.accountservice.Model.Activations;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.LockModeType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,7 @@ public class ActivationServiceImpl implements ActivationService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Activations createActivationToken(Activations activations) {
         Activations activation = this.activationsDAO.save(activations);
         if (activation == null)
@@ -35,6 +38,7 @@ public class ActivationServiceImpl implements ActivationService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Boolean deleteActivationToken(Long activationTokenId) {
         if (!this.activationsDAO.delete("activations", "activation_id", activationTokenId))
             throw new AccountServiceException(Messages.DELETE_ACTIVATION_TOKEN, HttpStatus.NOT_FOUND);
@@ -43,6 +47,7 @@ public class ActivationServiceImpl implements ActivationService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Boolean updateActivationToken(Activations activations) {
         if (!this.activationsDAO.update(activations))
             throw new AccountServiceException(Messages.UPDATE_ACTIVATION_TOKEN, HttpStatus.NOT_FOUND);
@@ -51,6 +56,7 @@ public class ActivationServiceImpl implements ActivationService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Activations getActivationToken(Long activationTokenId) {
         Activations activations = this.activationsDAO.get(Activations.class, activationTokenId);
         if (activations == null)
@@ -60,6 +66,7 @@ public class ActivationServiceImpl implements ActivationService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Activations findActivationToken(String token) {
         Activations activations = this.activationsDAO.getItemByColumn(Activations.class, "token", token);
         if (activations == null)
@@ -70,6 +77,7 @@ public class ActivationServiceImpl implements ActivationService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public List<Activations> getAllActivationTokens(int pageNumber, int pageSize) {
         List<Activations> activations = this.activationsDAO.getAll(Activations.class, pageNumber, pageSize);
         if (activations.isEmpty())
@@ -79,6 +87,7 @@ public class ActivationServiceImpl implements ActivationService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForActivationToken(HashMap<String, HashMap<String, String>> criteria) {
         if (criteria.get(Keys.PAGINATION) == null)
             throw new AccountServiceException(Messages.PAGINATION_ERROR, HttpStatus.NOT_FOUND);
@@ -93,6 +102,7 @@ public class ActivationServiceImpl implements ActivationService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Boolean validateActivationToken(long accountId, String token) {
         Activations activations = this.activationsDAO.getItemByColumn(Activations.class, "token", token);
         if (activations == null)

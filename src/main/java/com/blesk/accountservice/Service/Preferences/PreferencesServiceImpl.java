@@ -7,10 +7,12 @@ import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.LockModeType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Preferences createPreference(Preferences preferences) {
         for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
             preferences.getAccountPreferences().remove(accountPreferences);
@@ -38,6 +41,7 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Boolean deletePreference(Long preferenceId, boolean su) {
         if (su){
             Preferences preferences = this.preferencesDAO.get(Preferences.class, preferenceId);
@@ -56,12 +60,14 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Boolean updatePreference(Preferences preferences) {
         return this.preferencesDAO.update(preferences);
     }
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Preferences getPreference(Long preferenceId, boolean su) {
         if (su) {
             return this.preferencesDAO.get(Preferences.class, preferenceId);
@@ -72,6 +78,7 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Preferences findPreferenceByName(String name, boolean isDeleted) {
         Preferences preferences = this.preferencesDAO.getItemByColumn("name", name, isDeleted);
         if (preferences == null)
@@ -81,6 +88,7 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public List<Preferences> getAllPreferences(int pageNumber, int pageSize, boolean su) {
         if (su) {
             return this.preferencesDAO.getAll(Preferences.class, pageNumber, pageSize);
@@ -91,6 +99,7 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criteria, boolean su) {
         if (su) {
             return this.preferencesDAO.searchBy(Preferences.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));

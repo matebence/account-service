@@ -7,10 +7,12 @@ import com.blesk.accountservice.Model.Roles;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.LockModeType;
 import java.util.*;
 
 @Service
@@ -25,6 +27,7 @@ public class RolesServiceImpl implements RolesService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Roles createRole(Roles roles) {
         for (RolePrivileges privileges : roles.getRolePrivileges()) {
             roles.getRolePrivileges().remove(privileges);
@@ -36,6 +39,7 @@ public class RolesServiceImpl implements RolesService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Boolean deleteRole(Long roleId) {
         Roles roles = this.roleDAO.get(Roles.class, roleId);
         if (roles == null)
@@ -47,18 +51,21 @@ public class RolesServiceImpl implements RolesService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Boolean updateRole(Roles roles) {
         return this.roleDAO.update(roles);
     }
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Roles getRole(Long roleId) {
         return this.roleDAO.get(Roles.class, roleId);
     }
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Roles findRoleByName(String name) {
         Roles role = this.roleDAO.getItemByColumn(Roles.class, "name", name);
         if (role == null)
@@ -68,6 +75,7 @@ public class RolesServiceImpl implements RolesService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Set<RolePrivileges> findPrivilegesByRoleName(String name) {
         Set<RolePrivileges> rolePrivileges = this.roleDAO.getItemByColumn(Roles.class, "name", name).getRolePrivileges();
         if (rolePrivileges.isEmpty())
@@ -77,12 +85,14 @@ public class RolesServiceImpl implements RolesService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public List<Roles> getAllRoles(int pageNumber, int pageSize) {
         return this.roleDAO.getAll(Roles.class, pageNumber, pageSize);
     }
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criteria) {
         return this.roleDAO.searchBy(Roles.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
     }

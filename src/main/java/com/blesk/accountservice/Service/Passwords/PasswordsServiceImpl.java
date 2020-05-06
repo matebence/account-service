@@ -6,10 +6,12 @@ import com.blesk.accountservice.Model.Passwords;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.LockModeType;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +29,7 @@ public class PasswordsServiceImpl implements PasswordsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Passwords createPasswordToken(Passwords passwords) {
         Passwords password = this.passwordsDAO.save(passwords);
         if (password == null)
@@ -36,6 +39,7 @@ public class PasswordsServiceImpl implements PasswordsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Boolean deletePasswordToken(Long passwordTokenId) {
         Passwords passwords = this.passwordsDAO.get(Passwords.class, passwordTokenId);
         if (passwords == null)
@@ -47,6 +51,7 @@ public class PasswordsServiceImpl implements PasswordsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Boolean updatePasswordToken(Passwords passwords) {
         if (!this.passwordsDAO.update(passwords))
             throw new AccountServiceException(Messages.UPDATE_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
@@ -55,6 +60,7 @@ public class PasswordsServiceImpl implements PasswordsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Passwords getPasswordToken(Long passwordTokenId) {
         Passwords passwords = this.passwordsDAO.get(Passwords.class, passwordTokenId);
         if (passwords == null)
@@ -64,6 +70,7 @@ public class PasswordsServiceImpl implements PasswordsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Passwords findPasswordToken(String token) {
         Passwords passwords = this.passwordsDAO.getItemByColumn(Passwords.class, "token", token);
         if (passwords == null)
@@ -74,6 +81,7 @@ public class PasswordsServiceImpl implements PasswordsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public List<Passwords> getAllPasswordTokens(int pageNumber, int pageSize) {
         List<Passwords> passwords = this.passwordsDAO.getAll(Passwords.class, pageNumber, pageSize);
         if (passwords.isEmpty())
@@ -83,6 +91,7 @@ public class PasswordsServiceImpl implements PasswordsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForPasswordToken(HashMap<String, HashMap<String, String>> criteria) {
         if (criteria.get(Keys.PAGINATION) == null)
             throw new AccountServiceException(Messages.PAGINATION_ERROR, HttpStatus.NOT_FOUND);
@@ -97,6 +106,7 @@ public class PasswordsServiceImpl implements PasswordsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Boolean validatePasswordToken(long accountId, String token) {
         Passwords passwords = this.passwordsDAO.getItemByColumn(Passwords.class, "token", token);
         if (passwords == null)

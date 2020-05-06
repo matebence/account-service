@@ -8,12 +8,14 @@ import com.blesk.accountservice.Model.Activations;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import javax.persistence.LockModeType;
 import java.util.*;
 
 @Service
@@ -31,6 +33,7 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Accounts createAccount(@Validated(Accounts.validationWithoutEncryption.class) Accounts accounts, String[] allowedRoles) {
         Set<AccountRoles> assignedRoles = new HashSet<>(accounts.getAccountRoles());
         for (AccountRoles accountRoles : assignedRoles) {
@@ -49,6 +52,7 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Boolean deleteAccount(Long accountId, boolean su) {
         if (su) {
             Accounts accounts = this.accountDAO.get(Accounts.class, accountId);
@@ -67,6 +71,7 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.WRITE)
     public Boolean updateAccount(Accounts accounts, String[] allowedRoles) {
         accounts.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
         return this.accountDAO.update(accounts);
@@ -74,6 +79,7 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Accounts getAccount(Long accountId, boolean su) {
         if (su) {
             return this.accountDAO.get(Accounts.class, accountId);
@@ -84,6 +90,7 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Accounts findAccountByEmail(String email, boolean isDeleted) {
         Accounts accounts = this.accountDAO.getItemByColumn("email", email, isDeleted);
         if (accounts == null)
@@ -94,6 +101,7 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Accounts findAccountByUsername(String userName, boolean isDeleted) {
         Accounts accounts = this.accountDAO.getItemByColumn("userName", userName, isDeleted);
         if (accounts == null)
@@ -104,6 +112,7 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public List<Accounts> getAllAccounts(int pageNumber, int pageSize, boolean su) {
         if (su) {
             return this.accountDAO.getAll(Accounts.class, pageNumber, pageSize);
@@ -114,6 +123,7 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public List<Accounts> getAccountsForJoin(List<Long> ids, String columName) {
         List<Accounts> accounts =  this.accountDAO.getJoinValuesByColumn(Accounts.class, ids, columName);
         if (accounts == null)
@@ -123,6 +133,7 @@ public class AccountsServiceImpl implements AccountsService {
 
     @Override
     @Transactional
+    @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria, boolean su) {
         if (su) {
             return this.accountDAO.searchBy(Accounts.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
