@@ -2,6 +2,7 @@ package com.blesk.accountservice.Model;
 
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.*;
 
@@ -30,6 +31,7 @@ public class Passwords implements Serializable {
     private Long passwordTokenId;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "account_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Accounts accounts;
