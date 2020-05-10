@@ -5,5 +5,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PasswordsPaginSortingRepository extends PagingAndSortingRepository<Passwords, Long> {
+public interface PasswordsPagingSortingRepository extends PagingAndSortingRepository<Passwords, Long> {
 }
