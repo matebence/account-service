@@ -36,6 +36,8 @@ VALUES ('ROLE_COURIER',  CURRENT_TIMESTAMP, FALSE);
 
 INSERT INTO privileges (name, created_at ,is_deleted)
 VALUES ('VIEW_ALL_ACCOUNTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name, created_at ,is_deleted)
+VALUES ('JOIN_ACCOUNTS',  CURRENT_TIMESTAMP, FALSE);
 INSERT INTO privileges (name, created_at, is_deleted)
 VALUES ('VIEW_ACCOUNTS',  CURRENT_TIMESTAMP, FALSE);
 INSERT INTO privileges (name,  created_at, is_deleted)

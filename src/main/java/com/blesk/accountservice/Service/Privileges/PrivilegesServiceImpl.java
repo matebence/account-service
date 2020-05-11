@@ -38,10 +38,8 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Lock(value = LockModeType.WRITE)
     public Boolean deletePrivilege(Long privilegeId) {
         Privileges privileges = this.privilegeDAO.get(Privileges.class, privilegeId);
-        if (privileges == null)
-            throw new AccountServiceException(Messages.GET_PRIVILEGE, HttpStatus.NOT_FOUND);
-        if (!this.privilegeDAO.delete("privileges", "privilege_id", privilegeId))
-            throw new AccountServiceException(Messages.DELETE_PRIVILEGE, HttpStatus.NOT_FOUND);
+        if (privileges == null) throw new AccountServiceException(Messages.GET_PRIVILEGE, HttpStatus.NOT_FOUND);
+        if (!this.privilegeDAO.delete("privileges", "privilege_id", privilegeId)) throw new AccountServiceException(Messages.DELETE_PRIVILEGE, HttpStatus.NOT_FOUND);
         return true;
     }
 
@@ -63,8 +61,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Lock(value = LockModeType.READ)
     public Privileges findPrivilegeByName(String name) {
         Privileges privilege = this.privilegeDAO.getItemByColumn(Privileges.class, "name", name);
-        if (privilege == null)
-            throw new AccountServiceException(Messages.GET_PRIVILEGE, HttpStatus.NOT_FOUND);
+        if (privilege == null) throw new AccountServiceException(Messages.GET_PRIVILEGE, HttpStatus.NOT_FOUND);
         return privilege;
     }
 

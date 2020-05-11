@@ -32,8 +32,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Lock(value = LockModeType.WRITE)
     public Passwords createPasswordToken(Passwords passwords) {
         Passwords password = this.passwordsDAO.save(passwords);
-        if (password == null)
-            throw new AccountServiceException(Messages.CREATE_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
+        if (password == null) throw new AccountServiceException(Messages.CREATE_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
         return password;
     }
 
@@ -42,10 +41,8 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Lock(value = LockModeType.WRITE)
     public Boolean deletePasswordToken(Long passwordTokenId) {
         Passwords passwords = this.passwordsDAO.get(Passwords.class, passwordTokenId);
-        if (passwords == null)
-            throw new AccountServiceException(Messages.GET_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
-        if (!this.passwordsDAO.delete("passwords", "password_id", passwordTokenId))
-            throw new AccountServiceException(Messages.DELETE_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
+        if (passwords == null) throw new AccountServiceException(Messages.GET_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
+        if (!this.passwordsDAO.delete("passwords", "password_id", passwordTokenId)) throw new AccountServiceException(Messages.DELETE_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
         return true;
     }
 
@@ -53,8 +50,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean updatePasswordToken(Passwords passwords) {
-        if (!this.passwordsDAO.update(passwords))
-            throw new AccountServiceException(Messages.UPDATE_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
+        if (!this.passwordsDAO.update(passwords)) throw new AccountServiceException(Messages.UPDATE_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
         return true;
     }
 
@@ -63,8 +59,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Lock(value = LockModeType.READ)
     public Passwords getPasswordToken(Long passwordTokenId) {
         Passwords passwords = this.passwordsDAO.get(Passwords.class, passwordTokenId);
-        if (passwords == null)
-            throw new AccountServiceException(Messages.GET_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
+        if (passwords == null) throw new AccountServiceException(Messages.GET_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
         return passwords;
     }
 
@@ -73,9 +68,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Lock(value = LockModeType.READ)
     public Passwords findPasswordToken(String token) {
         Passwords passwords = this.passwordsDAO.getItemByColumn(Passwords.class, "token", token);
-        if (passwords == null)
-            throw new AccountServiceException(Messages.GET_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
-
+        if (passwords == null) throw new AccountServiceException(Messages.GET_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
         return passwords;
     }
 
@@ -84,8 +77,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Lock(value = LockModeType.READ)
     public List<Passwords> getAllPasswordTokens(int pageNumber, int pageSize) {
         List<Passwords> passwords = this.passwordsDAO.getAll(Passwords.class, pageNumber, pageSize);
-        if (passwords.isEmpty())
-            throw new AccountServiceException(Messages.GET_ALL_PASSWORD_TOKENS, HttpStatus.NOT_FOUND);
+        if (passwords.isEmpty()) throw new AccountServiceException(Messages.GET_ALL_PASSWORD_TOKENS, HttpStatus.NOT_FOUND);
         return passwords;
     }
 
@@ -93,14 +85,9 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Transactional
     @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForPasswordToken(HashMap<String, HashMap<String, String>> criteria) {
-        if (criteria.get(Keys.PAGINATION) == null)
-            throw new AccountServiceException(Messages.PAGINATION_ERROR, HttpStatus.NOT_FOUND);
-
+        if (criteria.get(Keys.PAGINATION) == null) throw new AccountServiceException(Messages.PAGINATION_ERROR, HttpStatus.NOT_FOUND);
         Map<String, Object> passwords = this.passwordsDAO.searchBy(Passwords.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
-
-        if (passwords == null || passwords.isEmpty())
-            throw new AccountServiceException(Messages.SEARCH_ERROR, HttpStatus.NOT_FOUND);
-
+        if (passwords == null || passwords.isEmpty()) throw new AccountServiceException(Messages.SEARCH_ERROR, HttpStatus.NOT_FOUND);
         return passwords;
     }
 
@@ -109,12 +96,8 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Lock(value = LockModeType.READ)
     public Boolean validatePasswordToken(long accountId, String token) {
         Passwords passwords = this.passwordsDAO.getItemByColumn(Passwords.class, "token", token);
-        if (passwords == null)
-            throw new AccountServiceException(Messages.VALIDATE_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
-
-        if (passwords.getAccounts().getAccountId() != accountId)
-            return false;
-
+        if (passwords == null) throw new AccountServiceException(Messages.VALIDATE_PASSWORD_TOKEN, HttpStatus.NOT_FOUND);
+        if (passwords.getAccounts().getAccountId() != accountId) return false;
         Calendar cal = Calendar.getInstance();
         return (passwords.getExpiryDate().getTime() - cal.getTime().getTime()) > 0;
     }

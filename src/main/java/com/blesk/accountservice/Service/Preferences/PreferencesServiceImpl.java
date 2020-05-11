@@ -45,15 +45,12 @@ public class PreferencesServiceImpl implements PreferencesService {
     public Boolean deletePreference(Long preferenceId, boolean su) {
         if (su){
             Preferences preferences = this.preferencesDAO.get(Preferences.class, preferenceId);
-            if (preferences == null)
-                throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
-            if (!this.preferencesDAO.delete("preferences", "preference_id", preferenceId))
-                throw new AccountServiceException(Messages.DELETE_PREFERENCE, HttpStatus.NOT_FOUND);
+            if (preferences == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
+            if (!this.preferencesDAO.delete("preferences", "preference_id", preferenceId)) throw new AccountServiceException(Messages.DELETE_PREFERENCE, HttpStatus.NOT_FOUND);
             return true;
         } else {
             Preferences preferences = this.preferencesDAO.get(preferenceId, false);
-            if (preferences == null)
-                throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
+            if (preferences == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
             return this.preferencesDAO.softDelete(preferences);
         }
     }
@@ -81,8 +78,7 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Lock(value = LockModeType.READ)
     public Preferences findPreferenceByName(String name, boolean isDeleted) {
         Preferences preferences = this.preferencesDAO.getItemByColumn("name", name, isDeleted);
-        if (preferences == null)
-            throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
+        if (preferences == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
         return preferences;
     }
 

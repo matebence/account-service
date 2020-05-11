@@ -24,12 +24,6 @@ import java.util.*;
 @ControllerAdvice
 public class AccountServiceHandler {
 
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public final ResponseEntity<Response> handleTypeMismatchException() {
-        Response errorObj = new Response(new Timestamp(System.currentTimeMillis()).toString(), Messages.TYPE_MISMATCH_EXCEPTION, true);
-        return new ResponseEntity<>(errorObj, new HttpHeaders(), HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public final ResponseEntity<Object> handleMethodArgumentException(MethodArgumentNotValidException ex) {
         Map<String, Object> errorObj = new LinkedHashMap<>();
@@ -41,7 +35,6 @@ public class AccountServiceHandler {
         errorObj.put("timestamp", new Date());
         errorObj.put("validations", validations);
         errorObj.put("error", true);
-
         return new ResponseEntity<>(errorObj, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
@@ -78,7 +71,12 @@ public class AccountServiceHandler {
         errorObj.put("timestamp", new Date());
         errorObj.put("validations", unique);
         errorObj.put("error", true);
+        return new ResponseEntity<>(errorObj, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public final ResponseEntity<Response> handleTypeMismatchException() {
+        Response errorObj = new Response(new Timestamp(System.currentTimeMillis()).toString(), Messages.TYPE_MISMATCH_EXCEPTION, true);
         return new ResponseEntity<>(errorObj, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 

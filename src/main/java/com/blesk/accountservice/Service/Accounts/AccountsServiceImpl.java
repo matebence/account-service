@@ -56,15 +56,12 @@ public class AccountsServiceImpl implements AccountsService {
     public Boolean deleteAccount(Long accountId, boolean su) {
         if (su) {
             Accounts accounts = this.accountDAO.get(Accounts.class, accountId);
-            if (accounts == null)
-                throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.NOT_FOUND);
-            if (!this.accountDAO.delete("accounts", "account_id", accountId))
-                throw new AccountServiceException(Messages.DELETE_ACCOUNT, HttpStatus.NOT_FOUND);
+            if (accounts == null) throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.NOT_FOUND);
+            if (!this.accountDAO.delete("accounts", "account_id", accountId)) throw new AccountServiceException(Messages.DELETE_ACCOUNT, HttpStatus.NOT_FOUND);
             return true;
         } else {
             Accounts accounts = this.accountDAO.get(accountId, false);
-            if (accounts == null)
-                throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.NOT_FOUND);
+            if (accounts == null) throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.NOT_FOUND);
             return this.accountDAO.softDelete(accounts);
         }
     }
@@ -93,9 +90,7 @@ public class AccountsServiceImpl implements AccountsService {
     @Lock(value = LockModeType.READ)
     public Accounts findAccountByEmail(String email, boolean isDeleted) {
         Accounts accounts = this.accountDAO.getItemByColumn("email", email, isDeleted);
-        if (accounts == null)
-            throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.NOT_FOUND);
-
+        if (accounts == null) throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.NOT_FOUND);
         return accounts;
     }
 
@@ -104,9 +99,7 @@ public class AccountsServiceImpl implements AccountsService {
     @Lock(value = LockModeType.READ)
     public Accounts findAccountByUsername(String userName, boolean isDeleted) {
         Accounts accounts = this.accountDAO.getItemByColumn("userName", userName, isDeleted);
-        if (accounts == null)
-            throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.NOT_FOUND);
-
+        if (accounts == null) throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.NOT_FOUND);
         return accounts;
     }
 
@@ -126,8 +119,7 @@ public class AccountsServiceImpl implements AccountsService {
     @Lock(value = LockModeType.READ)
     public List<Accounts> getAccountsForJoin(List<Long> ids, String columName) {
         List<Accounts> accounts =  this.accountDAO.getJoinValuesByColumn(Accounts.class, ids, columName);
-        if (accounts == null)
-            throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS, HttpStatus.NOT_FOUND);
+        if (accounts == null) throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS, HttpStatus.NOT_FOUND);
         return accounts;
     }
 

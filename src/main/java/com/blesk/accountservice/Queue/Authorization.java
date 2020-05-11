@@ -67,9 +67,7 @@ public class Authorization {
     public Boolean recordLastSuccessfullLogin(Logins logins) throws ListenerExecutionFailedException {
         try {
             Accounts accounts = this.accountsService.getAccount(logins.getAccounts().getAccountId(), false);
-            if (accounts.getPasswords() != null)
-                this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordTokenId());
-
+            if (accounts.getPasswords() != null) this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordTokenId());
             return this.loginsService.updateLogin(logins);
         } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
@@ -129,9 +127,7 @@ public class Authorization {
             if (result) {
                 Accounts account = this.accountsService.getAccount(accounts.getAccountId(), false);
                 account.setActivated(result);
-
-                if (this.accountsService.updateAccount(account, new String[]{}))
-                    return result;
+                if (this.accountsService.updateAccount(account, new String[]{})) return result;
             }
             return Boolean.FALSE;
         } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
