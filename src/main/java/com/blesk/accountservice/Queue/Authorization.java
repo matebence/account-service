@@ -138,7 +138,10 @@ public class Authorization {
     @RabbitListener(queues = "blesk.forgetPasswordQueue")
     public Passwords recoverAccountWithForgetPassword(String email) throws ListenerExecutionFailedException {
         try {
-            Passwords passwords = this.passwordsService.createPasswordToken(new Passwords(this.accountsService.findAccountByEmail(email, false), UUID.randomUUID().toString()));
+            Accounts accounts = this.accountsService.findAccountByEmail(email, false);
+            if (accounts == null) return new Passwords();
+
+            Passwords passwords = this.passwordsService.createPasswordToken(new Passwords(accounts, UUID.randomUUID().toString()));
             if (passwords == null) return new Passwords();
 
             Map<String, Object> variables = new HashMap<>();
