@@ -22,7 +22,7 @@ public class PasswordValidation implements ConstraintValidator<Password, String>
     @Override
     public void initialize(Password constraintAnnotation) {
         try {
-            String invalidPasswordList = this.getClass().getResource("/invalid-password-list.txt").getFile();
+            String invalidPasswordList = this.getClass().getClassLoader().getResource("/invalid-password-list.txt").getFile();
             this.dictionaryRule = new DictionaryRule(new WordListDictionary(WordLists.createFromReader(new FileReader[] {new FileReader(invalidPasswordList)},false, new ArraysSort())));
         } catch (IOException e) {
             throw new RuntimeException(Messages.BLACKLISTED_PASSWORDS, e);
