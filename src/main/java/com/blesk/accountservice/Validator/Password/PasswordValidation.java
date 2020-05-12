@@ -22,8 +22,8 @@ public class PasswordValidation implements ConstraintValidator<Password, String>
     @Override
     public void initialize(Password constraintAnnotation) {
         try {
-            URL url = this.getClass().getClassLoader().getResource("invalid-password-list.txt");
-            this.dictionaryRule = new DictionaryRule(new WordListDictionary(WordLists.createFromReader(new FileReader[]{new FileReader(url.getPath())}, false, new ArraysSort())));
+            String invalidPasswordList = this.getClass().getResource("/invalid-password-list.txt").getFile();
+            this.dictionaryRule = new DictionaryRule(new WordListDictionary(WordLists.createFromReader(new FileReader[] {new FileReader(invalidPasswordList)},false, new ArraysSort())));
         } catch (IOException e) {
             throw new RuntimeException(Messages.BLACKLISTED_PASSWORDS, e);
         }
@@ -47,9 +47,9 @@ public class PasswordValidation implements ConstraintValidator<Password, String>
                     this.dictionaryRule
             ));
 
-            RuleResult result = passwordValidator.validate(new PasswordData(password));
-            if (result.isValid()) return true;
-            context.buildConstraintViolationWithTemplate(passwordValidator.getMessages(result).get(0)).addConstraintViolation().disableDefaultConstraintViolation();
+            RuleResult ruleResult = passwordValidator.validate(new PasswordData(password));
+            if (ruleResult.isValid()) return true;
+            context.buildConstraintViolationWithTemplate(passwordValidator.getMessages(ruleResult).get(0)).addConstraintViolation().disableDefaultConstraintViolation();
         } catch (IOException e) {
             throw new RuntimeException(Messages.PASSWORD_RULES, e);
         }
