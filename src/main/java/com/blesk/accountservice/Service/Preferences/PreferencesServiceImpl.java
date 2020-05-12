@@ -1,14 +1,11 @@
 package com.blesk.accountservice.Service.Preferences;
 
 import com.blesk.accountservice.DAO.Preferences.PreferencesDAOImpl;
-import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.AccountPreferences;
 import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Value.Keys;
-import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,15 +39,10 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean deletePreference(Long preferenceId, boolean su) {
+    public Boolean deletePreference(Preferences preferences, boolean su) {
         if (su){
-            Preferences preferences = this.preferencesDAO.get(Preferences.class, preferenceId);
-            if (preferences == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
-            if (!this.preferencesDAO.delete("preferences", "preference_id", preferenceId)) throw new AccountServiceException(Messages.DELETE_PREFERENCE, HttpStatus.NOT_FOUND);
-            return true;
+            return this.preferencesDAO.delete("preferences", "preference_id", preferences.getPreferenceId());
         } else {
-            Preferences preferences = this.preferencesDAO.get(preferenceId, false);
-            if (preferences == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
             return this.preferencesDAO.softDelete(preferences);
         }
     }
@@ -77,9 +69,7 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Transactional
     @Lock(value = LockModeType.READ)
     public Preferences findPreferenceByName(String name, boolean isDeleted) {
-        Preferences preferences = this.preferencesDAO.getItemByColumn("name", name, isDeleted);
-        if (preferences == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
-        return preferences;
+        return this.preferencesDAO.getItemByColumn("name", name, isDeleted);
     }
 
     @Override

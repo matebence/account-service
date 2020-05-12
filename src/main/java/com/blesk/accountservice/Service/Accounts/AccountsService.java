@@ -10,7 +10,7 @@ public interface AccountsService {
 
     Accounts createAccount(Accounts accounts, String[] allowedRoles);
 
-    Boolean deleteAccount(Long accountId, boolean su);
+    Boolean deleteAccount(Accounts accounts, boolean su);
 
     Boolean updateAccount(Accounts accounts, String[] allowedRoles);
 

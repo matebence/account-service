@@ -63,14 +63,9 @@ public class RolesResource {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("DELETE_ROLES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
 
-        Boolean result;
-        try {
-            result = this.rolesService.deleteRole(roleId);
-        } catch (AccountServiceException ex) {
-            ex.setHttpStatus(HttpStatus.BAD_REQUEST);
-            throw ex;
-        }
-        if (!result) throw new AccountServiceException(Messages.DELETE_ROLE, HttpStatus.BAD_REQUEST);
+        Roles role = this.rolesService.getRole(roleId);
+        if (role == null) throw new AccountServiceException(Messages.GET_ROLE, HttpStatus.NOT_FOUND);
+        if(!this.rolesService.deleteRole(roleId)) throw new AccountServiceException(Messages.DELETE_ROLE, HttpStatus.BAD_REQUEST);
         return ResponseEntity.noContent().build();
     }
 
@@ -113,7 +108,6 @@ public class RolesResource {
         EntityModel<Roles> entityModel = new EntityModel<Roles>(roles);
         entityModel.add(linkTo(methodOn(this.getClass()).retrieveRoles(roleId, httpServletRequest, httpServletResponse)).withSelfRel());
         entityModel.add(linkTo(methodOn(this.getClass()).retrieveAllRoles(RolesResource.DEFAULT_NUMBER, RolesResource.DEFAULT_PAGE_SIZE, httpServletRequest, httpServletResponse)).withRel("all-roles"));
-
         return entityModel;
     }
 

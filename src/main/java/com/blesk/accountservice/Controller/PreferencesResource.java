@@ -63,14 +63,9 @@ public class PreferencesResource {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("DELETE_PREFERENCES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
 
-        Boolean result;
-        try {
-            result = this.preferencesService.deletePreference(preferenceId, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
-        } catch (AccountServiceException ex) {
-            ex.setHttpStatus(HttpStatus.BAD_REQUEST);
-            throw ex;
-        }
-        if (!result) throw new AccountServiceException(Messages.DELETE_PREFERENCE, HttpStatus.BAD_REQUEST);
+        Preferences preference = this.preferencesService.getPreference(preferenceId, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
+        if (preference == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
+        if(!this.preferencesService.deletePreference(preference, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")))) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.BAD_REQUEST);
         return ResponseEntity.noContent().build();
     }
 
@@ -85,7 +80,6 @@ public class PreferencesResource {
         if (preference == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.BAD_REQUEST);
 
         preference.setName(preferences.getName());
-
         for (AccountPreferences accountPreference : preference.getAccountPreferences()) {
             for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
                 if (accountPreferences.getDeleted() == null) {

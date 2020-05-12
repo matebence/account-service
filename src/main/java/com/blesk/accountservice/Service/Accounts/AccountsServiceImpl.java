@@ -1,15 +1,12 @@
 package com.blesk.accountservice.Service.Accounts;
 
 import com.blesk.accountservice.DAO.Accounts.AccountsDAOImpl;
-import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.AccountRoles;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Activations;
 import com.blesk.accountservice.Value.Keys;
-import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,15 +50,10 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean deleteAccount(Long accountId, boolean su) {
+    public Boolean deleteAccount(Accounts accounts, boolean su) {
         if (su) {
-            Accounts accounts = this.accountDAO.get(Accounts.class, accountId);
-            if (accounts == null) throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.NOT_FOUND);
-            if (!this.accountDAO.delete("accounts", "account_id", accountId)) throw new AccountServiceException(Messages.DELETE_ACCOUNT, HttpStatus.NOT_FOUND);
-            return true;
+            return this.accountDAO.delete("accounts", "account_id", accounts.getAccountId());
         } else {
-            Accounts accounts = this.accountDAO.get(accountId, false);
-            if (accounts == null) throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.NOT_FOUND);
             return this.accountDAO.softDelete(accounts);
         }
     }
@@ -89,18 +81,14 @@ public class AccountsServiceImpl implements AccountsService {
     @Transactional
     @Lock(value = LockModeType.READ)
     public Accounts findAccountByEmail(String email, boolean isDeleted) {
-        Accounts accounts = this.accountDAO.getItemByColumn("email", email, isDeleted);
-        if (accounts == null) throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.NOT_FOUND);
-        return accounts;
+        return this.accountDAO.getItemByColumn("email", email, isDeleted);
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
     public Accounts findAccountByUsername(String userName, boolean isDeleted) {
-        Accounts accounts = this.accountDAO.getItemByColumn("userName", userName, isDeleted);
-        if (accounts == null) throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.NOT_FOUND);
-        return accounts;
+        return this.accountDAO.getItemByColumn("userName", userName, isDeleted);
     }
 
     @Override
@@ -118,9 +106,7 @@ public class AccountsServiceImpl implements AccountsService {
     @Transactional
     @Lock(value = LockModeType.READ)
     public List<Accounts> getAccountsForJoin(List<Long> ids, String columName) {
-        List<Accounts> accounts =  this.accountDAO.getJoinValuesByColumn(Accounts.class, ids, columName);
-        if (accounts == null) throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS, HttpStatus.NOT_FOUND);
-        return accounts;
+        return this.accountDAO.getJoinValuesByColumn(Accounts.class, ids, columName);
     }
 
     @Override

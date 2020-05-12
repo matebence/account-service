@@ -1,14 +1,11 @@
 package com.blesk.accountservice.Service.Roles;
 
 import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
-import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.RolePrivileges;
 import com.blesk.accountservice.Model.Roles;
 import com.blesk.accountservice.Value.Keys;
-import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +30,6 @@ public class RolesServiceImpl implements RolesService {
             roles.getRolePrivileges().remove(privileges);
             roles.addPrivilege(privileges);
         }
-
         return this.roleDAO.save(roles);
     }
 
@@ -41,10 +37,7 @@ public class RolesServiceImpl implements RolesService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean deleteRole(Long roleId) {
-        Roles roles = this.roleDAO.get(Roles.class, roleId);
-        if (roles == null) throw new AccountServiceException(Messages.GET_ROLE, HttpStatus.NOT_FOUND);
-        if (!this.roleDAO.delete("roles", "role_id", roleId)) throw new AccountServiceException(Messages.DELETE_ROLE, HttpStatus.NOT_FOUND);
-        return true;
+        return this.roleDAO.delete("roles", "role_id", roleId);
     }
 
     @Override
@@ -65,18 +58,14 @@ public class RolesServiceImpl implements RolesService {
     @Transactional
     @Lock(value = LockModeType.READ)
     public Roles findRoleByName(String name) {
-        Roles role = this.roleDAO.getItemByColumn(Roles.class, "name", name);
-        if (role == null) throw new AccountServiceException(Messages.GET_ROLE, HttpStatus.NOT_FOUND);
-        return role;
+        return this.roleDAO.getItemByColumn(Roles.class, "name", name);
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
     public Set<RolePrivileges> findPrivilegesByRoleName(String name) {
-        Set<RolePrivileges> rolePrivileges = this.roleDAO.getItemByColumn(Roles.class, "name", name).getRolePrivileges();
-        if (rolePrivileges.isEmpty()) throw new AccountServiceException(String.format(Messages.GET_ROLE_PRIVILEGES, name), HttpStatus.NOT_FOUND);
-        return rolePrivileges;
+        return this.roleDAO.getItemByColumn(Roles.class, "name", name).getRolePrivileges();
     }
 
     @Override

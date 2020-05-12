@@ -2,6 +2,11 @@ package com.blesk.accountservice.Value;
 
 public class Messages {
 
+    public static final String BLACKLISTED_PASSWORDS = "Nepodarilo sa načítať súbor neplatných hesiel";
+    public static final String PASSWORD_RULES = "Nepodarilo sa načítať validačný súbor";
+
+
+
     public static final String TYPE_MISMATCH_EXCEPTION = "Nesprávný formát URL adresi";
     public static final String REQUEST_BODY_NOT_FOUND_EXCEPTION = "Prázdna požiadavka";
     public static final String PAGE_NOT_FOUND_EXCEPTION = "Je nám ľúto, ale požadovaná stránka nebola nájdená";
@@ -10,11 +15,6 @@ public class Messages {
     public static final String AUTH_REQUIRED_EXCEPTION = "Prístup odmietnutý";
     public static final String SQL_EXCEPTION = "Operácia sa neuskutočnila";
     public static final String EXCEPTION = "Nastala neočakávaná chyba";
-
-
-
-    public static final String BLACKLISTED_PASSWORDS = "Nepodarilo sa načítať súbor neplatných hesiel";
-    public static final String PASSWORD_RULES = "Nepodarilo sa načítať validačný súbor";
 
 
 
@@ -63,26 +63,6 @@ public class Messages {
     public static final String UPDATE_ACCOUNT = "Aktualizovanie účtu bolo neúspešné, skúste znova";
     public static final String GET_ACCOUNT = "Ľutujeme, účet neexistuje";
     public static final String GET_ALL_ACCOUNTS = "Nenašiel sa žiadný účet";
-
-    public static final String CREATE_ACTIVATION_TOKEN = "Vytvorenie kľúču pre aktiváciu účtu sa nepodarilo, skúste znova";
-    public static final String DELETE_ACTIVATION_TOKEN = "Odstránenie kľúču pre aktiváciu účtu sa nepodarilo, skúste znova";
-    public static final String UPDATE_ACTIVATION_TOKEN = "Kľúč pre aktiváciu účtu sa nepodarilo aktualizovať, skúste znova";
-    public static final String GET_ACTIVATION_TOKEN = "Ľutujeme, kľúč pre aktiváciu účtu neexistuje";
-    public static final String GET_ALL_ACTIVATION_TOKEN = "Nenašiel sa žiadný aktivačný kľúč";
-    public static final String VALIDATE_ACTIVATION_TOKEN = "Ľutujeme, kľúč pre aktiváciu účtu je neplatný";
-
-    public static final String CREATE_LOGIN = "Vytvorenie nového prihlasovacieho záznamu sa nepodarilo, skúste znova";
-    public static final String DELETE_LOGIN = "Odstránenie prihlasovacieho záznamu sa nepodarilo, skúste znova";
-    public static final String UPDATE_LOGIN = "Nepodarilo sa aktualizovať prihlasovací záznam, skúste znova";
-    public static final String GET_LOGIN = "Ľutujeme, prihlasovací záznam neexistuje";
-    public static final String GET_ALL_LOGINS = "Nenašiel sa žiadný prihlasovací záznam";
-
-    public static final String CREATE_PASSWORD_TOKEN = "Vytvorenie kľúču pre zabudnuté heslo sa nepodarilo, skúste znova";
-    public static final String DELETE_PASSWORD_TOKEN = "Odstránenie kľúču pre zabudnuté heslo sa nepodarilo, skúste znova";
-    public static final String UPDATE_PASSWORD_TOKEN = "Kľúč pre zabudnuté heslo sa nepodarilo aktualizovať, skúste znova";
-    public static final String GET_PASSWORD_TOKEN = "Ľutujeme, kľúč pre zabudnuté heslo neexistuje";
-    public static final String GET_ALL_PASSWORD_TOKENS = "Nenašiel sa žiadný kľúč pre obnoveniu hesla";
-    public static final String VALIDATE_PASSWORD_TOKEN = "Ľutujeme, kľúč pre zabudnuté heslo je neplatný";
 
     public static final String CREATE_PREFERENCE = "Vytvorenie preferencie sa nepodarilo, skúste znova";
     public static final String DELETE_PREFERENCE = "Odstránenie preferencie sa nepodarilo, skúste znova";

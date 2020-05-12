@@ -47,9 +47,7 @@ public class PasswordValidation implements ConstraintValidator<Password, String>
             ));
 
             RuleResult result = passwordValidator.validate(new PasswordData(password));
-            if (result.isValid()) {
-                return true;
-            }
+            if (result.isValid()) return true;
             context.buildConstraintViolationWithTemplate(passwordValidator.getMessages(result).get(0)).addConstraintViolation().disableDefaultConstraintViolation();
         } catch (IOException e) {
             throw new RuntimeException(Messages.PASSWORD_RULES, e);

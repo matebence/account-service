@@ -52,7 +52,6 @@ public class PrivilegesResource {
 
         EntityModel<Privileges> entityModel = new EntityModel<Privileges>(privilege);
         entityModel.add(linkTo(methodOn(this.getClass()).retrievePrivileges(privilege.getPrivilegeId(), httpServletRequest, httpServletResponse)).withRel("privilege"));
-
         return entityModel;
     }
 
@@ -63,14 +62,9 @@ public class PrivilegesResource {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("DELETE_PRIVILEGES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
 
-        Boolean result;
-        try {
-            result = this.privilegesService.deletePrivilege(privilegeId);
-        } catch (AccountServiceException ex) {
-            ex.setHttpStatus(HttpStatus.BAD_REQUEST);
-            throw ex;
-        }
-        if (!result) throw new AccountServiceException(Messages.DELETE_PRIVILEGE, HttpStatus.BAD_REQUEST);
+        Privileges privilege = this.privilegesService.getPrivilege(privilegeId);
+        if (privilege == null) throw new AccountServiceException(Messages.GET_PRIVILEGE, HttpStatus.NOT_FOUND);
+        if (!this.privilegesService.deletePrivilege(privilegeId)) throw new AccountServiceException(Messages.DELETE_PRIVILEGE, HttpStatus.BAD_REQUEST);
         return ResponseEntity.noContent().build();
     }
 

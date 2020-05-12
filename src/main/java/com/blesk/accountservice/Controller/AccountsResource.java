@@ -68,7 +68,6 @@ public class AccountsResource {
         Map<String, Object> variables = new HashMap<>();
         variables.put("activationUrl", String.format(this.activationUrl, account.getAccountId(), account.getActivations().getToken()));
         this.emailsService.sendHtmlMesseage("Registrácia", "signupactivation", variables, account);
-
         return entityModel;
     }
 
@@ -79,14 +78,9 @@ public class AccountsResource {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("DELETE_ACCOUNTS")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
 
-        Boolean result;
-        try {
-            result = this.accountsService.deleteAccount(accountId, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
-        } catch (AccountServiceException ex) {
-            ex.setHttpStatus(HttpStatus.BAD_REQUEST);
-            throw ex;
-        }
-        if (!result) throw new AccountServiceException(Messages.DELETE_ACCOUNT, HttpStatus.BAD_REQUEST);
+        Accounts account = this.accountsService.getAccount(accountId, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")));
+        if (account == null) throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.NOT_FOUND);
+        if(!this.accountsService.deleteAccount(account, (httpServletRequest.isUserInRole("SYSTEM") || httpServletRequest.isUserInRole("ADMIN")))) throw new AccountServiceException(Messages.DELETE_ACCOUNT, HttpStatus.BAD_REQUEST);
         return ResponseEntity.noContent().build();
     }
 
@@ -104,7 +98,6 @@ public class AccountsResource {
         account.setEmail(accounts.getEmail());
         account.setPassword(accounts.getPassword());
         account.setConfirmPassword(accounts.getConfirmPassword());
-
         for (AccountRoles accountRole : account.getAccountRoles()) {
             for (AccountRoles accountRoles : accounts.getAccountRoles()) {
                 if (accountRoles.getDeleted() == null) {
