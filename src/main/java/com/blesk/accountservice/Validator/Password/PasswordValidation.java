@@ -5,6 +5,7 @@ import org.passay.*;
 import org.passay.dictionary.WordListDictionary;
 import org.passay.dictionary.WordLists;
 import org.passay.dictionary.sort.ArraysSort;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -32,9 +33,9 @@ public class PasswordValidation implements ConstraintValidator<Password, String>
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
-        Resource resource = new ClassPathResource("/password-rules.properties");
         try {
-            Properties properties = PropertiesLoaderUtils.loadProperties(resource);
+            String resource = this.getClass().getResource("/password-rules.properties").getFile();
+            Properties properties = PropertiesLoaderUtils.loadProperties(new ByteArrayResource(resource.getBytes()));
             MessageResolver messageResolver = new PropertiesMessageResolver(properties);
             PasswordValidator passwordValidator = new PasswordValidator(messageResolver, Arrays.asList(
                     new LengthRule(8, 30),
