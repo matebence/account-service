@@ -2,39 +2,22 @@ package com.blesk.accountservice.Validator.Password;
 
 import com.blesk.accountservice.Value.Messages;
 import org.passay.*;
-import org.passay.dictionary.WordListDictionary;
-import org.passay.dictionary.WordLists;
-import org.passay.dictionary.sort.ArraysSort;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Properties;
 
 public class PasswordValidation implements ConstraintValidator<Password, String> {
 
-    private DictionaryRule dictionaryRule;
-
-    @Override
-    public void initialize(Password constraintAnnotation) {
-        try {
-            String invalidPasswordList = this.getClass().getClassLoader().getResource("/invalid-password-list.txt").getFile();
-            this.dictionaryRule = new DictionaryRule(new WordListDictionary(WordLists.createFromReader(new FileReader[] {new FileReader(invalidPasswordList)},false, new ArraysSort())));
-        } catch (IOException e) {
-            throw new RuntimeException(Messages.BLACKLISTED_PASSWORDS, e);
-        }
-    }
-
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
         try {
-            URL url = this.getClass().getClassLoader().getResource("password-rules.properties");
+            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("password-rules.properties");
             Properties properties = new Properties();
-            properties.load(new FileInputStream(url.getPath()));
+            properties.load(inputStream);
 
             MessageResolver messageResolver = new PropertiesMessageResolver(properties);
             PasswordValidator passwordValidator = new PasswordValidator(messageResolver, Arrays.asList(
@@ -43,8 +26,7 @@ public class PasswordValidation implements ConstraintValidator<Password, String>
                     new CharacterRule(EnglishCharacterData.LowerCase, 1),
                     new CharacterRule(EnglishCharacterData.Digit, 1),
                     new CharacterRule(EnglishCharacterData.Special, 1),
-                    new WhitespaceRule(),
-                    this.dictionaryRule
+                    new WhitespaceRule()
             ));
 
             RuleResult ruleResult = passwordValidator.validate(new PasswordData(password));
