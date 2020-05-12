@@ -67,11 +67,11 @@ public class Authorization {
     public Boolean recordLastSuccessfullLogin(Logins logins) throws ListenerExecutionFailedException {
         try {
             Accounts accounts = this.accountsService.getAccount(logins.getAccounts().getAccountId(), false);
-            if ((accounts.getPasswords() != null) && (this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordTokenId()))) return this.loginsService.updateLogin(logins);
+            if (accounts != null && accounts.getPasswords() != null) return this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordTokenId());
+            return this.loginsService.updateLogin(logins);
         } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
         }
-        return Boolean.FALSE;
     }
 
     @RabbitListener(queues = "blesk.createAccountQueue")
