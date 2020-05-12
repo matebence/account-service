@@ -5,9 +5,6 @@ import org.passay.*;
 import org.passay.dictionary.WordListDictionary;
 import org.passay.dictionary.WordLists;
 import org.passay.dictionary.sort.ArraysSort;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -25,8 +22,8 @@ public class PasswordValidation implements ConstraintValidator<Password, String>
     @Override
     public void initialize(Password constraintAnnotation) {
         try {
-            String invalidPasswordList = this.getClass().getResource("/invalid-password-list.txt").getFile();
-            this.dictionaryRule = new DictionaryRule(new WordListDictionary(WordLists.createFromReader(new FileReader[]{new FileReader(invalidPasswordList)}, false, new ArraysSort())));
+            URL url = this.getClass().getClassLoader().getResource("invalid-password-list.txt");
+            this.dictionaryRule = new DictionaryRule(new WordListDictionary(WordLists.createFromReader(new FileReader[]{new FileReader(url.getFile())}, false, new ArraysSort())));
         } catch (IOException e) {
             throw new RuntimeException(Messages.BLACKLISTED_PASSWORDS, e);
         }
