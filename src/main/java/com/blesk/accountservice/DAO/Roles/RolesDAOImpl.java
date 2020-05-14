@@ -67,8 +67,7 @@ public class RolesDAOImpl extends DAOImpl<Roles> implements RolesDAO {
         countCriteria.select(criteriaBuilder.count(countCriteria.from(Roles.class)));
         Long total = this.entityManager.createQuery(countCriteria).getSingleResult();
 
-        if (pageSize > total)
-            pageSize = total.intValue();
+        if (pageSize > total || pageSize == -1) pageSize = total.intValue();
 
         if ((pageNumber > 0) && (pageNumber < (Math.floor(total / pageSize))) ||
                 (pageNumber == 0) && (pageNumber < (Math.floor(total / pageSize))) ||

@@ -67,8 +67,7 @@ public class PrivilegesDAOImpl extends DAOImpl<Privileges> implements Privileges
         countCriteria.select(criteriaBuilder.count(countCriteria.from(Privileges.class)));
         Long total = this.entityManager.createQuery(countCriteria).getSingleResult();
 
-        if (pageSize > total)
-            pageSize = total.intValue();
+        if (pageSize > total || pageSize == -1) pageSize = total.intValue();
 
         if ((pageNumber > 0) && (pageNumber < (Math.floor(total / pageSize))) ||
                 (pageNumber == 0) && (pageNumber < (Math.floor(total / pageSize))) ||

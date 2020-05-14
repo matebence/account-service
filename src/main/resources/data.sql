@@ -159,6 +159,8 @@ VALUES (1, 29);
 INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (1, 30);
 INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (1, 31);
+INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (2, 1);
 INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (2, 2);
@@ -218,7 +220,8 @@ INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (2, 29);
 INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (2, 30);
-
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (2, 31);
 
 INSERT INTO account_role_items (account_id, role_id)
 VALUES (1, 1);
