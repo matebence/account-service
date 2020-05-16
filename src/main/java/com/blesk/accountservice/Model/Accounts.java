@@ -13,6 +13,7 @@ import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -39,12 +40,15 @@ public class Accounts implements Serializable, EncryptionAware {
     @Column(name = "account_id")
     private Long accountId;
 
+    @Valid
     @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "accounts")
     private Logins login;
 
+    @Valid
     @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "accounts")
     private Passwords passwords;
 
+    @Valid
     @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "accounts")
     private Activations activations;
 

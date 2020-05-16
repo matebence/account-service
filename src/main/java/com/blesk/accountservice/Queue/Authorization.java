@@ -1,6 +1,5 @@
 package com.blesk.accountservice.Queue;
 
-import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Logins;
 import com.blesk.accountservice.Model.Passwords;
@@ -57,8 +56,9 @@ public class Authorization {
     @RabbitListener(queues = "blesk.verifyAccountQueue")
     public Accounts verifyAccountForSigningIn(String userName) throws ListenerExecutionFailedException {
         try {
-            return this.accountsService.findAccountByUsername(userName, false);
-        } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+            Accounts accounts = this.accountsService.findAccountByUsername(userName, false);
+            return accounts != null ? accounts : new Accounts();
+        } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return new Accounts();
         }
     }
@@ -67,11 +67,9 @@ public class Authorization {
     public Boolean recordLastSuccessfullLogin(Logins logins) throws ListenerExecutionFailedException {
         try {
             Accounts accounts = this.accountsService.getAccount(logins.getAccounts().getAccountId(), false);
-            if (accounts.getPasswords() != null)
-                this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordTokenId());
-
+            if (accounts != null && accounts.getPasswords() != null) return this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordTokenId());
             return this.loginsService.updateLogin(logins);
-        } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
         }
     }
@@ -117,7 +115,7 @@ public class Authorization {
             accounts.setValidations(unique);
             return accounts;
 
-        } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return new Accounts();
         }
     }
@@ -129,27 +127,29 @@ public class Authorization {
             if (result) {
                 Accounts account = this.accountsService.getAccount(accounts.getAccountId(), false);
                 account.setActivated(result);
-
-                if (this.accountsService.updateAccount(account, new String[]{}))
-                    return result;
+                if (this.accountsService.updateAccount(account, new String[]{})) return result;
             }
-            return Boolean.FALSE;
-        } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
         }
+        return Boolean.FALSE;
     }
 
     @RabbitListener(queues = "blesk.forgetPasswordQueue")
     public Passwords recoverAccountWithForgetPassword(String email) throws ListenerExecutionFailedException {
         try {
-            Passwords passwords = this.passwordsService.createPasswordToken(new Passwords(this.accountsService.findAccountByEmail(email, false), UUID.randomUUID().toString()));
+            Accounts accounts = this.accountsService.findAccountByEmail(email, false);
+            if (accounts == null) return new Passwords();
+
+            Passwords passwords = this.passwordsService.createPasswordToken(new Passwords(accounts, UUID.randomUUID().toString()));
+            if (passwords == null) return new Passwords();
 
             Map<String, Object> variables = new HashMap<>();
             variables.put("resetPasswordUrl", String.format(this.resetPasswordUrl, passwords.getAccounts().getAccountId(), passwords.getToken()));
             this.emailsService.sendHtmlMesseage("Zabudnuté heslo", "forgetpassword", variables, passwords.getAccounts());
 
             return passwords;
-        } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return new Passwords();
         }
     }
@@ -158,7 +158,7 @@ public class Authorization {
     public Boolean verifyPasswordTokenForForgetPassword(Accounts accounts) throws ListenerExecutionFailedException {
         try {
             return this.passwordsService.validatePasswordToken(accounts.getAccountId(), accounts.getPasswords().getToken());
-        } catch (NullPointerException | AccountServiceException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
         }
     }

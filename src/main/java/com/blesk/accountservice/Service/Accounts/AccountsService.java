@@ -10,9 +10,7 @@ public interface AccountsService {
 
     Accounts createAccount(Accounts accounts, String[] allowedRoles);
 
-    Boolean softDeleteAccount(Long accountId);
-
-    Boolean deleteAccount(Long accountId);
+    Boolean deleteAccount(Accounts accounts, boolean su);
 
     Boolean updateAccount(Accounts accounts, String[] allowedRoles);
 
@@ -23,6 +21,8 @@ public interface AccountsService {
     Accounts findAccountByUsername(String userName, boolean isDeleted);
 
     List<Accounts> getAllAccounts(int pageNumber, int pageSize, boolean su);
+
+    List<Accounts> getAccountsForJoin(List<Long> ids, String columName);
 
     Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria, boolean su);
 }

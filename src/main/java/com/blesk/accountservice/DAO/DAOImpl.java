@@ -80,8 +80,7 @@ public class DAOImpl<T> implements DAO<T> {
         countCriteria.select(criteriaBuilder.count(countCriteria.from(c)));
         Long total = this.entityManager.createQuery(countCriteria).getSingleResult();
 
-        if (pageSize > total)
-            pageSize = total.intValue();
+        if (pageSize > total || pageSize == -1) pageSize = total.intValue();
 
         if ((pageNumber > 0) && (pageNumber < (Math.floor(total / pageSize))) ||
                 (pageNumber == 0) && (pageNumber < (Math.floor(total / pageSize))) ||
@@ -98,7 +97,7 @@ public class DAOImpl<T> implements DAO<T> {
 
             try {
                 return typedQuery.getResultList();
-            } catch (NoResultException ex) {
+            } catch (Exception ex) {
                 session.clear();
                 session.close();
                 return null;
@@ -117,7 +116,32 @@ public class DAOImpl<T> implements DAO<T> {
 
         try {
             return session.createQuery(criteriaQuery.where(criteriaBuilder.equal(root.get(column), value))).getSingleResult();
-        } catch (NoResultException ex) {
+        } catch (Exception ex) {
+            session.clear();
+            session.close();
+            return null;
+        }
+    }
+
+    @Override
+    public List<T> getJoinValuesByColumn(Class c, List<Long> ids, String columName) {
+        Session session = this.entityManager.unwrap(Session.class);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(c);
+        Root<T> root = criteriaQuery.from(c);
+
+        List<Predicate> predicates = new ArrayList<Predicate>();
+        CriteriaQuery<T> select = criteriaQuery.select(root);
+
+        if (ids != null) {
+            for (Long id : ids) {
+                predicates.add(criteriaBuilder.equal(root.get(columName), id));
+            }
+            select.where(criteriaBuilder.or(predicates.toArray(new Predicate[]{})));
+        }
+        try {
+            return session.createQuery(select).getResultList();
+        } catch (Exception ex) {
             session.clear();
             session.close();
             return null;
@@ -191,7 +215,7 @@ public class DAOImpl<T> implements DAO<T> {
             HashMap<String, Object> map = new HashMap<>();
             map.put("results", typedQuery.getResultList());
             return map;
-        } catch (NoResultException ex) {
+        } catch (Exception ex) {
             session.clear();
             session.close();
             return null;

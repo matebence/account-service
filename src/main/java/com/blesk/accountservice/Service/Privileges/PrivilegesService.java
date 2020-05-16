@@ -10,8 +10,6 @@ public interface PrivilegesService {
 
     Privileges createPrivilege(Privileges privileges);
 
-    Boolean softDeletePrivilege(Long privilegeId);
-
     Boolean deletePrivilege(Long privilegeId);
 
     Boolean updatePrivilege(Privileges privileges);
@@ -22,5 +20,5 @@ public interface PrivilegesService {
 
     List<Privileges> getAllPrivileges(int pageNumber, int pageSize);
 
-    Map<String, Object> searchForPrivileges(HashMap<String, HashMap<String, String>> criteria);
+    Map<String, Object> searchForPrivilege(HashMap<String, HashMap<String, String>> criteria);
 }

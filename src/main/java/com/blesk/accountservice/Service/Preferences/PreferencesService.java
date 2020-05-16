@@ -10,9 +10,7 @@ public interface PreferencesService {
 
     Preferences createPreference(Preferences preferences);
 
-    Boolean softDeletePreference(Long preferenceId);
-
-    Boolean deletePreference(Long preferenceId);
+    Boolean deletePreference(Preferences preferences, boolean su);
 
     Boolean updatePreference(Preferences preferences);
 
@@ -22,5 +20,5 @@ public interface PreferencesService {
 
     List<Preferences> getAllPreferences(int pageNumber, int pageSize, boolean su);
 
-    Map<String, Object> searchForPreferences(HashMap<String, HashMap<String, String>> criteria, boolean su);
+    Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criteria, boolean su);
 }
