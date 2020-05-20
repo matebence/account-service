@@ -78,7 +78,7 @@ public class PrivilegesResource {
         Privileges privilege = this.privilegesService.getPrivilege(privilegeId);
         if (privilege == null) throw new AccountServiceException(Messages.GET_PRIVILEGE, HttpStatus.BAD_REQUEST);
 
-        privilege.setName(privileges.getName());
+        privilege.setName(getNotNull(privileges.getName(), privilege.getName()));
         if (!this.privilegesService.updatePrivilege(privilege)) throw new AccountServiceException(Messages.UPDATE_PRIVILEGE, HttpStatus.BAD_REQUEST);
         return ResponseEntity.noContent().build();
     }
@@ -132,5 +132,9 @@ public class PrivilegesResource {
         if ((boolean) privileges.get("hasPrev")) collectionModel.add(linkTo(methodOn(this.getClass()).searchForPrivileges(search, httpServletRequest, httpServletResponse)).withRel("hasPrev"));
         if ((boolean) privileges.get("hasNext")) collectionModel.add(linkTo(methodOn(this.getClass()).searchForPrivileges(search, httpServletRequest, httpServletResponse)).withRel("hasNext"));
         return collectionModel;
+    }
+
+    private static <T> T getNotNull(T a, T b) {
+        return b != null && a != null && !a.equals(b) ? a : b;
     }
 }

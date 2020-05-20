@@ -79,15 +79,17 @@ public class RolesResource {
         Roles role = this.rolesService.getRole(roleId);
         if (role == null) throw new AccountServiceException(Messages.GET_ROLE, HttpStatus.BAD_REQUEST);
 
-        role.setName(roles.getName());
-        for (RolePrivileges rolePrivilege : role.getRolePrivileges()) {
-            for (RolePrivileges rolePrivileges : roles.getRolePrivileges()) {
-                if (rolePrivileges.getDeleted() == null) {
-                    role.addPrivilege(rolePrivileges);
-                } else if (rolePrivileges.getDeleted()) {
-                    role.removePrivilege(rolePrivilege);
-                } else {
-                    rolePrivilege.setPrivileges(rolePrivileges.getPrivileges());
+        role.setName(getNotNull(roles.getName(), role.getName()));
+        if (roles.getRolePrivileges() != null){
+            for (RolePrivileges rolePrivilege : role.getRolePrivileges()) {
+                for (RolePrivileges rolePrivileges : roles.getRolePrivileges()) {
+                    if (rolePrivileges.getDeleted() == null) {
+                        role.addPrivilege(rolePrivileges);
+                    } else if (rolePrivileges.getDeleted()) {
+                        role.removePrivilege(rolePrivilege);
+                    } else {
+                        rolePrivilege.setPrivileges(rolePrivileges.getPrivileges());
+                    }
                 }
             }
         }
@@ -144,5 +146,9 @@ public class RolesResource {
         if ((boolean) roles.get("hasPrev")) collectionModel.add(linkTo(methodOn(this.getClass()).searchForRoles(search, httpServletRequest, httpServletResponse)).withRel("hasPrev"));
         if ((boolean) roles.get("hasNext")) collectionModel.add(linkTo(methodOn(this.getClass()).searchForRoles(search, httpServletRequest, httpServletResponse)).withRel("hasNext"));
         return collectionModel;
+    }
+
+    private static <T> T getNotNull(T a, T b) {
+        return b != null && a != null && !a.equals(b) ? a : b;
     }
 }

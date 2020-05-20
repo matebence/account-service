@@ -79,15 +79,17 @@ public class PreferencesResource {
         Preferences preference = this.preferencesService.getPreference(preferenceId, false);
         if (preference == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.BAD_REQUEST);
 
-        preference.setName(preferences.getName());
-        for (AccountPreferences accountPreference : preference.getAccountPreferences()) {
-            for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
-                if (accountPreferences.getDeleted() == null) {
-                    preference.addAccount(accountPreferences);
-                } else if (accountPreferences.getDeleted()) {
-                    preference.removeAccount(accountPreference);
-                } else {
-                    accountPreference.setAccounts(accountPreferences.getAccounts());
+        preference.setName(getNotNull(preferences.getName(), preference.getName()));
+        if (preferences.getAccountPreferences() != null){
+            for (AccountPreferences accountPreference : preference.getAccountPreferences()) {
+                for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
+                    if (accountPreferences.getDeleted() == null) {
+                        preference.addAccount(accountPreferences);
+                    } else if (accountPreferences.getDeleted()) {
+                        preference.removeAccount(accountPreference);
+                    } else {
+                        accountPreference.setAccounts(accountPreferences.getAccounts());
+                    }
                 }
             }
         }
@@ -144,5 +146,9 @@ public class PreferencesResource {
         if ((boolean) preferences.get("hasPrev")) collectionModel.add(linkTo(methodOn(this.getClass()).searchForPreferences(search, httpServletRequest, httpServletResponse)).withRel("hasPrev"));
         if ((boolean) preferences.get("hasNext")) collectionModel.add(linkTo(methodOn(this.getClass()).searchForPreferences(search, httpServletRequest, httpServletResponse)).withRel("hasNext"));
         return collectionModel;
+    }
+
+    private static <T> T getNotNull(T a, T b) {
+        return b != null && a != null && !a.equals(b) ? a : b;
     }
 }
