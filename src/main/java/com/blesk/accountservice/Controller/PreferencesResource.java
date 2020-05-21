@@ -2,7 +2,6 @@ package com.blesk.accountservice.Controller;
 
 import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Exception.AccountServiceException;
-import com.blesk.accountservice.Model.AccountPreferences;
 import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Service.Preferences.PreferencesServiceImpl;
 import com.blesk.accountservice.Value.Keys;
@@ -79,21 +78,7 @@ public class PreferencesResource {
         Preferences preference = this.preferencesService.getPreference(preferenceId, false);
         if (preference == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.BAD_REQUEST);
 
-        preference.setName(getNotNull(preferences.getName(), preference.getName()));
-        if (preferences.getAccountPreferences() != null){
-            for (AccountPreferences accountPreference : preference.getAccountPreferences()) {
-                for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
-                    if (accountPreferences.getDeleted() == null) {
-                        preference.addAccount(accountPreferences);
-                    } else if (accountPreferences.getDeleted()) {
-                        preference.removeAccount(accountPreference);
-                    } else {
-                        accountPreference.setAccounts(accountPreferences.getAccounts());
-                    }
-                }
-            }
-        }
-        if (!this.preferencesService.updatePreference(preference)) throw new AccountServiceException(Messages.UPDATE_PREFERENCE, HttpStatus.BAD_REQUEST);
+        if (!this.preferencesService.updatePreference(preference, preferences)) throw new AccountServiceException(Messages.UPDATE_PREFERENCE, HttpStatus.BAD_REQUEST);
         return ResponseEntity.noContent().build();
     }
 
@@ -146,9 +131,5 @@ public class PreferencesResource {
         if ((boolean) preferences.get("hasPrev")) collectionModel.add(linkTo(methodOn(this.getClass()).searchForPreferences(search, httpServletRequest, httpServletResponse)).withRel("hasPrev"));
         if ((boolean) preferences.get("hasNext")) collectionModel.add(linkTo(methodOn(this.getClass()).searchForPreferences(search, httpServletRequest, httpServletResponse)).withRel("hasNext"));
         return collectionModel;
-    }
-
-    private static <T> T getNotNull(T a, T b) {
-        return b != null && a != null && !a.equals(b) ? a : b;
     }
 }

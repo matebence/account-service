@@ -5,7 +5,6 @@ import com.blesk.accountservice.Model.Logins;
 import com.blesk.accountservice.Model.Passwords;
 import com.blesk.accountservice.Service.Accounts.AccountsServiceImpl;
 import com.blesk.accountservice.Service.Activations.ActivationServiceImpl;
-import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
 import com.blesk.accountservice.Service.Logins.LoginsServiceImpl;
 import com.blesk.accountservice.Service.Passwords.PasswordsServiceImpl;
 import com.blesk.accountservice.Value.Messages;
@@ -14,7 +13,6 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.amqp.rabbit.support.ListenerExecutionFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Component;
@@ -28,12 +26,6 @@ import java.util.*;
 @Component
 public class Authorization {
 
-    @Value("${blesk.javamailer.url.forget-password}")
-    private String resetPasswordUrl;
-
-    @Value("${blesk.javamailer.url.account-activation}")
-    private String activationUrl;
-
     private AccountsServiceImpl accountsService;
 
     private LoginsServiceImpl loginsService;
@@ -42,15 +34,12 @@ public class Authorization {
 
     private PasswordsServiceImpl passwordsService;
 
-    private EmailsServiceImpl emailsService;
-
     @Autowired
-    public Authorization(AccountsServiceImpl accountsService, LoginsServiceImpl loginsService, ActivationServiceImpl activationService, PasswordsServiceImpl passwordsService, EmailsServiceImpl emailsService) {
+    public Authorization(AccountsServiceImpl accountsService, LoginsServiceImpl loginsService, ActivationServiceImpl activationService, PasswordsServiceImpl passwordsService) {
         this.accountsService = accountsService;
         this.loginsService = loginsService;
         this.activationService = activationService;
         this.passwordsService = passwordsService;
-        this.emailsService = emailsService;
     }
 
     @RabbitListener(queues = "blesk.verifyAccountQueue")
@@ -91,13 +80,7 @@ public class Authorization {
 
         try {
             final String[] allowedRoles = {"ROLE_COURIER", "ROLE_CLIENT"};
-            Accounts account = this.accountsService.createAccount(accounts, allowedRoles);
-
-            Map<String, Object> variables = new HashMap<>();
-            variables.put("activationUrl", String.format(this.activationUrl, account.getAccountId(), account.getActivations().getToken()));
-            this.emailsService.sendHtmlMesseage("Registrácia", "signupactivation", variables, account);
-
-            return account;
+            return this.accountsService.createAccount(accounts, allowedRoles);
 
         } catch (DataIntegrityViolationException e) {
             ConstraintViolationException exDetail = (ConstraintViolationException) e.getCause();
@@ -127,7 +110,7 @@ public class Authorization {
             if (result) {
                 Accounts account = this.accountsService.getAccount(accounts.getAccountId(), false);
                 account.setActivated(result);
-                if (this.accountsService.updateAccount(account, new String[]{})) return result;
+                if (this.accountsService.updateAccount(account, new Accounts(), new String[]{})) return result;
             }
         } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
@@ -143,10 +126,6 @@ public class Authorization {
 
             Passwords passwords = this.passwordsService.createPasswordToken(new Passwords(accounts, UUID.randomUUID().toString()));
             if (passwords == null) return new Passwords();
-
-            Map<String, Object> variables = new HashMap<>();
-            variables.put("resetPasswordUrl", String.format(this.resetPasswordUrl, passwords.getAccounts().getAccountId(), passwords.getToken()));
-            this.emailsService.sendHtmlMesseage("Zabudnuté heslo", "forgetpassword", variables, passwords.getAccounts());
 
             return passwords;
         } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {

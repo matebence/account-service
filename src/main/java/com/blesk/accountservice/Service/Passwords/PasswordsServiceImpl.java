@@ -2,8 +2,10 @@ package com.blesk.accountservice.Service.Passwords;
 
 import com.blesk.accountservice.DAO.Passwords.PasswordsDAOImpl;
 import com.blesk.accountservice.Model.Passwords;
+import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
 import com.blesk.accountservice.Value.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,18 +19,29 @@ import java.util.Map;
 @Service
 public class PasswordsServiceImpl implements PasswordsService {
 
+    @Value("${blesk.javamailer.url.forget-password}")
+    private String resetPasswordUrl;
+
     private PasswordsDAOImpl passwordsDAO;
 
+    private EmailsServiceImpl emailsService;
+
     @Autowired
-    public PasswordsServiceImpl(PasswordsDAOImpl passwordsDAO) {
+    public PasswordsServiceImpl(PasswordsDAOImpl passwordsDAO, EmailsServiceImpl emailsService) {
         this.passwordsDAO = passwordsDAO;
+        this.emailsService = emailsService;
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Passwords createPasswordToken(Passwords passwords) {
-        return this.passwordsDAO.save(passwords);
+        Passwords password = this.passwordsDAO.save(passwords);
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("resetPasswordUrl", String.format(this.resetPasswordUrl, passwords.getAccounts().getAccountId(), passwords.getToken()));
+        this.emailsService.sendHtmlMesseage("Zabudnuté heslo", "forgetpassword", variables, passwords.getAccounts());
+        return password;
     }
 
     @Override

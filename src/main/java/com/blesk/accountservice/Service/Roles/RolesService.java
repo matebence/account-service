@@ -14,7 +14,7 @@ public interface RolesService {
 
     Boolean deleteRole(Long roleId);
 
-    Boolean updateRole(Roles roles);
+    Boolean updateRole(Roles role, Roles roles);
 
     Roles getRole(Long roleId);
 

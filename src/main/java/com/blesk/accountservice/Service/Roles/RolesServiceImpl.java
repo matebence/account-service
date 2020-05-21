@@ -43,8 +43,23 @@ public class RolesServiceImpl implements RolesService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean updateRole(Roles roles) {
-        return this.roleDAO.update(roles);
+    public Boolean updateRole(Roles role, Roles roles) {
+        role.setName(getNotNull(roles.getName(), role.getName()));
+        if (roles.getRolePrivileges() != null){
+            for (RolePrivileges rolePrivilege : role.getRolePrivileges()) {
+                for (RolePrivileges rolePrivileges : roles.getRolePrivileges()) {
+                    if (rolePrivileges.getDeleted() == null) {
+                        role.addPrivilege(rolePrivileges);
+                    } else if (rolePrivileges.getDeleted()) {
+                        role.removePrivilege(rolePrivilege);
+                    } else {
+                        rolePrivilege.setPrivileges(rolePrivileges.getPrivileges());
+                    }
+                }
+            }
+        }
+
+        return this.roleDAO.update(role);
     }
 
     @Override
@@ -80,5 +95,9 @@ public class RolesServiceImpl implements RolesService {
     @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criteria) {
         return this.roleDAO.searchBy(Roles.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+    }
+
+    private static <T> T getNotNull(T a, T b) {
+        return b != null && a != null && !a.equals(b) ? a : b;
     }
 }

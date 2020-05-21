@@ -2,14 +2,12 @@ package com.blesk.accountservice.Controller;
 
 import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Exception.AccountServiceException;
-import com.blesk.accountservice.Model.AccountRoles;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Service.Accounts.AccountsServiceImpl;
 import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -32,9 +30,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping(value = "/api", produces = "application/json")
 public class AccountsResource {
-
-    @Value("${blesk.javamailer.url.account-activation}")
-    private String activationUrl;
 
     private final static int DEFAULT_PAGE_SIZE = 10;
     private final static int DEFAULT_NUMBER = 0;
@@ -61,10 +56,6 @@ public class AccountsResource {
 
         EntityModel<Accounts> entityModel = new EntityModel<Accounts>(account);
         entityModel.add(linkTo(methodOn(this.getClass()).retrieveAccounts(account.getAccountId(), httpServletRequest, httpServletResponse)).withRel("account"));
-
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("activationUrl", String.format(this.activationUrl, account.getAccountId(), account.getActivations().getToken()));
-        this.emailsService.sendHtmlMesseage("Registrácia", "signupactivation", variables, account);
         return entityModel;
     }
 
@@ -91,24 +82,7 @@ public class AccountsResource {
         Accounts account = this.accountsService.getAccount(accountId, false);
         if (account == null) throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.BAD_REQUEST);
 
-        account.setUserName(getNotNull(accounts.getUserName(), account.getUserName()));
-        account.setEmail(getNotNull(accounts.getEmail(), account.getEmail()));
-        account.setPassword(getNotNull(accounts.getPassword(), account.getPassword()));
-        account.setConfirmPassword(getNotNull(accounts.getConfirmPassword(), account.getConfirmPassword()));
-        if (accounts.getAccountRoles() != null){
-            for (AccountRoles accountRole : account.getAccountRoles()) {
-                for (AccountRoles accountRoles : accounts.getAccountRoles()) {
-                    if (accountRoles.getDeleted() == null) {
-                        account.addRole(accountRoles);
-                    } else if (accountRoles.getDeleted()) {
-                        account.removeRole(accountRole);
-                    } else {
-                        accountRole.setRoles(accountRoles.getRoles());
-                    }
-                }
-            }
-        }
-        if (!this.accountsService.updateAccount(account, new String[]{"ROLE_SYSTEM", "ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CLIENT", "ROLE_COURIER"})) throw new AccountServiceException(Messages.UPDATE_ACCOUNT, HttpStatus.BAD_REQUEST);
+        if (!this.accountsService.updateAccount(account, accounts, new String[]{"ROLE_SYSTEM", "ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CLIENT", "ROLE_COURIER"})) throw new AccountServiceException(Messages.UPDATE_ACCOUNT, HttpStatus.BAD_REQUEST);
         return ResponseEntity.noContent().build();
     }
 
@@ -173,9 +147,5 @@ public class AccountsResource {
         List<Accounts> accounts = this.accountsService.getAccountsForJoin(ids, columName);
         if (accounts == null || accounts.isEmpty()) throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS, HttpStatus.BAD_REQUEST);
         return new CollectionModel(accounts);
-    }
-
-    private static <T> T getNotNull(T a, T b) {
-        return b != null && a != null && !a.equals(b) ? a : b;
     }
 }

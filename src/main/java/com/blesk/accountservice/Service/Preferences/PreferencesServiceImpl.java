@@ -50,8 +50,22 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean updatePreference(Preferences preferences) {
-        return this.preferencesDAO.update(preferences);
+    public Boolean updatePreference(Preferences preference, Preferences preferences) {
+        preference.setName(getNotNull(preferences.getName(), preference.getName()));
+        if (preferences.getAccountPreferences() != null){
+            for (AccountPreferences accountPreference : preference.getAccountPreferences()) {
+                for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
+                    if (accountPreferences.getDeleted() == null) {
+                        preference.addAccount(accountPreferences);
+                    } else if (accountPreferences.getDeleted()) {
+                        preference.removeAccount(accountPreference);
+                    } else {
+                        accountPreference.setAccounts(accountPreferences.getAccounts());
+                    }
+                }
+            }
+        }
+        return this.preferencesDAO.update(preference);
     }
 
     @Override
@@ -92,5 +106,9 @@ public class PreferencesServiceImpl implements PreferencesService {
         } else {
             return this.preferencesDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)), false);
         }
+    }
+
+    private static <T> T getNotNull(T a, T b) {
+        return b != null && a != null && !a.equals(b) ? a : b;
     }
 }

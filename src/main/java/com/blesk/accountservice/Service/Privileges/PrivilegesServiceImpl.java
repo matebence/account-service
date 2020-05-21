@@ -40,8 +40,9 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean updatePrivilege(Privileges privileges) {
-        return this.privilegeDAO.update(privileges);
+    public Boolean updatePrivilege(Privileges privilege, Privileges privileges) {
+        privilege.setName(getNotNull(privileges.getName(), privilege.getName()));
+        return this.privilegeDAO.update(privilege);
     }
 
     @Override
@@ -69,5 +70,9 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForPrivilege(HashMap<String, HashMap<String, String>> criteria) {
         return this.privilegeDAO.searchBy(Privileges.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+    }
+
+    private static <T> T getNotNull(T a, T b) {
+        return b != null && a != null && !a.equals(b) ? a : b;
     }
 }

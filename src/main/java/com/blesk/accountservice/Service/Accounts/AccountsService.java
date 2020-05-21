@@ -12,7 +12,7 @@ public interface AccountsService {
 
     Boolean deleteAccount(Accounts accounts, boolean su);
 
-    Boolean updateAccount(Accounts accounts, String[] allowedRoles);
+    Boolean updateAccount(Accounts account, Accounts accounts, String[] allowedRoles);
 
     Accounts getAccount(Long accountId, boolean su);
 
