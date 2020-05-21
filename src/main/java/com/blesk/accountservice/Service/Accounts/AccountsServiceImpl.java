@@ -5,6 +5,7 @@ import com.blesk.accountservice.Model.AccountRoles;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Activations;
 import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
+import com.blesk.accountservice.Utilitie.Tools;
 import com.blesk.accountservice.Value.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,10 +76,10 @@ public class AccountsServiceImpl implements AccountsService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean updateAccount(Accounts account, Accounts accounts, String[] allowedRoles) {
-        account.setUserName(getNotNull(accounts.getUserName(), account.getUserName()));
-        account.setEmail(getNotNull(accounts.getEmail(), account.getEmail()));
-        account.setPassword(getNotNull(accounts.getPassword(), account.getPassword()));
-        account.setConfirmPassword(getNotNull(accounts.getConfirmPassword(), account.getConfirmPassword()));
+        account.setUserName(Tools.getNotNull(accounts.getUserName(), account.getUserName()));
+        account.setEmail(Tools.getNotNull(accounts.getEmail(), account.getEmail()));
+        account.setPassword(Tools.getNotNull(accounts.getPassword(), account.getPassword()));
+        account.setConfirmPassword(Tools.getNotNull(accounts.getConfirmPassword(), account.getConfirmPassword()));
         account.setPassword(this.passwordEncoder.encode(account.getPassword()));
 
         if (accounts.getAccountRoles() != null){
@@ -158,9 +159,5 @@ public class AccountsServiceImpl implements AccountsService {
         } else {
             return this.accountDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)), false);
         }
-    }
-
-    private static <T> T getNotNull(T a, T b) {
-        return b != null && a != null && !a.equals(b) ? a : b;
     }
 }

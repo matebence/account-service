@@ -3,6 +3,7 @@ package com.blesk.accountservice.Service.Preferences;
 import com.blesk.accountservice.DAO.Preferences.PreferencesDAOImpl;
 import com.blesk.accountservice.Model.AccountPreferences;
 import com.blesk.accountservice.Model.Preferences;
+import com.blesk.accountservice.Utilitie.Tools;
 import com.blesk.accountservice.Value.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
@@ -51,7 +52,7 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean updatePreference(Preferences preference, Preferences preferences) {
-        preference.setName(getNotNull(preferences.getName(), preference.getName()));
+        preference.setName(Tools.getNotNull(preferences.getName(), preference.getName()));
         if (preferences.getAccountPreferences() != null){
             for (AccountPreferences accountPreference : preference.getAccountPreferences()) {
                 for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
@@ -106,9 +107,5 @@ public class PreferencesServiceImpl implements PreferencesService {
         } else {
             return this.preferencesDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)), false);
         }
-    }
-
-    private static <T> T getNotNull(T a, T b) {
-        return b != null && a != null && !a.equals(b) ? a : b;
     }
 }

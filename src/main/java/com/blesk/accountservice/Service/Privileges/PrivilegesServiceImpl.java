@@ -2,6 +2,7 @@ package com.blesk.accountservice.Service.Privileges;
 
 import com.blesk.accountservice.DAO.Privileges.PrivilegesDAOImpl;
 import com.blesk.accountservice.Model.Privileges;
+import com.blesk.accountservice.Utilitie.Tools;
 import com.blesk.accountservice.Value.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
@@ -41,7 +42,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean updatePrivilege(Privileges privilege, Privileges privileges) {
-        privilege.setName(getNotNull(privileges.getName(), privilege.getName()));
+        privilege.setName(Tools.getNotNull(privileges.getName(), privilege.getName()));
         return this.privilegeDAO.update(privilege);
     }
 
@@ -70,9 +71,5 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForPrivilege(HashMap<String, HashMap<String, String>> criteria) {
         return this.privilegeDAO.searchBy(Privileges.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
-    }
-
-    private static <T> T getNotNull(T a, T b) {
-        return b != null && a != null && !a.equals(b) ? a : b;
     }
 }

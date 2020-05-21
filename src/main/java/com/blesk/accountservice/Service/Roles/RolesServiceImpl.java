@@ -3,6 +3,7 @@ package com.blesk.accountservice.Service.Roles;
 import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
 import com.blesk.accountservice.Model.RolePrivileges;
 import com.blesk.accountservice.Model.Roles;
+import com.blesk.accountservice.Utilitie.Tools;
 import com.blesk.accountservice.Value.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
@@ -44,7 +45,7 @@ public class RolesServiceImpl implements RolesService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean updateRole(Roles role, Roles roles) {
-        role.setName(getNotNull(roles.getName(), role.getName()));
+        role.setName(Tools.getNotNull(roles.getName(), role.getName()));
         if (roles.getRolePrivileges() != null){
             for (RolePrivileges rolePrivilege : role.getRolePrivileges()) {
                 for (RolePrivileges rolePrivileges : roles.getRolePrivileges()) {
@@ -95,9 +96,5 @@ public class RolesServiceImpl implements RolesService {
     @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criteria) {
         return this.roleDAO.searchBy(Roles.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
-    }
-
-    private static <T> T getNotNull(T a, T b) {
-        return b != null && a != null && !a.equals(b) ? a : b;
     }
 }
