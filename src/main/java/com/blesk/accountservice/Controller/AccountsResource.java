@@ -4,7 +4,6 @@ import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Service.Accounts.AccountsServiceImpl;
-import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +35,9 @@ public class AccountsResource {
 
     private AccountsServiceImpl accountsService;
 
-    private EmailsServiceImpl emailsService;
-
     @Autowired
-    public AccountsResource(AccountsServiceImpl accountsService, EmailsServiceImpl emailsService) {
+    public AccountsResource(AccountsServiceImpl accountsService) {
         this.accountsService = accountsService;
-        this.emailsService = emailsService;
     }
 
     @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
