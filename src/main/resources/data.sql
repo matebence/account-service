@@ -96,6 +96,26 @@ INSERT INTO privileges (name,  created_at, is_deleted)
 VALUES ('CREATE_GENDERS',  CURRENT_TIMESTAMP, FALSE);
 INSERT INTO privileges (name,  created_at, is_deleted)
 VALUES ('UPDATE_GENDERS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at ,is_deleted)
+VALUES ('VIEW_ALL_PAYOUTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('VIEW_PAYOUTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('DELETE_PAYOUTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('CREATE_PAYOUTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('UPDATE_PAYOUTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at ,is_deleted)
+VALUES ('VIEW_ALL_PAYMENTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('VIEW_PAYMENTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('DELETE_PAYMENTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('CREATE_PAYMENTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('UPDATE_PAYMENTS',  CURRENT_TIMESTAMP, FALSE);
 
 
 INSERT INTO role_privilege_items (role_id, privilege_id)
@@ -161,6 +181,26 @@ VALUES (1, 30);
 INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (1, 31);
 INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (1, 32);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (1, 33);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (1, 34);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (1, 35);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (1, 36);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (1, 37);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (1, 38);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (1, 39);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (1, 40);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (1, 41);
+INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (2, 1);
 INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (2, 2);
@@ -222,6 +262,27 @@ INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (2, 30);
 INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (2, 31);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (2, 32);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (2, 33);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (2, 34);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (2, 35);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (2, 36);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (2, 37);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (2, 38);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (2, 39);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (2, 40);
+INSERT INTO role_privilege_items (role_id, privilege_id)
+VALUES (2, 41);
+
 
 INSERT INTO account_role_items (account_id, role_id)
 VALUES (1, 1);
