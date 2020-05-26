@@ -24,5 +24,5 @@ public interface RolesService {
 
     List<Roles> getAllRoles(int pageNumber, int pageSize);
 
-    Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criteria);
+    Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criterias);
 }

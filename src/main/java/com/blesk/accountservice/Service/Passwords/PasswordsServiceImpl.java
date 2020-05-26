@@ -3,7 +3,6 @@ package com.blesk.accountservice.Service.Passwords;
 import com.blesk.accountservice.DAO.Passwords.PasswordsDAOImpl;
 import com.blesk.accountservice.Model.Passwords;
 import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
-import com.blesk.accountservice.Value.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Lock;
@@ -84,8 +83,8 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Map<String, Object> searchForPasswordToken(HashMap<String, HashMap<String, String>> criteria) {
-        return this.passwordsDAO.searchBy(Passwords.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+    public Map<String, Object> searchForPasswordToken(HashMap<String, HashMap<String, String>> criterias) {
+        return this.passwordsDAO.searchBy(Passwords.class, criterias);
     }
 
     @Override

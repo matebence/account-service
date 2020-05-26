@@ -1,6 +1,7 @@
 package com.blesk.accountservice.Value;
 
 public class Messages {
+
     public static final String PASSWORD_RULES = "Nepodarilo sa načítať validačný súbor";
 
 

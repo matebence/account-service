@@ -4,7 +4,6 @@ import com.blesk.accountservice.DAO.Roles.RolesDAOImpl;
 import com.blesk.accountservice.Model.RolePrivileges;
 import com.blesk.accountservice.Model.Roles;
 import com.blesk.accountservice.Utilitie.Tools;
-import com.blesk.accountservice.Value.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
@@ -94,7 +93,7 @@ public class RolesServiceImpl implements RolesService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criteria) {
-        return this.roleDAO.searchBy(Roles.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+    public Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criterias) {
+        return this.roleDAO.searchBy(Roles.class, criterias);
     }
 }

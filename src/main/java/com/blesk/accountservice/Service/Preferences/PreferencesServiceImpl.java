@@ -4,7 +4,6 @@ import com.blesk.accountservice.DAO.Preferences.PreferencesDAOImpl;
 import com.blesk.accountservice.Model.AccountPreferences;
 import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Utilitie.Tools;
-import com.blesk.accountservice.Value.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
@@ -76,15 +75,19 @@ public class PreferencesServiceImpl implements PreferencesService {
         if (su) {
             return this.preferencesDAO.get(Preferences.class, preferenceId);
         } else {
-            return this.preferencesDAO.get(preferenceId, false);
+            return this.preferencesDAO.get(preferenceId);
         }
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Preferences findPreferenceByName(String name, boolean isDeleted) {
-        return this.preferencesDAO.getItemByColumn("name", name, isDeleted);
+    public Preferences findPreferenceByName(String name, boolean su) {
+        if (su) {
+            return this.preferencesDAO.getItemByColumn(Preferences.class,"name", name);
+        } else {
+            return this.preferencesDAO.getItemByColumn("name", name);
+        }
     }
 
     @Override
@@ -94,18 +97,18 @@ public class PreferencesServiceImpl implements PreferencesService {
         if (su) {
             return this.preferencesDAO.getAll(Preferences.class, pageNumber, pageSize);
         } else {
-            return this.preferencesDAO.getAll(pageNumber, pageSize, false);
+            return this.preferencesDAO.getAll(pageNumber, pageSize);
         }
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criteria, boolean su) {
+    public Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criterias, boolean su) {
         if (su) {
-            return this.preferencesDAO.searchBy(Preferences.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+            return this.preferencesDAO.searchBy(Preferences.class, criterias);
         } else {
-            return this.preferencesDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)), false);
+            return this.preferencesDAO.searchBy(criterias);
         }
     }
 }

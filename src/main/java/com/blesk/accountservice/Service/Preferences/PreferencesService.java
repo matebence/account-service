@@ -16,9 +16,9 @@ public interface PreferencesService {
 
     Preferences getPreference(Long preferenceId, boolean su);
 
-    Preferences findPreferenceByName(String name, boolean isDeleted);
+    Preferences findPreferenceByName(String name, boolean su);
 
     List<Preferences> getAllPreferences(int pageNumber, int pageSize, boolean su);
 
-    Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criteria, boolean su);
+    Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criterias, boolean su);
 }

@@ -3,7 +3,6 @@ package com.blesk.accountservice.Service.Privileges;
 import com.blesk.accountservice.DAO.Privileges.PrivilegesDAOImpl;
 import com.blesk.accountservice.Model.Privileges;
 import com.blesk.accountservice.Utilitie.Tools;
-import com.blesk.accountservice.Value.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
@@ -69,7 +68,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Map<String, Object> searchForPrivilege(HashMap<String, HashMap<String, String>> criteria) {
-        return this.privilegeDAO.searchBy(Privileges.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+    public Map<String, Object> searchForPrivilege(HashMap<String, HashMap<String, String>> criterias) {
+        return this.privilegeDAO.searchBy(Privileges.class, criterias);
     }
 }

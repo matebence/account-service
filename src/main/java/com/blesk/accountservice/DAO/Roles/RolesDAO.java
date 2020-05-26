@@ -11,11 +11,11 @@ public interface RolesDAO extends DAO<Roles> {
 
     Boolean softDelete(Roles roles);
 
-    Roles get(Long id, boolean isDeleted);
+    Roles get(Long id);
 
-    List<Roles> getAll(int pageNumber, int pageSize, boolean isDeleted);
+    List<Roles> getAll(int pageNumber, int pageSize);
 
-    Roles getItemByColumn(String column, String value, boolean isDeleted);
+    Roles getItemByColumn(String column, String value);
 
-    Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias, int pageNumber, boolean isDeleted);
+    Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias);
 }

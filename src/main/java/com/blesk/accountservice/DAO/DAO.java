@@ -20,5 +20,5 @@ public interface DAO<T> {
 
     List<T> getJoinValuesByColumn(Class c, List<Long> ids, String columName);
 
-    Map<String, Object> searchBy(Class c, HashMap<String, HashMap<String, String>> criterias, int pageNumber);
+    Map<String, Object> searchBy(Class c, HashMap<String, HashMap<String, String>> criterias);
 }

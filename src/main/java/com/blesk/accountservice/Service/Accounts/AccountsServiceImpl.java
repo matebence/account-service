@@ -6,7 +6,6 @@ import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Activations;
 import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
 import com.blesk.accountservice.Utilitie.Tools;
-import com.blesk.accountservice.Value.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Lock;
@@ -114,22 +113,30 @@ public class AccountsServiceImpl implements AccountsService {
         if (su) {
             return this.accountDAO.get(Accounts.class, accountId);
         } else {
-            return this.accountDAO.get(accountId, false);
+            return this.accountDAO.get(accountId);
         }
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Accounts findAccountByEmail(String email, boolean isDeleted) {
-        return this.accountDAO.getItemByColumn("email", email, isDeleted);
+    public Accounts findAccountByEmail(String email, boolean su) {
+        if (su) {
+            return this.accountDAO.getItemByColumn(Accounts.class, "email", email);
+        } else {
+            return this.accountDAO.getItemByColumn("email", email);
+        }
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Accounts findAccountByUsername(String userName, boolean isDeleted) {
-        return this.accountDAO.getItemByColumn("userName", userName, isDeleted);
+    public Accounts findAccountByUsername(String userName, boolean su) {
+        if (su) {
+            return this.accountDAO.getItemByColumn(Accounts.class, "userName", userName);
+        } else {
+            return this.accountDAO.getItemByColumn("userName", userName);
+        }
     }
 
     @Override
@@ -139,7 +146,7 @@ public class AccountsServiceImpl implements AccountsService {
         if (su) {
             return this.accountDAO.getAll(Accounts.class, pageNumber, pageSize);
         } else {
-            return this.accountDAO.getAll(pageNumber, pageSize, false);
+            return this.accountDAO.getAll(pageNumber, pageSize);
         }
     }
 
@@ -153,11 +160,11 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria, boolean su) {
+    public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criterias, boolean su) {
         if (su) {
-            return this.accountDAO.searchBy(Accounts.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+            return this.accountDAO.searchBy(Accounts.class, criterias);
         } else {
-            return this.accountDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)), false);
+            return this.accountDAO.searchBy(criterias);
         }
     }
 }

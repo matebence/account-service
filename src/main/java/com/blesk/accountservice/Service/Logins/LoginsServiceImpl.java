@@ -2,7 +2,6 @@ package com.blesk.accountservice.Service.Logins;
 
 import com.blesk.accountservice.DAO.Logins.LoginsDAOImpl;
 import com.blesk.accountservice.Model.Logins;
-import com.blesk.accountservice.Value.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
@@ -61,8 +60,8 @@ public class LoginsServiceImpl implements LoginsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Map<String, Object> searchForLogin(HashMap<String, HashMap<String, String>> criteria) {
-        return this.loginsDAO.searchBy(Logins.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+    public Map<String, Object> searchForLogin(HashMap<String, HashMap<String, String>> criterias) {
+        return this.loginsDAO.searchBy(Logins.class, criterias);
     }
 
     @Override

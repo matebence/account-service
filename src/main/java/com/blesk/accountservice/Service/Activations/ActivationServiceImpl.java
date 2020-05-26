@@ -2,7 +2,6 @@ package com.blesk.accountservice.Service.Activations;
 
 import com.blesk.accountservice.DAO.Activations.ActivationsDAOImpl;
 import com.blesk.accountservice.Model.Activations;
-import com.blesk.accountservice.Value.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
@@ -68,8 +67,8 @@ public class ActivationServiceImpl implements ActivationService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Map<String, Object> searchForActivationToken(HashMap<String, HashMap<String, String>> criteria) {
-        return this.activationsDAO.searchBy(Activations.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+    public Map<String, Object> searchForActivationToken(HashMap<String, HashMap<String, String>> criterias) {
+        return this.activationsDAO.searchBy(Activations.class, criterias);
     }
 
     @Override

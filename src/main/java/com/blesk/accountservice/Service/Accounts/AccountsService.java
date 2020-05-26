@@ -16,13 +16,13 @@ public interface AccountsService {
 
     Accounts getAccount(Long accountId, boolean su);
 
-    Accounts findAccountByEmail(String email, boolean isDeleted);
+    Accounts findAccountByEmail(String email, boolean su);
 
-    Accounts findAccountByUsername(String userName, boolean isDeleted);
+    Accounts findAccountByUsername(String userName, boolean su);
 
     List<Accounts> getAllAccounts(int pageNumber, int pageSize, boolean su);
 
     List<Accounts> getAccountsForJoin(List<Long> ids, String columName);
 
-    Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria, boolean su);
+    Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criterias, boolean su);
 }
