@@ -67,7 +67,7 @@ public class Authorization {
     public Accounts createNewPublicAccount(Accounts accounts) throws ListenerExecutionFailedException {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<Accounts>> violations = validator.validate(accounts, Accounts.validationWithEncryption.class);
+        Set<ConstraintViolation<Accounts>> violations = validator.validate(accounts, Accounts.class);
         HashMap<String, String> validation = new HashMap<>();
 
         if (!violations.isEmpty()) {

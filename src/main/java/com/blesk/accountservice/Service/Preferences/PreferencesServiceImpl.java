@@ -3,7 +3,6 @@ package com.blesk.accountservice.Service.Preferences;
 import com.blesk.accountservice.DAO.Preferences.PreferencesDAOImpl;
 import com.blesk.accountservice.Model.AccountPreferences;
 import com.blesk.accountservice.Model.Preferences;
-import com.blesk.accountservice.Utilitie.Tools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
@@ -51,17 +50,15 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean updatePreference(Preferences preference, Preferences preferences) {
-        preference.setName(Tools.getNotNull(preferences.getName(), preference.getName()));
-        if (preferences.getAccountPreferences() != null){
-            for (AccountPreferences accountPreference : preference.getAccountPreferences()) {
-                for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
-                    if (accountPreferences.getDeleted() == null) {
-                        preference.addAccount(accountPreferences);
-                    } else if (accountPreferences.getDeleted()) {
-                        preference.removeAccount(accountPreference);
-                    } else {
-                        accountPreference.setAccounts(accountPreferences.getAccounts());
-                    }
+        preference.setName(preferences.getName());
+        for (AccountPreferences accountPreference : preference.getAccountPreferences()) {
+            for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
+                if (accountPreferences.getDeleted() == null) {
+                    preference.addAccount(accountPreferences);
+                } else if (accountPreferences.getDeleted()) {
+                    preference.removeAccount(accountPreference);
+                } else {
+                    accountPreference.setAccounts(accountPreferences.getAccounts());
                 }
             }
         }

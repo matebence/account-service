@@ -5,14 +5,12 @@ import com.blesk.accountservice.Model.AccountRoles;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Activations;
 import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
-import com.blesk.accountservice.Utilitie.Tools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.LockModeType;
 import java.util.*;
@@ -39,7 +37,7 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Accounts createAccount(@Validated(Accounts.validationWithoutEncryption.class) Accounts accounts, String[] allowedRoles) {
+    public Accounts createAccount(Accounts accounts, String[] allowedRoles) {
         Set<AccountRoles> assignedRoles = new HashSet<>(accounts.getAccountRoles());
         for (AccountRoles accountRoles : assignedRoles) {
             if (!Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
@@ -75,29 +73,25 @@ public class AccountsServiceImpl implements AccountsService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean updateAccount(Accounts account, Accounts accounts, String[] allowedRoles) {
-        account.setUserName(Tools.getNotNull(accounts.getUserName(), account.getUserName()));
-        account.setEmail(Tools.getNotNull(accounts.getEmail(), account.getEmail()));
-        account.setPassword(Tools.getNotNull(accounts.getPassword(), account.getPassword()));
-        account.setConfirmPassword(Tools.getNotNull(accounts.getConfirmPassword(), account.getConfirmPassword()));
-        account.setPassword(this.passwordEncoder.encode(account.getPassword()));
+        account.setUserName(accounts.getUserName());
+        account.setEmail(accounts.getEmail());
+        account.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
 
-        if (accounts.getAccountRoles() != null){
-            for (AccountRoles accountRole : account.getAccountRoles()) {
-                for (AccountRoles accountRoles : accounts.getAccountRoles()) {
-                    if (accountRoles.getDeleted() == null) {
-                        if (!Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
-                            account.getAccountRoles().remove(accountRoles);
-                        } else {
-                            account.addRole(accountRoles);
-                        }
-                    } else if (accountRoles.getDeleted()) {
-                        account.removeRole(accountRole);
+        for (AccountRoles accountRole : account.getAccountRoles()) {
+            for (AccountRoles accountRoles : accounts.getAccountRoles()) {
+                if (accountRoles.getDeleted() == null) {
+                    if (!Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
+                        account.getAccountRoles().remove(accountRoles);
                     } else {
-                        if (!Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
-                            account.getAccountRoles().remove(accountRoles);
-                        } else {
-                            accountRole.setRoles(accountRoles.getRoles());
-                        }
+                        account.addRole(accountRoles);
+                    }
+                } else if (accountRoles.getDeleted()) {
+                    account.removeRole(accountRole);
+                } else {
+                    if (!Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
+                        account.getAccountRoles().remove(accountRoles);
+                    } else {
+                        accountRole.setRoles(accountRoles.getRoles());
                     }
                 }
             }

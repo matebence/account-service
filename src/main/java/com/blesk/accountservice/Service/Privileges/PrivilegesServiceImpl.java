@@ -2,7 +2,6 @@ package com.blesk.accountservice.Service.Privileges;
 
 import com.blesk.accountservice.DAO.Privileges.PrivilegesDAOImpl;
 import com.blesk.accountservice.Model.Privileges;
-import com.blesk.accountservice.Utilitie.Tools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
@@ -41,7 +40,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean updatePrivilege(Privileges privilege, Privileges privileges) {
-        privilege.setName(Tools.getNotNull(privileges.getName(), privilege.getName()));
+        privilege.setName(privileges.getName());
         return this.privilegeDAO.update(privilege);
     }
 
