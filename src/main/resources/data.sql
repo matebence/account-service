@@ -525,7 +525,7 @@ VALUES (5, 2);
 INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (5, 7);
 INSERT INTO role_privilege_items (role_id, privilege_id)
-VALUES (5, 8)
+VALUES (5, 8);
 INSERT INTO role_privilege_items (role_id, privilege_id)
 VALUES (5, 11);
 INSERT INTO role_privilege_items (role_id, privilege_id)
