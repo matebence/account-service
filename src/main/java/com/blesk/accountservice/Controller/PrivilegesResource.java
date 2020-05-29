@@ -78,8 +78,7 @@ public class PrivilegesResource {
         Privileges privilege = this.privilegesService.getPrivilege(privilegeId);
         if (privilege == null) throw new AccountServiceException(Messages.GET_PRIVILEGE, HttpStatus.BAD_REQUEST);
 
-        privilege.setName(privileges.getName());
-        if (!this.privilegesService.updatePrivilege(privilege)) throw new AccountServiceException(Messages.UPDATE_PRIVILEGE, HttpStatus.BAD_REQUEST);
+        if (!this.privilegesService.updatePrivilege(privilege, privileges)) throw new AccountServiceException(Messages.UPDATE_PRIVILEGE, HttpStatus.BAD_REQUEST);
         return ResponseEntity.noContent().build();
     }
 

@@ -11,11 +11,11 @@ public interface PreferencesDAO extends DAO<Preferences> {
 
     Boolean softDelete(Preferences deleted);
 
-    Preferences get(Long id, boolean isDeleted);
+    Preferences get(Long id);
 
-    List<Preferences> getAll(int pageNumber, int pageSize, boolean isDeleted);
+    List<Preferences> getAll(int pageNumber, int pageSize);
 
-    Preferences getItemByColumn(String column, String value, boolean isDeleted);
+    Preferences getItemByColumn(String column, String value);
 
-    Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias, int pageNumber, boolean isDeleted);
+    Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias);
 }

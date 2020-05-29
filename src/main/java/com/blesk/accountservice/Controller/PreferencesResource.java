@@ -2,7 +2,6 @@ package com.blesk.accountservice.Controller;
 
 import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Exception.AccountServiceException;
-import com.blesk.accountservice.Model.AccountPreferences;
 import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Service.Preferences.PreferencesServiceImpl;
 import com.blesk.accountservice.Value.Keys;
@@ -69,7 +68,7 @@ public class PreferencesResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER') || hasRole('CLIENT') || hasRole('COURIER')")
     @PutMapping("/preferences/{preferenceId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updatePreferences(@Valid @RequestBody Preferences preferences, @PathVariable long preferenceId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -79,23 +78,11 @@ public class PreferencesResource {
         Preferences preference = this.preferencesService.getPreference(preferenceId, false);
         if (preference == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.BAD_REQUEST);
 
-        preference.setName(preferences.getName());
-        for (AccountPreferences accountPreference : preference.getAccountPreferences()) {
-            for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
-                if (accountPreferences.getDeleted() == null) {
-                    preference.addAccount(accountPreferences);
-                } else if (accountPreferences.getDeleted()) {
-                    preference.removeAccount(accountPreference);
-                } else {
-                    accountPreference.setAccounts(accountPreferences.getAccounts());
-                }
-            }
-        }
-        if (!this.preferencesService.updatePreference(preference)) throw new AccountServiceException(Messages.UPDATE_PREFERENCE, HttpStatus.BAD_REQUEST);
+        if (!this.preferencesService.updatePreference(preference, preferences)) throw new AccountServiceException(Messages.UPDATE_PREFERENCE, HttpStatus.BAD_REQUEST);
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER') || hasRole('CLIENT') || hasRole('COURIER')")
     @GetMapping("/preferences/{preferenceId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Preferences> retrievePreferences(@PathVariable long preferenceId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -111,7 +98,7 @@ public class PreferencesResource {
         return entityModel;
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER') || hasRole('CLIENT') || hasRole('COURIER')")
     @GetMapping("/preferences/page/{pageNumber}/limit/{pageSize}")
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
     public CollectionModel<List<Preferences>> retrieveAllPreferences(@PathVariable int pageNumber, @PathVariable int pageSize, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {

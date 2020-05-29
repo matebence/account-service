@@ -2,7 +2,6 @@ package com.blesk.accountservice.Value;
 
 public class Messages {
 
-    public static final String BLACKLISTED_PASSWORDS = "Nepodarilo sa načítať súbor neplatných hesiel";
     public static final String PASSWORD_RULES = "Nepodarilo sa načítať validačný súbor";
 
 

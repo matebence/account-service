@@ -11,11 +11,11 @@ public interface PrivilegesDAO extends DAO<Privileges> {
 
     Boolean softDelete(Privileges privileges);
 
-    Privileges get(Long id, boolean isDeleted);
+    Privileges get(Long id);
 
-    List<Privileges> getAll(int pageNumber, int pageSize, boolean isDeleted);
+    List<Privileges> getAll(int pageNumber, int pageSize);
 
-    Privileges getItemByColumn(String column, String value, boolean isDeleted);
+    Privileges getItemByColumn(String column, String value);
 
-    Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias, int pageNumber, boolean isDeleted);
+    Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias);
 }

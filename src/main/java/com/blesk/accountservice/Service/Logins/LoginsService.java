@@ -20,5 +20,5 @@ public interface LoginsService {
 
     List<Logins> getAllLogins(int pageNumber, int pageSize);
 
-    Map<String, Object> searchForLogin(HashMap<String, HashMap<String, String>> criteria);
+    Map<String, Object> searchForLogin(HashMap<String, HashMap<String, String>> criterias);
 }

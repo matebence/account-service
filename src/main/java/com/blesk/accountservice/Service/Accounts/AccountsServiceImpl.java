@@ -4,8 +4,9 @@ import com.blesk.accountservice.DAO.Accounts.AccountsDAOImpl;
 import com.blesk.accountservice.Model.AccountRoles;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Activations;
-import com.blesk.accountservice.Value.Keys;
+import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,20 +19,26 @@ import java.util.*;
 @Service
 public class AccountsServiceImpl implements AccountsService {
 
+    @Value("${blesk.javamailer.url.account-activation}")
+    private String activationUrl;
+
     private AccountsDAOImpl accountDAO;
 
     private PasswordEncoder passwordEncoder;
 
+    private EmailsServiceImpl emailsService;
+
     @Autowired
-    public AccountsServiceImpl(AccountsDAOImpl accountDAO, PasswordEncoder passwordEncoder) {
+    public AccountsServiceImpl(AccountsDAOImpl accountDAO, PasswordEncoder passwordEncoder, EmailsServiceImpl emailsService) {
         this.accountDAO = accountDAO;
         this.passwordEncoder = passwordEncoder;
+        this.emailsService = emailsService;
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Accounts createAccount(@Validated(Accounts.validationWithoutEncryption.class) Accounts accounts, String[] allowedRoles) {
+    public Accounts createAccount(@Validated(Accounts.basicValidation.class) Accounts accounts, String[] allowedRoles) {
         Set<AccountRoles> assignedRoles = new HashSet<>(accounts.getAccountRoles());
         for (AccountRoles accountRoles : assignedRoles) {
             if (!Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
@@ -44,7 +51,12 @@ public class AccountsServiceImpl implements AccountsService {
 
         accounts.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
         accounts.setActivations(new Activations(UUID.randomUUID().toString()));
-        return this.accountDAO.save(accounts);
+        Accounts account = this.accountDAO.save(accounts);
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("activationUrl", String.format(this.activationUrl, account.getAccountId(), account.getActivations().getToken()));
+        this.emailsService.sendHtmlMesseage("Registrácia", "signupactivation", variables, account);
+        return account;
     }
 
     @Override
@@ -61,9 +73,32 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean updateAccount(Accounts accounts, String[] allowedRoles) {
-        accounts.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
-        return this.accountDAO.update(accounts);
+    public Boolean updateAccount(Accounts account, @Validated(Accounts.basicValidation.class) Accounts accounts, String[] allowedRoles) {
+        account.setUserName(accounts.getUserName());
+        account.setEmail(accounts.getEmail());
+        account.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
+
+        for (AccountRoles accountRole : account.getAccountRoles()) {
+            for (AccountRoles accountRoles : accounts.getAccountRoles()) {
+                if (accountRoles.getDeleted() == null) {
+                    if (!Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
+                        account.getAccountRoles().remove(accountRoles);
+                    } else {
+                        account.addRole(accountRoles);
+                    }
+                } else if (accountRoles.getDeleted()) {
+                    account.removeRole(accountRole);
+                } else {
+                    if (!Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
+                        account.getAccountRoles().remove(accountRoles);
+                    } else {
+                        accountRole.setRoles(accountRoles.getRoles());
+                    }
+                }
+            }
+        }
+
+        return this.accountDAO.update(account);
     }
 
     @Override
@@ -73,22 +108,30 @@ public class AccountsServiceImpl implements AccountsService {
         if (su) {
             return this.accountDAO.get(Accounts.class, accountId);
         } else {
-            return this.accountDAO.get(accountId, false);
+            return this.accountDAO.get(accountId);
         }
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Accounts findAccountByEmail(String email, boolean isDeleted) {
-        return this.accountDAO.getItemByColumn("email", email, isDeleted);
+    public Accounts findAccountByEmail(String email, boolean su) {
+        if (su) {
+            return this.accountDAO.getItemByColumn(Accounts.class, "email", email);
+        } else {
+            return this.accountDAO.getItemByColumn("email", email);
+        }
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Accounts findAccountByUsername(String userName, boolean isDeleted) {
-        return this.accountDAO.getItemByColumn("userName", userName, isDeleted);
+    public Accounts findAccountByUsername(String userName, boolean su) {
+        if (su) {
+            return this.accountDAO.getItemByColumn(Accounts.class, "userName", userName);
+        } else {
+            return this.accountDAO.getItemByColumn("userName", userName);
+        }
     }
 
     @Override
@@ -98,7 +141,7 @@ public class AccountsServiceImpl implements AccountsService {
         if (su) {
             return this.accountDAO.getAll(Accounts.class, pageNumber, pageSize);
         } else {
-            return this.accountDAO.getAll(pageNumber, pageSize, false);
+            return this.accountDAO.getAll(pageNumber, pageSize);
         }
     }
 
@@ -112,11 +155,11 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criteria, boolean su) {
+    public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criterias, boolean su) {
         if (su) {
-            return this.accountDAO.searchBy(Accounts.class, criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)));
+            return this.accountDAO.searchBy(Accounts.class, criterias);
         } else {
-            return this.accountDAO.searchBy(criteria, Integer.parseInt(criteria.get(Keys.PAGINATION).get(Keys.PAGE_NUMBER)), false);
+            return this.accountDAO.searchBy(criterias);
         }
     }
 }

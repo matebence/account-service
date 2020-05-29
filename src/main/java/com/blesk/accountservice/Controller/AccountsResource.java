@@ -2,15 +2,11 @@ package com.blesk.accountservice.Controller;
 
 import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Exception.AccountServiceException;
-import com.blesk.accountservice.Model.AccountRoles;
 import com.blesk.accountservice.Model.Accounts;
-import com.blesk.accountservice.Model.Activations;
 import com.blesk.accountservice.Service.Accounts.AccountsServiceImpl;
-import com.blesk.accountservice.Service.Emails.EmailsServiceImpl;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -26,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -35,39 +30,28 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping(value = "/api", produces = "application/json")
 public class AccountsResource {
 
-    @Value("${blesk.javamailer.url.account-activation}")
-    private String activationUrl;
-
     private final static int DEFAULT_PAGE_SIZE = 10;
     private final static int DEFAULT_NUMBER = 0;
 
     private AccountsServiceImpl accountsService;
 
-    private EmailsServiceImpl emailsService;
-
     @Autowired
-    public AccountsResource(AccountsServiceImpl accountsService, EmailsServiceImpl emailsService) {
+    public AccountsResource(AccountsServiceImpl accountsService) {
         this.accountsService = accountsService;
-        this.emailsService = emailsService;
     }
 
     @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
     @PostMapping("/accounts")
     @ResponseStatus(HttpStatus.CREATED)
-    public EntityModel<Accounts> createAccounts(@Validated(Accounts.validationWithEncryption.class) @RequestBody Accounts accounts, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    public EntityModel<Accounts> createAccounts(@Validated(Accounts.advancedValidation.class) @RequestBody Accounts accounts, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("CREATE_ACCOUNTS")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
 
-        accounts.setActivations(new Activations(UUID.randomUUID().toString()));
         Accounts account = this.accountsService.createAccount(accounts, new String[]{"ROLE_SYSTEM", "ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CLIENT", "ROLE_COURIER"});
         if (account == null) throw new AccountServiceException(Messages.CREATE_ACCOUNT, HttpStatus.BAD_REQUEST);
 
         EntityModel<Accounts> entityModel = new EntityModel<Accounts>(account);
         entityModel.add(linkTo(methodOn(this.getClass()).retrieveAccounts(account.getAccountId(), httpServletRequest, httpServletResponse)).withRel("account"));
-
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("activationUrl", String.format(this.activationUrl, account.getAccountId(), account.getActivations().getToken()));
-        this.emailsService.sendHtmlMesseage("Registrácia", "signupactivation", variables, account);
         return entityModel;
     }
 
@@ -87,29 +71,14 @@ public class AccountsResource {
     @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
     @PutMapping("/accounts/{accountId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Object> updateAccounts(@Validated(Accounts.validationWithEncryption.class) @RequestBody Accounts accounts, @PathVariable long accountId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    public ResponseEntity<Object> updateAccounts(@Validated(Accounts.advancedValidation.class) @RequestBody Accounts accounts, @PathVariable long accountId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
         if (!jwtMapper.getGrantedPrivileges().contains("UPDATE_ACCOUNTS")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
 
         Accounts account = this.accountsService.getAccount(accountId, false);
         if (account == null) throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.BAD_REQUEST);
 
-        account.setUserName(accounts.getUserName());
-        account.setEmail(accounts.getEmail());
-        account.setPassword(accounts.getPassword());
-        account.setConfirmPassword(accounts.getConfirmPassword());
-        for (AccountRoles accountRole : account.getAccountRoles()) {
-            for (AccountRoles accountRoles : accounts.getAccountRoles()) {
-                if (accountRoles.getDeleted() == null) {
-                    account.addRole(accountRoles);
-                } else if (accountRoles.getDeleted()) {
-                    account.removeRole(accountRole);
-                } else {
-                    accountRole.setRoles(accountRoles.getRoles());
-                }
-            }
-        }
-        if (!this.accountsService.updateAccount(account, new String[]{"ROLE_SYSTEM", "ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CLIENT", "ROLE_COURIER"})) throw new AccountServiceException(Messages.UPDATE_ACCOUNT, HttpStatus.BAD_REQUEST);
+        if (!this.accountsService.updateAccount(account, accounts, new String[]{"ROLE_SYSTEM", "ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CLIENT", "ROLE_COURIER"})) throw new AccountServiceException(Messages.UPDATE_ACCOUNT, HttpStatus.BAD_REQUEST);
         return ResponseEntity.noContent().build();
     }
 

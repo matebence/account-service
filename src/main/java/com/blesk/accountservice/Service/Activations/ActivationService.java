@@ -20,7 +20,7 @@ public interface ActivationService {
 
     List<Activations> getAllActivationTokens(int pageNumber, int pageSize);
 
-    Map<String, Object> searchForActivationToken(HashMap<String, HashMap<String, String>> criteria);
+    Map<String, Object> searchForActivationToken(HashMap<String, HashMap<String, String>> criterias);
 
     Boolean validateActivationToken(long accountId, String token);
 }

@@ -14,7 +14,7 @@ public interface RolesService {
 
     Boolean deleteRole(Long roleId);
 
-    Boolean updateRole(Roles roles);
+    Boolean updateRole(Roles role, Roles roles);
 
     Roles getRole(Long roleId);
 
@@ -24,5 +24,5 @@ public interface RolesService {
 
     List<Roles> getAllRoles(int pageNumber, int pageSize);
 
-    Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criteria);
+    Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criterias);
 }

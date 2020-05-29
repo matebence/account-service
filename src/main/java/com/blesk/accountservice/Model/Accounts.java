@@ -1,7 +1,6 @@
 package com.blesk.accountservice.Model;
 
 import com.blesk.accountservice.Validator.Match.FieldMatch;
-import com.blesk.accountservice.Validator.Password.EncryptionAware;
 import com.blesk.accountservice.Validator.Password.Password;
 import com.blesk.accountservice.Value.Messages;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -26,13 +25,13 @@ import java.util.*;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Accounts.class)
 @JsonIgnoreProperties(value = {"accountPreferences"})
 @SQLDelete(sql = "UPDATE accounts SET is_deleted = TRUE, deleted_at = NOW() WHERE account_id = ?")
-@FieldMatch(first = "password", second = "confirmPassword", message = Messages.ACCOUNTS_PASWORD_MATCH, groups = Accounts.validationWithEncryption.class)
-public class Accounts implements Serializable, EncryptionAware {
+@FieldMatch(first = "password", second = "confirmPassword", message = Messages.ACCOUNTS_PASWORD_MATCH, groups = Accounts.advancedValidation.class)
+public class Accounts implements Serializable {
 
-    public interface validationWithEncryption {
+    public interface advancedValidation {
     }
 
-    public interface validationWithoutEncryption {
+    public interface basicValidation {
     }
 
     @Id
@@ -60,19 +59,19 @@ public class Accounts implements Serializable, EncryptionAware {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<AccountPreferences> accountPreferences = new HashSet<AccountPreferences>();
 
-    @NotNull(message = Messages.ACCOUNTS_USER_NAME_NULL, groups = validationWithEncryption.class)
-    @Size(min = 5, max = 255, message = Messages.ACCOUNTS_USER_NAME_LENGHT, groups = validationWithEncryption.class)
+    @NotNull(message = Messages.ACCOUNTS_USER_NAME_NULL, groups = advancedValidation.class)
+    @Size(min = 5, max = 255, message = Messages.ACCOUNTS_USER_NAME_LENGHT, groups = advancedValidation.class)
     @Column(name = "user_name", nullable = false)
     private String userName;
 
-    @NotNull(message = Messages.ACCOUNTS_EMAIL_NULL, groups = validationWithEncryption.class)
-    @Email(message = Messages.ACCOUNTS_EMAIL, groups = validationWithEncryption.class)
-    @Size(min = 5, max = 255, message = Messages.ACCOUNTS_EMAIL_LENGHT, groups = validationWithEncryption.class)
+    @NotNull(message = Messages.ACCOUNTS_EMAIL_NULL, groups = advancedValidation.class)
+    @Email(message = Messages.ACCOUNTS_EMAIL, groups = advancedValidation.class)
+    @Size(min = 5, max = 255, message = Messages.ACCOUNTS_EMAIL_LENGHT, groups = advancedValidation.class)
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Password(groups = validationWithEncryption.class)
-    @NotNull(message = Messages.ACCOUNTS_PASSWORD_NULL, groups = validationWithEncryption.class)
+    @Password(groups = advancedValidation.class)
+    @NotNull(message = Messages.ACCOUNTS_PASSWORD_NULL, groups = advancedValidation.class)
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -205,8 +204,16 @@ public class Accounts implements Serializable, EncryptionAware {
         this.email = email;
     }
 
+    public String getPassword() {
+        return this.password;
+    }
+
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getConfirmPassword() {
+        return this.confirmPassword;
     }
 
     public void setConfirmPassword(String confirmPassword) {
@@ -259,16 +266,6 @@ public class Accounts implements Serializable, EncryptionAware {
 
     public void setValidations(HashMap<String, String> validations) {
         this.validations = validations;
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
-
-    @Override
-    public String getConfirmPassword() {
-        return this.confirmPassword;
     }
 
     @PrePersist

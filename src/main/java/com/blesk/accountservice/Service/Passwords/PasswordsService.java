@@ -20,7 +20,9 @@ public interface PasswordsService {
 
     List<Passwords> getAllPasswordTokens(int pageNumber, int pageSize);
 
-    Map<String, Object> searchForPasswordToken(HashMap<String, HashMap<String, String>> criteria);
+    Map<String, Object> searchForPasswordToken(HashMap<String, HashMap<String, String>> criterias);
 
     Boolean validatePasswordToken(long accountId, String token);
+
+    Boolean generateNewPassword(long accountId);
 }

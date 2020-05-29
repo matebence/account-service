@@ -46,23 +46,28 @@ public class AccountServiceHandler {
         switch (exDetail.getConstraintName()) {
             case "account_id":
                 unique.put("accountId", Messages.UNIQUE_FIELD_DEFAULT);
+                break;
             case "account_username":
                 unique.put("userName", Messages.ACCOUNTS_USER_NAME_UNIQUE);
+                break;
             case "account_email":
                 unique.put("email", Messages.ACCOUNTS_EMAIL_UNIQUE);
                 break;
             case "preference_id":
                 unique.put("preferenceId", Messages.UNIQUE_FIELD_DEFAULT);
+                break;
             case "preference_name":
                 unique.put("name", Messages.PREFERENCES_UNIQUE);
                 break;
             case "privilege_id":
                 unique.put("privilegeId", Messages.UNIQUE_FIELD_DEFAULT);
+                break;
             case "privilege_name":
                 unique.put("name", Messages.PRIVILEGES_UNIQUE);
                 break;
             case "role_id":
                 unique.put("roleId", Messages.UNIQUE_FIELD_DEFAULT);
+                break;
             case "role_name":
                 unique.put("name", Messages.ROLES_UNIQUE);
                 break;

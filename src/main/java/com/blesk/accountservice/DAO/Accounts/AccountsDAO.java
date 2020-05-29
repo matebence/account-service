@@ -11,11 +11,11 @@ public interface AccountsDAO extends DAO<Accounts> {
 
     Boolean softDelete(Accounts accounts);
 
-    Accounts get(Long id, boolean isDeleted);
+    Accounts get(Long id);
 
-    List<Accounts> getAll(int pageNumber, int pageSize, boolean isDeleted);
+    List<Accounts> getAll(int pageNumber, int pageSize);
 
-    Accounts getItemByColumn(String column, String value, boolean isDeleted);
+    Accounts getItemByColumn(String column, String value);
 
-    Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias, int pageNumber, boolean isDeleted);
+    Map<String, Object> searchBy(HashMap<String, HashMap<String, String>> criterias);
 }
