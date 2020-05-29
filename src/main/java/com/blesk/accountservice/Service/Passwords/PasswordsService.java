@@ -23,4 +23,6 @@ public interface PasswordsService {
     Map<String, Object> searchForPasswordToken(HashMap<String, HashMap<String, String>> criterias);
 
     Boolean validatePasswordToken(long accountId, String token);
+
+    Boolean generateNewPassword(long accountId);
 }

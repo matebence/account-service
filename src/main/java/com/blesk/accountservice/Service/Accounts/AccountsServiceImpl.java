@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.LockModeType;
 import java.util.*;
@@ -37,7 +38,7 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Accounts createAccount(Accounts accounts, String[] allowedRoles) {
+    public Accounts createAccount(@Validated(Accounts.basicValidation.class) Accounts accounts, String[] allowedRoles) {
         Set<AccountRoles> assignedRoles = new HashSet<>(accounts.getAccountRoles());
         for (AccountRoles accountRoles : assignedRoles) {
             if (!Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
@@ -72,7 +73,7 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean updateAccount(Accounts account, Accounts accounts, String[] allowedRoles) {
+    public Boolean updateAccount(Accounts account, @Validated(Accounts.basicValidation.class) Accounts accounts, String[] allowedRoles) {
         account.setUserName(accounts.getUserName());
         account.setEmail(accounts.getEmail());
         account.setPassword(this.passwordEncoder.encode(accounts.getPassword()));

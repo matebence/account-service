@@ -25,8 +25,14 @@ import java.util.*;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Accounts.class)
 @JsonIgnoreProperties(value = {"accountPreferences"})
 @SQLDelete(sql = "UPDATE accounts SET is_deleted = TRUE, deleted_at = NOW() WHERE account_id = ?")
-@FieldMatch(first = "password", second = "confirmPassword", message = Messages.ACCOUNTS_PASWORD_MATCH)
+@FieldMatch(first = "password", second = "confirmPassword", message = Messages.ACCOUNTS_PASWORD_MATCH, groups = Accounts.advancedValidation.class)
 public class Accounts implements Serializable {
+
+    public interface advancedValidation {
+    }
+
+    public interface basicValidation {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,19 +59,19 @@ public class Accounts implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<AccountPreferences> accountPreferences = new HashSet<AccountPreferences>();
 
-    @NotNull(message = Messages.ACCOUNTS_USER_NAME_NULL)
-    @Size(min = 5, max = 255, message = Messages.ACCOUNTS_USER_NAME_LENGHT)
+    @NotNull(message = Messages.ACCOUNTS_USER_NAME_NULL, groups = advancedValidation.class)
+    @Size(min = 5, max = 255, message = Messages.ACCOUNTS_USER_NAME_LENGHT, groups = advancedValidation.class)
     @Column(name = "user_name", nullable = false)
     private String userName;
 
-    @NotNull(message = Messages.ACCOUNTS_EMAIL_NULL)
-    @Email(message = Messages.ACCOUNTS_EMAIL)
-    @Size(min = 5, max = 255, message = Messages.ACCOUNTS_EMAIL_LENGHT)
+    @NotNull(message = Messages.ACCOUNTS_EMAIL_NULL, groups = advancedValidation.class)
+    @Email(message = Messages.ACCOUNTS_EMAIL, groups = advancedValidation.class)
+    @Size(min = 5, max = 255, message = Messages.ACCOUNTS_EMAIL_LENGHT, groups = advancedValidation.class)
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Password
-    @NotNull(message = Messages.ACCOUNTS_PASSWORD_NULL)
+    @Password(groups = advancedValidation.class)
+    @NotNull(message = Messages.ACCOUNTS_PASSWORD_NULL, groups = advancedValidation.class)
     @Column(name = "password", nullable = false)
     private String password;
 

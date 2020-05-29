@@ -67,7 +67,7 @@ public class Authorization {
     public Accounts createNewPublicAccount(Accounts accounts) throws ListenerExecutionFailedException {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<Accounts>> violations = validator.validate(accounts, Accounts.class);
+        Set<ConstraintViolation<Accounts>> violations = validator.validate(accounts, Accounts.advancedValidation.class);
         HashMap<String, String> validation = new HashMap<>();
 
         if (!violations.isEmpty()) {
@@ -136,7 +136,9 @@ public class Authorization {
     @RabbitListener(queues = "blesk.verifyPasswordTokenQueue")
     public Boolean verifyPasswordTokenForForgetPassword(Accounts accounts) throws ListenerExecutionFailedException {
         try {
-            return this.passwordsService.validatePasswordToken(accounts.getAccountId(), accounts.getPasswords().getToken());
+            if (this.passwordsService.validatePasswordToken(accounts.getAccountId(), accounts.getPasswords().getToken()))
+                return this.passwordsService.generateNewPassword(accounts.getAccountId());
+            return Boolean.FALSE;
         } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
         }
