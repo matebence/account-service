@@ -45,7 +45,7 @@ public class Authorization {
     @RabbitListener(queues = "blesk.verifyAccountQueue")
     public Accounts verifyAccountForSigningIn(String userName) throws ListenerExecutionFailedException {
         try {
-            Accounts accounts = this.accountsService.findAccountByUsername(userName, false);
+            Accounts accounts = this.accountsService.findAccountByUsername(userName);
             return accounts != null ? accounts : new Accounts();
         } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return new Accounts();
@@ -55,8 +55,8 @@ public class Authorization {
     @RabbitListener(queues = "blesk.lastLoginQueue")
     public Boolean recordLastSuccessfullLogin(Logins logins) throws ListenerExecutionFailedException {
         try {
-            Accounts accounts = this.accountsService.getAccount(logins.getAccounts().getAccountId(), false);
-            if (accounts != null && accounts.getPasswords() != null) return this.passwordsService.deletePasswordToken(accounts.getPasswords().getPasswordTokenId());
+            Accounts accounts = this.accountsService.getAccount(logins.getAccounts().getAccountId());
+            if (accounts != null && accounts.getPasswords() != null) return this.passwordsService.deletePasswordToken(accounts.getPasswords());
             return this.loginsService.updateLogin(logins);
         } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
             return Boolean.FALSE;
@@ -108,7 +108,7 @@ public class Authorization {
         try {
             Boolean result = this.activationService.validateActivationToken(accounts.getAccountId(), accounts.getActivations().getToken());
             if (result) {
-                Accounts account = this.accountsService.getAccount(accounts.getAccountId(), false);
+                Accounts account = this.accountsService.getAccount(accounts.getAccountId());
                 account.setActivated(result);
                 if (this.accountsService.updateAccount(account, new Accounts(), new String[]{})) return result;
             }
@@ -121,7 +121,7 @@ public class Authorization {
     @RabbitListener(queues = "blesk.forgetPasswordQueue")
     public Passwords recoverAccountWithForgetPassword(String email) throws ListenerExecutionFailedException {
         try {
-            Accounts accounts = this.accountsService.findAccountByEmail(email, false);
+            Accounts accounts = this.accountsService.findAccountByEmail(email);
             if (accounts == null) return new Passwords();
 
             Passwords passwords = this.passwordsService.createPasswordToken(new Passwords(accounts, UUID.randomUUID().toString()));

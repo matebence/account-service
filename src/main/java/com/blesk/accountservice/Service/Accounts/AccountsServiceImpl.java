@@ -62,12 +62,8 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean deleteAccount(Accounts accounts, boolean su) {
-        if (su) {
-            return this.accountDAO.delete("accounts", "account_id", accounts.getAccountId());
-        } else {
-            return this.accountDAO.softDelete(accounts);
-        }
+    public Boolean deleteAccount(Accounts accounts) {
+        return this.accountDAO.delete(accounts);
     }
 
     @Override
@@ -104,45 +100,29 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Accounts getAccount(Long accountId, boolean su) {
-        if (su) {
-            return this.accountDAO.get(Accounts.class, accountId);
-        } else {
-            return this.accountDAO.get(accountId);
-        }
+    public Accounts getAccount(Long accountId) {
+        return this.accountDAO.get(Accounts.class, "accountId", accountId);
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Accounts findAccountByEmail(String email, boolean su) {
-        if (su) {
-            return this.accountDAO.getItemByColumn(Accounts.class, "email", email);
-        } else {
-            return this.accountDAO.getItemByColumn("email", email);
-        }
+    public Accounts findAccountByEmail(String email) {
+        return this.accountDAO.getItemByColumn(Accounts.class, "email", email);
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Accounts findAccountByUsername(String userName, boolean su) {
-        if (su) {
-            return this.accountDAO.getItemByColumn(Accounts.class, "userName", userName);
-        } else {
-            return this.accountDAO.getItemByColumn("userName", userName);
-        }
+    public Accounts findAccountByUsername(String userName) {
+        return this.accountDAO.getItemByColumn(Accounts.class, "userName", userName);
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public List<Accounts> getAllAccounts(int pageNumber, int pageSize, boolean su) {
-        if (su) {
-            return this.accountDAO.getAll(Accounts.class, pageNumber, pageSize);
-        } else {
-            return this.accountDAO.getAll(pageNumber, pageSize);
-        }
+    public List<Accounts> getAllAccounts(int pageNumber, int pageSize) {
+        return this.accountDAO.getAll(Accounts.class, pageNumber, pageSize);
     }
 
     @Override
@@ -155,11 +135,7 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criterias, boolean su) {
-        if (su) {
-            return this.accountDAO.searchBy(Accounts.class, criterias);
-        } else {
-            return this.accountDAO.searchBy(criterias);
-        }
+    public Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criterias) {
+        return this.accountDAO.searchBy(Accounts.class, criterias);
     }
 }

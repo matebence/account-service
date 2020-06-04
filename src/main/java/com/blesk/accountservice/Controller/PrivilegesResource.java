@@ -64,7 +64,7 @@ public class PrivilegesResource {
 
         Privileges privilege = this.privilegesService.getPrivilege(privilegeId);
         if (privilege == null) throw new AccountServiceException(Messages.GET_PRIVILEGE, HttpStatus.NOT_FOUND);
-        if (!this.privilegesService.deletePrivilege(privilegeId)) throw new AccountServiceException(Messages.DELETE_PRIVILEGE, HttpStatus.BAD_REQUEST);
+        if (!this.privilegesService.deletePrivilege(privilege)) throw new AccountServiceException(Messages.DELETE_PRIVILEGE, HttpStatus.BAD_REQUEST);
         return ResponseEntity.noContent().build();
     }
 
@@ -103,7 +103,7 @@ public class PrivilegesResource {
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
     public CollectionModel<List<Privileges>> retrieveAllPrivileges(@PathVariable int pageNumber, @PathVariable int pageSize, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("VIEW_ALL_PRIVILEGES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
+        if (!jwtMapper.getGrantedPrivileges().contains("VIEW_PRIVILEGES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
 
         List<Privileges> privileges = this.privilegesService.getAllPrivileges(pageNumber, pageSize);
         if (privileges == null || privileges.isEmpty()) throw new AccountServiceException(Messages.GET_ALL_PRIVILEGES, HttpStatus.BAD_REQUEST);
@@ -119,7 +119,7 @@ public class PrivilegesResource {
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<List<Privileges>> searchForPrivileges(@RequestBody HashMap<String, HashMap<String, String>> search, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("VIEW_ALL_PRIVILEGES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
+        if (!jwtMapper.getGrantedPrivileges().contains("VIEW_PRIVILEGES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         if (search.get(Keys.PAGINATION) == null) throw new AccountServiceException(Messages.PAGINATION_ERROR, HttpStatus.BAD_REQUEST);
 
         Map<String, Object> privileges = this.privilegesService.searchForPrivilege(search);

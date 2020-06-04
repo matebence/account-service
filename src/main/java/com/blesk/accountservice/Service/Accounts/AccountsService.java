@@ -10,19 +10,19 @@ public interface AccountsService {
 
     Accounts createAccount(Accounts accounts, String[] allowedRoles);
 
-    Boolean deleteAccount(Accounts accounts, boolean su);
+    Boolean deleteAccount(Accounts accounts);
 
     Boolean updateAccount(Accounts account, Accounts accounts, String[] allowedRoles);
 
-    Accounts getAccount(Long accountId, boolean su);
+    Accounts getAccount(Long accountId);
 
-    Accounts findAccountByEmail(String email, boolean su);
+    Accounts findAccountByEmail(String email);
 
-    Accounts findAccountByUsername(String userName, boolean su);
+    Accounts findAccountByUsername(String userName);
 
-    List<Accounts> getAllAccounts(int pageNumber, int pageSize, boolean su);
+    List<Accounts> getAllAccounts(int pageNumber, int pageSize);
 
     List<Accounts> getAccountsForJoin(List<Long> ids, String columName);
 
-    Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criterias, boolean su);
+    Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criterias);
 }

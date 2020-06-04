@@ -10,7 +10,7 @@ public interface PrivilegesService {
 
     Privileges createPrivilege(Privileges privileges);
 
-    Boolean deletePrivilege(Long privilegeId);
+    Boolean deletePrivilege(Privileges privileges);
 
     Boolean updatePrivilege(Privileges privilege, Privileges privileges);
 

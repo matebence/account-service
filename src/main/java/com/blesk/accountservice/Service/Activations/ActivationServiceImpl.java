@@ -32,8 +32,8 @@ public class ActivationServiceImpl implements ActivationService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean deleteActivationToken(Long activationTokenId) {
-        return this.activationsDAO.delete("activations", "activation_id", activationTokenId);
+    public Boolean deleteActivationToken(Activations activations) {
+        return this.activationsDAO.delete(activations);
     }
 
     @Override
@@ -46,8 +46,8 @@ public class ActivationServiceImpl implements ActivationService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Activations getActivationToken(Long activationTokenId) {
-        return this.activationsDAO.get(Activations.class, activationTokenId);
+    public Activations getActivationToken(Long accountActivationId) {
+        return this.activationsDAO.get(Activations.class, "accountActivationId", accountActivationId);
     }
 
     @Override

@@ -10,7 +10,7 @@ public interface LoginsService {
 
     Logins createLogin(Logins logins);
 
-    Boolean deleteLogin(Long loginId);
+    Boolean deleteLogin(Logins logins);
 
     Boolean updateLogin(Logins logins);
 

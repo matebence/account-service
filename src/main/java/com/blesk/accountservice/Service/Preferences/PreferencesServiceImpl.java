@@ -38,12 +38,8 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean deletePreference(Preferences preferences, boolean su) {
-        if (su){
-            return this.preferencesDAO.delete("preferences", "preference_id", preferences.getPreferenceId());
-        } else {
-            return this.preferencesDAO.softDelete(preferences);
-        }
+    public Boolean deletePreference(Preferences preferences) {
+        return this.preferencesDAO.delete(preferences);
     }
 
     @Override
@@ -68,44 +64,28 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Preferences getPreference(Long preferenceId, boolean su) {
-        if (su) {
-            return this.preferencesDAO.get(Preferences.class, preferenceId);
-        } else {
-            return this.preferencesDAO.get(preferenceId);
-        }
+    public Preferences getPreference(Long preferenceId) {
+        return this.preferencesDAO.get(Preferences.class, "preferenceId", preferenceId);
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Preferences findPreferenceByName(String name, boolean su) {
-        if (su) {
-            return this.preferencesDAO.getItemByColumn(Preferences.class,"name", name);
-        } else {
-            return this.preferencesDAO.getItemByColumn("name", name);
-        }
+    public Preferences findPreferenceByName(String name) {
+        return this.preferencesDAO.getItemByColumn(Preferences.class, "name", name);
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public List<Preferences> getAllPreferences(int pageNumber, int pageSize, boolean su) {
-        if (su) {
-            return this.preferencesDAO.getAll(Preferences.class, pageNumber, pageSize);
-        } else {
-            return this.preferencesDAO.getAll(pageNumber, pageSize);
-        }
+    public List<Preferences> getAllPreferences(int pageNumber, int pageSize) {
+        return this.preferencesDAO.getAll(Preferences.class, pageNumber, pageSize);
     }
 
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criterias, boolean su) {
-        if (su) {
-            return this.preferencesDAO.searchBy(Preferences.class, criterias);
-        } else {
-            return this.preferencesDAO.searchBy(criterias);
-        }
+    public Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criterias) {
+        return this.preferencesDAO.searchBy(Preferences.class, criterias);
     }
 }

@@ -32,8 +32,8 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean deletePrivilege(Long privilegeId) {
-        return this.privilegeDAO.delete("privileges", "privilege_id", privilegeId);
+    public Boolean deletePrivilege(Privileges privileges) {
+        return this.privilegeDAO.delete(privileges);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Override
     @Transactional
     public Privileges getPrivilege(Long privilegeId) {
-        return this.privilegeDAO.get(Privileges.class, privilegeId);
+        return this.privilegeDAO.get(Privileges.class, "privilegeId", privilegeId);
     }
 
     @Override
