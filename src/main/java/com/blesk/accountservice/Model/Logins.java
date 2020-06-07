@@ -138,11 +138,13 @@ public class Logins implements Serializable {
     @PrePersist
     protected void prePersist() {
         this.isDeleted = false;
+        this.lastLogin = new Timestamp(System.currentTimeMillis());
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
     @PreUpdate
     protected void preUpdate() {
+        this.lastLogin = new Timestamp(System.currentTimeMillis());
         this.updatedAt = new Timestamp(System.currentTimeMillis());
     }
 }
