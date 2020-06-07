@@ -47,7 +47,7 @@ public class Authorization {
         try {
             Accounts accounts = this.accountsService.findAccountByUsername(userName);
             return accounts != null ? accounts : new Accounts();
-        } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (Exception ex) {
             return new Accounts();
         }
     }
@@ -58,7 +58,7 @@ public class Authorization {
             Accounts accounts = this.accountsService.getAccount(logins.getAccounts().getAccountId());
             if (accounts != null && accounts.getPasswords() != null) return this.passwordsService.deletePasswordToken(accounts.getPasswords());
             return this.loginsService.updateLogin(logins);
-        } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (Exception ex) {
             return Boolean.FALSE;
         }
     }
@@ -98,7 +98,7 @@ public class Authorization {
             accounts.setValidations(unique);
             return accounts;
 
-        } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (Exception ex) {
             return new Accounts();
         }
     }
@@ -112,7 +112,7 @@ public class Authorization {
                 account.setActivated(result);
                 if (this.accountsService.updateAccount(account, new Accounts(), new String[]{})) return result;
             }
-        } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (Exception ex) {
             return Boolean.FALSE;
         }
         return Boolean.FALSE;
@@ -128,7 +128,7 @@ public class Authorization {
             if (passwords == null) return new Passwords();
 
             return passwords;
-        } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (Exception ex) {
             return new Passwords();
         }
     }
@@ -139,7 +139,7 @@ public class Authorization {
             if (this.passwordsService.validatePasswordToken(accounts.getAccountId(), accounts.getPasswords().getToken()))
                 return this.passwordsService.generateNewPassword(accounts.getAccountId());
             return Boolean.FALSE;
-        } catch (NullPointerException | TransientPropertyValueException | InvalidDataAccessApiUsageException ex) {
+        } catch (Exception ex) {
             return Boolean.FALSE;
         }
     }

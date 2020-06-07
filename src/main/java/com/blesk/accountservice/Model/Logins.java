@@ -32,14 +32,14 @@ public class Logins implements Serializable {
 
     @NotNull(message = Messages.LOGIN_TIMESTAMP_NULL)
     @Column(name = "last_login", nullable = false)
-    private Timestamp lastLogin;
+    private Timestamp lastLogin = new Timestamp(System.currentTimeMillis());
 
     @NotNull(message = Messages.LOGIN_IP_ADDRESS_NULL)
     @Column(name = "ip_address", nullable = false)
     private String ipAddress;
 
     @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
@@ -137,14 +137,11 @@ public class Logins implements Serializable {
 
     @PrePersist
     protected void prePersist() {
-        this.isDeleted = false;
-        this.lastLogin = new Timestamp(System.currentTimeMillis());
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
     @PreUpdate
     protected void preUpdate() {
-        this.lastLogin = new Timestamp(System.currentTimeMillis());
         this.updatedAt = new Timestamp(System.currentTimeMillis());
     }
 }

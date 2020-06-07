@@ -144,7 +144,6 @@ public class Roles implements Serializable {
 
     @PrePersist
     protected void prePersist() {
-        this.isDeleted = false;
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 

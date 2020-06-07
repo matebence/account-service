@@ -82,7 +82,7 @@ public class Accounts implements Serializable {
     private Boolean isActivated;
 
     @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
@@ -271,7 +271,6 @@ public class Accounts implements Serializable {
     @PrePersist
     protected void prePersist() {
         this.isActivated = false;
-        this.isDeleted = false;
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 

@@ -35,7 +35,7 @@ public class Activations implements Serializable {
     private String token;
 
     @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
@@ -122,7 +122,6 @@ public class Activations implements Serializable {
 
     @PrePersist
     protected void prePersist() {
-        this.isDeleted = false;
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 

@@ -150,6 +150,14 @@ INSERT INTO privileges (name,  created_at, is_deleted)
 VALUES ('CREATE_DISTRICTS',  CURRENT_TIMESTAMP, FALSE);
 INSERT INTO privileges (name,  created_at, is_deleted)
 VALUES ('UPDATE_DISTRICTS',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('VIEW_WAREHOUSES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('DELETE_WAREHOUSES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('CREATE_WAREHOUSES',  CURRENT_TIMESTAMP, FALSE);
+INSERT INTO privileges (name,  created_at, is_deleted)
+VALUES ('UPDATE_WAREHOUSES',  CURRENT_TIMESTAMP, FALSE);
 
 
 INSERT INTO role_privilege_items (privilege_id, role_id)

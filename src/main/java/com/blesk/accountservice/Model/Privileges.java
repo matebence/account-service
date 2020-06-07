@@ -125,7 +125,6 @@ public class Privileges implements Serializable {
 
     @PrePersist
     protected void prePersist() {
-        this.isDeleted = false;
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
