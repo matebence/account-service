@@ -198,3 +198,11 @@ INSERT INTO account_role_items (account_id, role_id)
 VALUES (4, 4);
 INSERT INTO account_role_items (account_id, role_id)
 VALUES (5, 5);
+
+
+INSERT INTO preferences (name)
+VALUES ('Cena prepravy (eur/1km)');
+
+
+INSERT INTO account_preference_items (account_id, preference_id, value, created_at, is_deleted)
+VALUES (5, 1, 3.50, CURRENT_TIMESTAMP, FALSE);

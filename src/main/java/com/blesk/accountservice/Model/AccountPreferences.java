@@ -39,7 +39,7 @@ public class AccountPreferences implements Serializable {
     private String content;
 
     @Column(name = "value")
-    private int value;
+    private Double value;
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
@@ -66,14 +66,14 @@ public class AccountPreferences implements Serializable {
         this.preferences = preferences;
     }
 
-    public AccountPreferences(boolean isSet, String content, int value, Boolean isDeleted) {
+    public AccountPreferences(boolean isSet, String content, Double value, Boolean isDeleted) {
         this.isSet = isSet;
         this.content = content;
         this.value = value;
         this.isDeleted = isDeleted;
     }
 
-    public AccountPreferences(boolean isSet, String content, int value, Boolean isDeleted, Accounts accounts, Preferences preferences) {
+    public AccountPreferences(boolean isSet, String content, Double value, Boolean isDeleted, Accounts accounts, Preferences preferences) {
         this.isSet = isSet;
         this.content = content;
         this.value = value;
@@ -125,11 +125,11 @@ public class AccountPreferences implements Serializable {
         this.content = content;
     }
 
-    public int getValue() {
+    public Double getValue() {
         return this.value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 
