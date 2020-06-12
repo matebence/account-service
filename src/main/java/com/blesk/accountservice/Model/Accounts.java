@@ -55,7 +55,7 @@ public class Accounts implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<AccountRoles> accountRoles = new HashSet<AccountRoles>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "accounts")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "accounts")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<AccountPreferences> accountPreferences = new HashSet<AccountPreferences>();
 

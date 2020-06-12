@@ -1,6 +1,5 @@
 package com.blesk.accountservice.Controller;
 
-import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Preferences;
 import com.blesk.accountservice.Service.Preferences.PreferencesServiceImpl;
@@ -12,8 +11,6 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,9 +41,6 @@ public class PreferencesResource {
     @PostMapping("/preferences")
     @ResponseStatus(HttpStatus.CREATED)
     public EntityModel<Preferences> createPreferences(@Valid @RequestBody Preferences preferences, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("CREATE_PREFERENCES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
-
         Preferences preference = this.preferencesService.createPreference(preferences);
         if (preference == null) throw new AccountServiceException(Messages.CREATE_PREFERENCE, HttpStatus.BAD_REQUEST);
 
@@ -59,9 +53,6 @@ public class PreferencesResource {
     @DeleteMapping("/preferences/{preferenceId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> deletePreferences(@PathVariable long preferenceId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("DELETE_PREFERENCES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
-
         Preferences preference = this.preferencesService.getPreference(preferenceId);
         if (preference == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.NOT_FOUND);
         if(!this.preferencesService.deletePreference(preference)) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.BAD_REQUEST);
@@ -72,9 +63,6 @@ public class PreferencesResource {
     @PutMapping("/preferences/{preferenceId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updatePreferences(@Valid @RequestBody Preferences preferences, @PathVariable long preferenceId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("UPDATE_PREFERENCES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
-
         Preferences preference = this.preferencesService.getPreference(preferenceId);
         if (preference == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.BAD_REQUEST);
 
@@ -86,9 +74,6 @@ public class PreferencesResource {
     @GetMapping("/preferences/{preferenceId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Preferences> retrievePreferences(@PathVariable long preferenceId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("VIEW_PREFERENCES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
-
         Preferences preferences = this.preferencesService.getPreference(preferenceId);
         if (preferences == null) throw new AccountServiceException(Messages.GET_PREFERENCE, HttpStatus.BAD_REQUEST);
 
@@ -102,9 +87,6 @@ public class PreferencesResource {
     @GetMapping("/preferences/page/{pageNumber}/limit/{pageSize}")
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
     public CollectionModel<List<Preferences>> retrieveAllPreferences(@PathVariable int pageNumber, @PathVariable int pageSize, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("VIEW_PREFERENCES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
-
         List<Preferences> preferences = this.preferencesService.getAllPreferences(pageNumber, pageSize);
         if (preferences == null || preferences.isEmpty()) throw new AccountServiceException(Messages.GET_ALL_PREFERENCES, HttpStatus.BAD_REQUEST);
 
@@ -118,10 +100,7 @@ public class PreferencesResource {
     @PostMapping("/preferences/search")
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<List<Preferences>> searchForPreferences(@RequestBody HashMap<String, HashMap<String, String>> search, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("VIEW_PREFERENCES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         if (search.get(Keys.PAGINATION) == null) throw new AccountServiceException(Messages.PAGINATION_ERROR, HttpStatus.BAD_REQUEST);
-
         Map<String, Object> preferences = this.preferencesService.searchForPreference(search);
         if (preferences == null || preferences.isEmpty()) throw new AccountServiceException(Messages.SEARCH_ERROR, HttpStatus.BAD_REQUEST);
 

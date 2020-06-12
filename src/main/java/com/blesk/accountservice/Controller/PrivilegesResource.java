@@ -1,6 +1,5 @@
 package com.blesk.accountservice.Controller;
 
-import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Privileges;
 import com.blesk.accountservice.Service.Privileges.PrivilegesServiceImpl;
@@ -12,8 +11,6 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,9 +41,6 @@ public class PrivilegesResource {
     @PostMapping("/privileges")
     @ResponseStatus(HttpStatus.CREATED)
     public EntityModel<Privileges> createPrivileges(@Valid @RequestBody Privileges privileges, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("CREATE_PRIVILEGES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
-
         Privileges privilege = this.privilegesService.createPrivilege(privileges);
         if (privilege == null) throw new AccountServiceException(Messages.CREATE_PRIVILEGE, HttpStatus.BAD_REQUEST);
 
@@ -59,9 +53,6 @@ public class PrivilegesResource {
     @DeleteMapping("/privileges/{privilegeId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> deletePrivileges(@PathVariable long privilegeId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("DELETE_PRIVILEGES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
-
         Privileges privilege = this.privilegesService.getPrivilege(privilegeId);
         if (privilege == null) throw new AccountServiceException(Messages.GET_PRIVILEGE, HttpStatus.NOT_FOUND);
         if (!this.privilegesService.deletePrivilege(privilege)) throw new AccountServiceException(Messages.DELETE_PRIVILEGE, HttpStatus.BAD_REQUEST);
@@ -72,9 +63,6 @@ public class PrivilegesResource {
     @PutMapping("/privileges/{privilegeId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updatePrivileges(@Valid @RequestBody Privileges privileges, @PathVariable long privilegeId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("UPDATE_PRIVILEGES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
-
         Privileges privilege = this.privilegesService.getPrivilege(privilegeId);
         if (privilege == null) throw new AccountServiceException(Messages.GET_PRIVILEGE, HttpStatus.BAD_REQUEST);
 
@@ -86,9 +74,6 @@ public class PrivilegesResource {
     @GetMapping("/privileges/{privilegeId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Privileges> retrievePrivileges(@PathVariable long privilegeId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("VIEW_PRIVILEGES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
-
         Privileges privileges = this.privilegesService.getPrivilege(privilegeId);
         if (privileges == null) throw new AccountServiceException(Messages.GET_PRIVILEGE, HttpStatus.BAD_REQUEST);
 
@@ -102,9 +87,6 @@ public class PrivilegesResource {
     @GetMapping("/privileges/page/{pageNumber}/limit/{pageSize}")
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
     public CollectionModel<List<Privileges>> retrieveAllPrivileges(@PathVariable int pageNumber, @PathVariable int pageSize, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("VIEW_PRIVILEGES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
-
         List<Privileges> privileges = this.privilegesService.getAllPrivileges(pageNumber, pageSize);
         if (privileges == null || privileges.isEmpty()) throw new AccountServiceException(Messages.GET_ALL_PRIVILEGES, HttpStatus.BAD_REQUEST);
 
@@ -118,10 +100,7 @@ public class PrivilegesResource {
     @PostMapping("/privileges/search")
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<List<Privileges>> searchForPrivileges(@RequestBody HashMap<String, HashMap<String, String>> search, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
-        if (!jwtMapper.getGrantedPrivileges().contains("VIEW_PRIVILEGES")) throw new AccountServiceException(Messages.AUTH_EXCEPTION, HttpStatus.UNAUTHORIZED);
         if (search.get(Keys.PAGINATION) == null) throw new AccountServiceException(Messages.PAGINATION_ERROR, HttpStatus.BAD_REQUEST);
-
         Map<String, Object> privileges = this.privilegesService.searchForPrivilege(search);
         if (privileges == null || privileges.isEmpty()) throw new AccountServiceException(Messages.SEARCH_ERROR, HttpStatus.BAD_REQUEST);
 
