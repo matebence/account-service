@@ -126,14 +126,13 @@ public class DAOImpl<T> implements DAO<T> {
         Root<T> root = criteriaQuery.from(c);
 
         List<Predicate> predicates = new ArrayList<Predicate>();
-        predicates.add(criteriaBuilder.equal(root.get("isDeleted"), false));
         CriteriaQuery<T> select = criteriaQuery.select(root);
 
         if (ids != null) {
             for (Long id : ids) {
                 predicates.add(criteriaBuilder.equal(root.get(columName), id));
             }
-            select.where(criteriaBuilder.or(predicates.toArray(new Predicate[]{})));
+            select.where(criteriaBuilder.or(predicates.toArray(new Predicate[]{})), criteriaBuilder.and(criteriaBuilder.equal(root.get("isDeleted"), false)));
         }
         try {
             return session.createQuery(select).getResultList();
