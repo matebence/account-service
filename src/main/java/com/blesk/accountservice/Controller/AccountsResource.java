@@ -37,11 +37,11 @@ public class AccountsResource {
         this.accountsService = accountsService;
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER')")
     @PostMapping("/accounts")
     @ResponseStatus(HttpStatus.CREATED)
     public EntityModel<Accounts> createAccounts(@Validated(Accounts.advancedValidation.class) @RequestBody Accounts accounts, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        Accounts account = this.accountsService.createAccount(accounts, new String[]{"ROLE_SYSTEM", "ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CLIENT", "ROLE_COURIER"});
+        Accounts account = this.accountsService.createAccount(accounts, new String[]{"ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CLIENT", "ROLE_COURIER"});
         if (account == null) throw new AccountServiceException(Messages.CREATE_ACCOUNT, HttpStatus.BAD_REQUEST);
 
         EntityModel<Accounts> entityModel = new EntityModel<Accounts>(account);
@@ -49,7 +49,7 @@ public class AccountsResource {
         return entityModel;
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER')")
     @DeleteMapping("/accounts/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> deleteAccounts(@PathVariable long accountId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -59,7 +59,7 @@ public class AccountsResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER')")
     @PutMapping("/accounts/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updateAccounts(@Validated(Accounts.advancedValidation.class) @RequestBody Accounts accounts, @PathVariable long accountId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -70,7 +70,7 @@ public class AccountsResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER')")
     @GetMapping("/accounts/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Accounts> retrieveAccounts(@PathVariable long accountId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -83,7 +83,7 @@ public class AccountsResource {
         return entityModel;
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER')")
     @GetMapping("/accounts/page/{pageNumber}/limit/{pageSize}")
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
     public CollectionModel<List<Accounts>> retrieveAllAccounts(@PathVariable int pageNumber, @PathVariable int pageSize, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -96,7 +96,7 @@ public class AccountsResource {
         return collectionModel;
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER')")
     @PostMapping("/accounts/search")
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<List<Accounts>> searchForAccounts(@RequestBody HashMap<String, HashMap<String, String>> search, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -112,7 +112,7 @@ public class AccountsResource {
         return collectionModel;
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER') || hasRole('CLIENT') || hasRole('COURIER')")
+    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER') || hasRole('CLIENT') || hasRole('COURIER')")
     @PostMapping("/accounts/join/{columName}")
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<List<Accounts>> joinAccounts(@PathVariable String columName, @RequestBody List<Long> ids, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {

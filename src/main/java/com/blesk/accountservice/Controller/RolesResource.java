@@ -37,7 +37,7 @@ public class RolesResource {
         this.rolesService = rolesService;
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/roles")
     @ResponseStatus(HttpStatus.CREATED)
     public EntityModel<Roles> createRoles(@Valid @RequestBody Roles roles, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -49,7 +49,7 @@ public class RolesResource {
         return entityModel;
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/roles/{roleId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> deleteRoles(@PathVariable long roleId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -59,7 +59,7 @@ public class RolesResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/roles/{roleId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updateRoles(@Valid @RequestBody Roles roles, @PathVariable long roleId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -70,7 +70,7 @@ public class RolesResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/roles/{roleId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Roles> retrieveRoles(@PathVariable long roleId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -83,7 +83,7 @@ public class RolesResource {
         return entityModel;
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/roles/page/{pageNumber}/limit/{pageSize}")
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
     public CollectionModel<List<Roles>> retrieveAllRoles(@PathVariable int pageNumber, @PathVariable int pageSize, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -96,7 +96,7 @@ public class RolesResource {
         return collectionModel;
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/roles/search")
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<List<Roles>> searchForRoles(@RequestBody HashMap<String, HashMap<String, String>> search, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {

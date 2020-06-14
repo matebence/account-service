@@ -1,6 +1,4 @@
 INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_deleted)
-VALUES ('system', 'system@blesk.sk', '$2y$10$2V6Si2mzFJd9Q4x2LkUqgeEMmJKAbg6/bd9TjUWSnxltyemWBxJh6', TRUE, CURRENT_TIMESTAMP, FALSE);
-INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_deleted)
 VALUES ('admin', 'admin@blesk.sk', '$2a$10$yglygEX/oNZuex6lh.1QTOeIwR5lbBqeROU.F7N9D8XSmrU9ReFYS', TRUE, CURRENT_TIMESTAMP, FALSE);
 INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_deleted)
 VALUES ('jansiroky', 'jan.siroky@blesk.sk', '$2a$10$Vws9nU1mqlbo1KLVXaq7dOQUGd2BfSILJETt2zb50rCR0cRVdl5xu', TRUE, CURRENT_TIMESTAMP, FALSE);
@@ -18,12 +16,8 @@ INSERT INTO logins (account_id, last_login, ip_address, created_at, is_deleted)
 VALUES (3, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP, FALSE);
 INSERT INTO logins (account_id, last_login, ip_address, created_at, is_deleted)
 VALUES (4, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP, FALSE);
-INSERT INTO logins (account_id, last_login, ip_address, created_at, is_deleted)
-VALUES (5, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP, FALSE);
 
 
-INSERT INTO roles (name,  created_at, is_deleted)
-VALUES ('ROLE_SYSTEM',  CURRENT_TIMESTAMP, FALSE);
 INSERT INTO roles (name,  created_at, is_deleted)
 VALUES ('ROLE_ADMIN',  CURRENT_TIMESTAMP, FALSE);
 INSERT INTO roles (name,  created_at, is_deleted)
@@ -225,8 +219,6 @@ VALUES ('UPDATE_CATEGORIES',  CURRENT_TIMESTAMP, FALSE);
 
 
 INSERT INTO role_privilege_items (privilege_id, role_id)
-SELECT privilege_id, (SELECT role_id FROM roles WHERE name = 'ROLE_SYSTEM') AS role_id FROM privileges;
-INSERT INTO role_privilege_items (privilege_id, role_id)
 SELECT privilege_id, (SELECT role_id FROM roles WHERE name = 'ROLE_ADMIN') AS role_id FROM privileges;
 INSERT INTO role_privilege_items (privilege_id, role_id)
 SELECT privilege_id, (SELECT role_id FROM roles WHERE name = 'ROLE_MANAGER') AS role_id FROM privileges
@@ -274,8 +266,6 @@ INSERT INTO account_role_items (account_id, role_id)
 VALUES (3, 3);
 INSERT INTO account_role_items (account_id, role_id)
 VALUES (4, 4);
-INSERT INTO account_role_items (account_id, role_id)
-VALUES (5, 5);
 
 
 INSERT INTO preferences (name)
