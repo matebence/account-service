@@ -112,7 +112,7 @@ public class AccountsResource {
         return collectionModel;
     }
 
-    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER') || hasRole('CLIENT') || hasRole('COURIER')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER') || hasRole('CLIENT') || hasRole('COURIER')")
     @PostMapping("/accounts/join/{columName}")
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<List<Accounts>> joinAccounts(@PathVariable String columName, @RequestBody List<Long> ids, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
