@@ -273,4 +273,4 @@ VALUES ('Cena prepravy (eur/1km)');
 
 
 INSERT INTO account_preference_items (account_id, preference_id, value, created_at, is_deleted)
-VALUES (5, 1, 3.50, CURRENT_TIMESTAMP, FALSE);
+VALUES (4, 1, 3.50, CURRENT_TIMESTAMP, FALSE);
