@@ -37,7 +37,7 @@ public class PrivilegesResource {
         this.privilegesService = privilegesService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN')")
     @PostMapping("/privileges")
     @ResponseStatus(HttpStatus.CREATED)
     public EntityModel<Privileges> createPrivileges(@Valid @RequestBody Privileges privileges, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -49,7 +49,7 @@ public class PrivilegesResource {
         return entityModel;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN')")
     @DeleteMapping("/privileges/{privilegeId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> deletePrivileges(@PathVariable long privilegeId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -59,7 +59,7 @@ public class PrivilegesResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN')")
     @PutMapping("/privileges/{privilegeId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updatePrivileges(@Valid @RequestBody Privileges privileges, @PathVariable long privilegeId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -70,7 +70,7 @@ public class PrivilegesResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN')")
     @GetMapping("/privileges/{privilegeId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Privileges> retrievePrivileges(@PathVariable long privilegeId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -83,7 +83,7 @@ public class PrivilegesResource {
         return entityModel;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN')")
     @GetMapping("/privileges/page/{pageNumber}/limit/{pageSize}")
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
     public CollectionModel<List<Privileges>> retrieveAllPrivileges(@PathVariable int pageNumber, @PathVariable int pageSize, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -96,7 +96,7 @@ public class PrivilegesResource {
         return collectionModel;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN')")
     @PostMapping("/privileges/search")
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<List<Privileges>> searchForPrivileges(@RequestBody HashMap<String, HashMap<String, String>> search, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {

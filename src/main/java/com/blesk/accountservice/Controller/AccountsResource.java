@@ -37,7 +37,7 @@ public class AccountsResource {
         this.accountsService = accountsService;
     }
 
-    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
     @PostMapping("/accounts")
     @ResponseStatus(HttpStatus.CREATED)
     public EntityModel<Accounts> createAccounts(@Validated(Accounts.advancedValidation.class) @RequestBody Accounts accounts, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -49,7 +49,7 @@ public class AccountsResource {
         return entityModel;
     }
 
-    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
     @DeleteMapping("/accounts/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> deleteAccounts(@PathVariable long accountId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -59,7 +59,7 @@ public class AccountsResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
     @PutMapping("/accounts/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updateAccounts(@Validated(Accounts.advancedValidation.class) @RequestBody Accounts accounts, @PathVariable long accountId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -70,7 +70,7 @@ public class AccountsResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
     @GetMapping("/accounts/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Accounts> retrieveAccounts(@PathVariable long accountId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -83,7 +83,7 @@ public class AccountsResource {
         return entityModel;
     }
 
-    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
     @GetMapping("/accounts/page/{pageNumber}/limit/{pageSize}")
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
     public CollectionModel<List<Accounts>> retrieveAllAccounts(@PathVariable int pageNumber, @PathVariable int pageSize, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -96,7 +96,7 @@ public class AccountsResource {
         return collectionModel;
     }
 
-    @PreAuthorize("hasRole('ADMIN') || hasRole('MANAGER')")
+    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
     @PostMapping("/accounts/search")
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<List<Accounts>> searchForAccounts(@RequestBody HashMap<String, HashMap<String, String>> search, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
