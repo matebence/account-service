@@ -111,4 +111,13 @@ public class PrivilegesResource {
         if ((boolean) privileges.get("hasNext")) collectionModel.add(linkTo(methodOn(this.getClass()).searchForPrivileges(search, httpServletRequest, httpServletResponse)).withRel("hasNext"));
         return collectionModel;
     }
+
+    @PreAuthorize("hasRole('SYSTEM')")
+    @PostMapping("/privileges/join/{columName}")
+    @ResponseStatus(HttpStatus.OK)
+    public CollectionModel<List<Privileges>> joinPrivileges(@PathVariable String columName, @RequestBody List<Long> ids, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        List<Privileges> privileges = this.privilegesService.getPrivilegesForJoin(ids, columName);
+        if (privileges == null || privileges.isEmpty()) throw new AccountServiceException(Messages.GET_ALL_PRIVILEGES, HttpStatus.BAD_REQUEST);
+        return new CollectionModel(privileges);
+    }
 }

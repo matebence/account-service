@@ -24,5 +24,7 @@ public interface RolesService {
 
     List<Roles> getAllRoles(int pageNumber, int pageSize);
 
+    List<Roles> getRolesForJoin(List<Long> ids, String columName);
+
     Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criterias);
 }

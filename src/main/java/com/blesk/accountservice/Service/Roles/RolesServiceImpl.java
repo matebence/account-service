@@ -90,6 +90,13 @@ public class RolesServiceImpl implements RolesService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
+    public List<Roles> getRolesForJoin(List<Long> ids, String columName) {
+        return this.roleDAO.getJoinValuesByColumn(Roles.class, ids, columName);
+    }
+
+    @Override
+    @Transactional
+    @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criterias) {
         return this.roleDAO.searchBy(Roles.class, criterias);
     }

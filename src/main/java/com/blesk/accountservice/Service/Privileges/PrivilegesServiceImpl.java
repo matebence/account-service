@@ -67,6 +67,13 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
+    public List<Privileges> getPrivilegesForJoin(List<Long> ids, String columName) {
+        return this.privilegeDAO.getJoinValuesByColumn(Privileges.class, ids, columName);
+    }
+
+    @Override
+    @Transactional
+    @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForPrivilege(HashMap<String, HashMap<String, String>> criterias) {
         return this.privilegeDAO.searchBy(Privileges.class, criterias);
     }

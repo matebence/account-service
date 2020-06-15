@@ -85,6 +85,13 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
+    public List<Preferences> getPreferencesForJoin(List<Long> ids, String columName) {
+        return this.preferencesDAO.getJoinValuesByColumn(Preferences.class, ids, columName);
+    }
+
+    @Override
+    @Transactional
+    @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criterias) {
         return this.preferencesDAO.searchBy(Preferences.class, criterias);
     }

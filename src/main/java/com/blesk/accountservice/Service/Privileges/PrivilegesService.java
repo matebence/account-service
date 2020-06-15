@@ -20,5 +20,7 @@ public interface PrivilegesService {
 
     List<Privileges> getAllPrivileges(int pageNumber, int pageSize);
 
+    List<Privileges> getPrivilegesForJoin(List<Long> ids, String columName);
+
     Map<String, Object> searchForPrivilege(HashMap<String, HashMap<String, String>> criterias);
 }

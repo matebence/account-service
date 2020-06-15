@@ -111,4 +111,13 @@ public class PreferencesResource {
         if ((boolean) preferences.get("hasNext")) collectionModel.add(linkTo(methodOn(this.getClass()).searchForPreferences(search, httpServletRequest, httpServletResponse)).withRel("hasNext"));
         return collectionModel;
     }
+
+    @PreAuthorize("hasRole('SYSTEM')")
+    @PostMapping("/preferences/join/{columName}")
+    @ResponseStatus(HttpStatus.OK)
+    public CollectionModel<List<Preferences>> joinPreferences(@PathVariable String columName, @RequestBody List<Long> ids, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        List<Preferences> preferences = this.preferencesService.getPreferencesForJoin(ids, columName);
+        if (preferences == null || preferences.isEmpty()) throw new AccountServiceException(Messages.GET_ALL_PREFERENCES, HttpStatus.BAD_REQUEST);
+        return new CollectionModel(preferences);
+    }
 }

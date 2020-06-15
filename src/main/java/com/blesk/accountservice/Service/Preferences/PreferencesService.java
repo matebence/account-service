@@ -20,5 +20,7 @@ public interface PreferencesService {
 
     List<Preferences> getAllPreferences(int pageNumber, int pageSize);
 
+    List<Preferences> getPreferencesForJoin(List<Long> ids, String columName);
+
     Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criterias);
 }

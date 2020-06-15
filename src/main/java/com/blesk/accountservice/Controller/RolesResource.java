@@ -111,4 +111,13 @@ public class RolesResource {
         if ((boolean) roles.get("hasNext")) collectionModel.add(linkTo(methodOn(this.getClass()).searchForRoles(search, httpServletRequest, httpServletResponse)).withRel("hasNext"));
         return collectionModel;
     }
+
+    @PreAuthorize("hasRole('SYSTEM')")
+    @PostMapping("/roles/join/{columName}")
+    @ResponseStatus(HttpStatus.OK)
+    public CollectionModel<List<Roles>> joinRoles(@PathVariable String columName, @RequestBody List<Long> ids, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        List<Roles> roles = this.rolesService.getRolesForJoin(ids, columName);
+        if (roles == null || roles.isEmpty()) throw new AccountServiceException(Messages.GET_ALL_ROLES, HttpStatus.BAD_REQUEST);
+        return new CollectionModel(roles);
+    }
 }
