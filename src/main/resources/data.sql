@@ -6,6 +6,8 @@ INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_d
 VALUES ('petervarga','peter.varga@gmail.com', '$2a$10$1oyamJIm8aSLaXnm/xhaRe6yxAWEKZeFjsMQ/wWXoINsGeuHd.c2S', TRUE, CURRENT_TIMESTAMP, FALSE);
 INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_deleted)
 VALUES ('michalvelky', 'michal.velky@gmail.com', '$2a$10$Wi7MdTNoKKK7Iaf262bWLuVdzOViFXHRgR7siBaq8YRWkTpJtd5J.', TRUE, CURRENT_TIMESTAMP, FALSE);
+INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_deleted)
+VALUES ('lukastrnka','lukas.trnka@gmail.com', '$2a$10$1oyamJIm8aSLaXnm/xhaRe6yxAWEKZeFjsMQ/wWXoINsGeuHd.c2S', TRUE, CURRENT_TIMESTAMP, FALSE);
 
 
 INSERT INTO logins (account_id, last_login, ip_address, created_at, is_deleted)
@@ -264,6 +266,8 @@ INSERT INTO account_role_items (account_id, role_id)
 VALUES (3, 3);
 INSERT INTO account_role_items (account_id, role_id)
 VALUES (4, 4);
+INSERT INTO account_role_items (account_id, role_id)
+VALUES (5, 3);
 
 
 INSERT INTO preferences (name)
