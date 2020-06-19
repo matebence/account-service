@@ -20,7 +20,6 @@ import java.util.Date;
 @Entity(name = "Passwords")
 @Table(name = "passwords", uniqueConstraints = {@UniqueConstraint(columnNames = {"password_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = Passwords.class)
-@SQLDelete(sql = "UPDATE passwords SET is_deleted = TRUE, deleted_at = NOW() WHERE password_id = ?")
 public class Passwords implements Serializable {
 
     private static final int EXPIRATION = 60 * 24;
@@ -44,24 +43,11 @@ public class Passwords implements Serializable {
     @Column(name = "expiry_date", nullable = false)
     private Date expiryDate;
 
-    @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted = false;
-
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
-
-    @Column(name = "deleted_at", updatable = false)
-    private Timestamp deletedAt;
-
-    public Passwords(Accounts accounts, String token, Boolean isDeleted) {
-        this.accounts = accounts;
-        this.token = token;
-        this.isDeleted = isDeleted;
-        setExpiryDate();
-    }
 
     public Passwords(Accounts accounts, String token) {
         this.accounts = accounts;
@@ -112,14 +98,6 @@ public class Passwords implements Serializable {
         this.expiryDate = new Date(cal.getTime().getTime());
     }
 
-    public Boolean getDeleted() {
-        return this.isDeleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.isDeleted = deleted;
-    }
-
     public Timestamp getCreatedAt() {
         return this.createdAt;
     }
@@ -134,14 +112,6 @@ public class Passwords implements Serializable {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Timestamp getDeletedAt() {
-        return this.deletedAt;
-    }
-
-    public void setDeletedAt(Timestamp deletedAt) {
-        this.deletedAt = deletedAt;
     }
 
     @PrePersist
