@@ -56,7 +56,7 @@ public class Authorization {
     public Boolean recordLastSuccessfullLogin(Logins logins) throws ListenerExecutionFailedException {
         try {
             Accounts accounts = this.accountsService.getAccount(logins.getAccounts().getAccountId());
-            if (accounts != null && accounts.getPasswords() != null) return this.passwordsService.deletePasswordToken(accounts.getPasswords());
+            if (accounts != null && accounts.getPasswords() != null) this.passwordsService.deletePasswordToken(accounts.getPasswords());
             return this.loginsService.updateLogin(logins);
         } catch (Exception ex) {
             return Boolean.FALSE;
