@@ -10,14 +10,14 @@ INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_d
 VALUES ('lukastrnka','lukas.trnka@gmail.com', '$2a$10$1oyamJIm8aSLaXnm/xhaRe6yxAWEKZeFjsMQ/wWXoINsGeuHd.c2S', TRUE, CURRENT_TIMESTAMP, FALSE);
 
 
-INSERT INTO logins (account_id, last_login, ip_address, created_at, is_deleted)
-VALUES (1, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP, FALSE);
-INSERT INTO logins (account_id, last_login, ip_address, created_at, is_deleted)
-VALUES (2, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP, FALSE);
-INSERT INTO logins (account_id, last_login, ip_address, created_at, is_deleted)
-VALUES (3, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP, FALSE);
-INSERT INTO logins (account_id, last_login, ip_address, created_at, is_deleted)
-VALUES (4, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP, FALSE);
+INSERT INTO logins (account_id, last_login, ip_address, created_at)
+VALUES (1, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP);
+INSERT INTO logins (account_id, last_login, ip_address, created_at)
+VALUES (2, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP);
+INSERT INTO logins (account_id, last_login, ip_address, created_at)
+VALUES (3, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP);
+INSERT INTO logins (account_id, last_login, ip_address, created_at)
+VALUES (4, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP);
 
 
 INSERT INTO roles (name,  created_at, is_deleted)
