@@ -8,13 +8,11 @@ import com.blesk.accountservice.Service.Activations.ActivationServiceImpl;
 import com.blesk.accountservice.Service.Logins.LoginsServiceImpl;
 import com.blesk.accountservice.Service.Passwords.PasswordsServiceImpl;
 import com.blesk.accountservice.Value.Messages;
-import org.hibernate.TransientPropertyValueException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.amqp.rabbit.support.ListenerExecutionFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintViolation;
@@ -110,9 +108,10 @@ public class Authorization {
         try {
             Boolean result = this.activationService.validateActivationToken(accounts.getAccountId(), accounts.getActivations().getToken());
             if (result) {
-                Accounts account = this.accountsService.getAccount(accounts.getAccountId());
-                Accounts activatedAccount = account;
+                Accounts activatedAccount = this.accountsService.getAccount(accounts.getAccountId());
                 activatedAccount.setActivated(result);
+
+                Accounts account = this.accountsService.getAccount(accounts.getAccountId());
                 if (this.accountsService.updateAccount(activatedAccount, account, new String[]{})) return result;
             }
         } catch (Exception ex) {
@@ -139,8 +138,7 @@ public class Authorization {
     @RabbitListener(queues = "blesk.verifyPasswordTokenQueue")
     public Boolean verifyPasswordTokenForForgetPassword(Accounts accounts) throws ListenerExecutionFailedException {
         try {
-            if (this.passwordsService.validatePasswordToken(accounts.getAccountId(), accounts.getPasswords().getToken()))
-                return this.passwordsService.generateNewPassword(accounts.getAccountId());
+            if (this.passwordsService.validatePasswordToken(accounts.getAccountId(), accounts.getPasswords().getToken())) return this.passwordsService.generateNewPassword(accounts.getAccountId());
             return Boolean.FALSE;
         } catch (Exception ex) {
             return Boolean.FALSE;
