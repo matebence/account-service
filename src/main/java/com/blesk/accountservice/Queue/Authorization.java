@@ -89,8 +89,10 @@ public class Authorization {
             switch (exDetail.getConstraintName()) {
                 case "account_id":
                     unique.put("accountId", Messages.UNIQUE_FIELD_DEFAULT);
+                    break;
                 case "account_username":
                     unique.put("userName", Messages.ACCOUNTS_USER_NAME_UNIQUE);
+                    break;
                 case "account_email":
                     unique.put("email", Messages.ACCOUNTS_EMAIL_UNIQUE);
                     break;
