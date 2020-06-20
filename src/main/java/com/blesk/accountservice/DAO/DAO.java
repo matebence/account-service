@@ -10,7 +10,9 @@ public interface DAO<T> {
 
     Boolean update(T t);
 
-    Boolean delete(T t);
+    Boolean softDelete(T t);
+
+    Boolean delete(String entity, String IdColumn, Long id);
 
     T get(Class<T> c, String column, Long id);
 

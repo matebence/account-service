@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 public class PasswordsDAOImpl extends DAOImpl<Passwords> implements PasswordsDAO {
 
     @Override
-    public Boolean delete(Passwords passwords) {
+    public Boolean softDelete(Passwords passwords) {
         Session session = this.entityManager.unwrap(Session.class);
         try {
             passwords = this.entityManager.contains(passwords) ? passwords : this.entityManager.merge(passwords);

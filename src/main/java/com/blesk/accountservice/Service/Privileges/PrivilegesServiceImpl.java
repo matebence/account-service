@@ -33,7 +33,7 @@ public class PrivilegesServiceImpl implements PrivilegesService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean deletePrivilege(Privileges privileges) {
-        return this.privilegeDAO.delete(privileges);
+        return this.privilegeDAO.softDelete(privileges);
     }
 
     @Override

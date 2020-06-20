@@ -33,7 +33,7 @@ public class ActivationServiceImpl implements ActivationService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean deleteActivationToken(Activations activations) {
-        return this.activationsDAO.delete(activations);
+        return this.activationsDAO.delete("activations", "activation_id", activations.getAccountActivationId());
     }
 
     @Override

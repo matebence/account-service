@@ -63,7 +63,7 @@ public class AccountsServiceImpl implements AccountsService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean deleteAccount(Accounts accounts) {
-        return this.accountDAO.delete(accounts);
+        return this.accountDAO.softDelete(accounts);
     }
 
     @Override

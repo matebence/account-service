@@ -36,7 +36,7 @@ public class RolesServiceImpl implements RolesService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean deleteRole(Roles roles) {
-        return this.roleDAO.delete(roles);
+        return this.roleDAO.softDelete(roles);
     }
 
     @Override

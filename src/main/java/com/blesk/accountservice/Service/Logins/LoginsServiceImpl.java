@@ -33,7 +33,7 @@ public class LoginsServiceImpl implements LoginsService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean deleteLogin(Logins logins) {
-        return this.loginsDAO.delete(logins);
+        return this.loginsDAO.delete("logins", "login_id", logins.getLoginId());
     }
 
     @Override

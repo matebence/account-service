@@ -65,7 +65,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean deletePasswordToken(Passwords passwords) {
-        return this.passwordsDAO.delete(passwords);
+        return this.passwordsDAO.delete("passwords", "password_id", passwords.getPasswordTokenId());
     }
 
     @Override

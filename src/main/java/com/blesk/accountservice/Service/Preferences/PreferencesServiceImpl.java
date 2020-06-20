@@ -39,7 +39,7 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Boolean deletePreference(Preferences preferences) {
-        return this.preferencesDAO.delete(preferences);
+        return this.preferencesDAO.softDelete(preferences);
     }
 
     @Override

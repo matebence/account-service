@@ -49,10 +49,24 @@ public class DAOImpl<T> implements DAO<T> {
     }
 
     @Override
-    public Boolean delete(T t) {
+    public Boolean softDelete(T t) {
         Session session = this.entityManager.unwrap(Session.class);
         try {
             session.delete(t);
+        } catch (Exception e) {
+            session.clear();
+            session.close();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Boolean delete(String entity, String IdColumn, Long id) {
+        Session session = this.entityManager.unwrap(Session.class);
+        try {
+            Query query = session.createSQLQuery(String.format("DELETE FROM %s WHERE %s = :%s", entity, IdColumn, IdColumn)).setParameter(IdColumn, id);
+            query.executeUpdate();
         } catch (Exception e) {
             session.clear();
             session.close();
