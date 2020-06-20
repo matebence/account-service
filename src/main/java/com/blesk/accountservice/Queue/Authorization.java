@@ -111,8 +111,9 @@ public class Authorization {
             Boolean result = this.activationService.validateActivationToken(accounts.getAccountId(), accounts.getActivations().getToken());
             if (result) {
                 Accounts account = this.accountsService.getAccount(accounts.getAccountId());
-                account.setActivated(result);
-                if (this.accountsService.updateAccount(account, new Accounts(), new String[]{})) return result;
+                Accounts activatedAccount = account;
+                activatedAccount.setActivated(result);
+                if (this.accountsService.updateAccount(activatedAccount, account, new String[]{})) return result;
             }
         } catch (Exception ex) {
             return Boolean.FALSE;
