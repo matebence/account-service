@@ -270,9 +270,9 @@ INSERT INTO account_role_items (account_id, role_id)
 VALUES (5, 3);
 
 
-INSERT INTO preferences (name)
-VALUES ('Cena prepravy (eur/1km)');
+INSERT INTO preferences (name, created_at, is_deleted)
+VALUES ('Cena prepravy (eur/1km)', CURRENT_TIMESTAMP, FALSE);
 
 
-INSERT INTO account_preference_items (account_id, preference_id, value, created_at, is_deleted)
-VALUES (4, 1, 3.50, CURRENT_TIMESTAMP, FALSE);
+INSERT INTO account_preference_items (account_id, preference_id, value)
+VALUES (4, 1, 3.50);

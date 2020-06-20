@@ -73,26 +73,8 @@ public class AccountsServiceImpl implements AccountsService {
         account.setUserName(accounts.getUserName());
         account.setEmail(accounts.getEmail());
         account.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
-
-        for (AccountRoles accountRole : account.getAccountRoles()) {
-            for (AccountRoles accountRoles : accounts.getAccountRoles()) {
-                if (accountRoles.getDeleted() == null) {
-                    if (!Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
-                        account.getAccountRoles().remove(accountRoles);
-                    } else {
-                        account.addRole(accountRoles);
-                    }
-                } else if (accountRoles.getDeleted()) {
-                    account.removeRole(accountRole);
-                } else {
-                    if (!Arrays.asList(allowedRoles).contains(accountRoles.getRoles().getName())) {
-                        account.getAccountRoles().remove(accountRoles);
-                    } else {
-                        accountRole.setRoles(accountRoles.getRoles());
-                    }
-                }
-            }
-        }
+        account.removeAllRoles(new HashSet<>(account.getAccountRoles()));
+        account.addAllRoles(accounts.getAccountRoles());
 
         return this.accountDAO.update(account);
     }

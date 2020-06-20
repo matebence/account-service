@@ -168,6 +168,22 @@ public class Accounts implements Serializable {
         accountRoles.setRoles(null);
     }
 
+    public void removeAllRoles(Set<AccountRoles> accountRoles){
+        for(AccountRoles accountRole : accountRoles){
+            accountRole.getRoles().getAccountRoles().remove(accountRole);
+            this.accountRoles.remove(accountRole);
+            accountRole.setAccounts(null);
+            accountRole.setRoles(null);
+        }
+    }
+
+    public void addAllRoles(Set<AccountRoles> accountRoles){
+        for(AccountRoles accountRole : accountRoles){
+            this.accountRoles.add(accountRole);
+            accountRole.setAccounts(this);
+        }
+    }
+
     public Set<AccountRoles> getAccountRoles() {
         return this.accountRoles;
     }
@@ -182,6 +198,22 @@ public class Accounts implements Serializable {
         this.accountPreferences.remove(accountPreferences);
         accountPreferences.setAccounts(null);
         accountPreferences.setPreferences(null);
+    }
+
+    public void removeAllPreferences(Set<AccountPreferences> accountPreferences){
+        for(AccountPreferences accountPreference : accountPreferences){
+            accountPreference.getPreferences().getAccountPreferences().remove(accountPreference);
+            this.accountPreferences.remove(accountPreference);
+            accountPreference.setAccounts(null);
+            accountPreference.setPreferences(null);
+        }
+    }
+
+    public void addAllPreferences(Set<AccountPreferences> accountPreferences){
+        for(AccountPreferences accountPreference : accountPreferences){
+            this.accountPreferences.add(accountPreference);
+            accountPreference.setAccounts(this);
+        }
     }
 
     public Set<AccountPreferences> getAccountPreferences() {

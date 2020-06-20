@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.LockModeType;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -47,17 +48,9 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Lock(value = LockModeType.WRITE)
     public Boolean updatePreference(Preferences preference, Preferences preferences) {
         preference.setName(preferences.getName());
-        for (AccountPreferences accountPreference : preference.getAccountPreferences()) {
-            for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
-                if (accountPreferences.getDeleted() == null) {
-                    preference.addAccount(accountPreferences);
-                } else if (accountPreferences.getDeleted()) {
-                    preference.removeAccount(accountPreference);
-                } else {
-                    accountPreference.setAccounts(accountPreferences.getAccounts());
-                }
-            }
-        }
+        preference.removeAllAccounts(new HashSet<>(preference.getAccountPreferences()));
+        preference.addAllAccounts(preferences.getAccountPreferences());
+
         return this.preferencesDAO.update(preference);
     }
 

@@ -44,17 +44,8 @@ public class RolesServiceImpl implements RolesService {
     @Lock(value = LockModeType.WRITE)
     public Boolean updateRole(Roles role, Roles roles) {
         role.setName(roles.getName());
-        for (RolePrivileges rolePrivilege : role.getRolePrivileges()) {
-            for (RolePrivileges rolePrivileges : roles.getRolePrivileges()) {
-                if (rolePrivileges.getDeleted() == null) {
-                    role.addPrivilege(rolePrivileges);
-                } else if (rolePrivileges.getDeleted()) {
-                    role.removePrivilege(rolePrivilege);
-                } else {
-                    rolePrivilege.setPrivileges(rolePrivileges.getPrivileges());
-                }
-            }
-        }
+        role.removeAllPrivileges(new HashSet<>(role.getRolePrivileges()));
+        role.addAllPrivileges(roles.getRolePrivileges());
 
         return this.roleDAO.update(role);
     }

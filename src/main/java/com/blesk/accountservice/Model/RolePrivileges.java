@@ -30,9 +30,6 @@ public class RolePrivileges implements Serializable {
     @JoinColumn(name = "privilege_id")
     private Privileges privileges;
 
-    @Transient
-    private Boolean isDeleted;
-
     public RolePrivileges(Roles roles, Privileges privileges) {
         this.roles = roles;
         this.privileges = privileges;
@@ -71,13 +68,5 @@ public class RolePrivileges implements Serializable {
 
     public void setPrivileges(Privileges privileges) {
         this.privileges = privileges;
-    }
-
-    public Boolean getDeleted() {
-        return this.isDeleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.isDeleted = deleted;
     }
 }
