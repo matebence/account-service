@@ -12,7 +12,7 @@ public interface RolesService {
 
     Roles createRole(Roles roles);
 
-    Boolean deleteRole(Long roleId);
+    Boolean deleteRole(Roles roles);
 
     Boolean updateRole(Roles role, Roles roles);
 
@@ -23,6 +23,8 @@ public interface RolesService {
     Set<RolePrivileges> findPrivilegesByRoleName(String name);
 
     List<Roles> getAllRoles(int pageNumber, int pageSize);
+
+    List<Roles> getRolesForJoin(List<Long> ids, String columName);
 
     Map<String, Object> searchForRole(HashMap<String, HashMap<String, String>> criterias);
 }

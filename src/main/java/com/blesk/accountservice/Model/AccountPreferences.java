@@ -9,14 +9,13 @@ import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 @DynamicInsert
 @DynamicUpdate
 @Entity(name = "AccountPreferencesItems")
 @Table(name = "account_preference_items", uniqueConstraints = {@UniqueConstraint(name = "account_preference_id", columnNames = "account_preference_id")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = AccountPreferences.class)
-@JsonIgnoreProperties(value = {"accountPreferenceId"})
+@JsonIgnoreProperties(value = {"accountPreferenceId", "accounts"})
 public class AccountPreferences implements Serializable {
 
     @Id
@@ -33,25 +32,25 @@ public class AccountPreferences implements Serializable {
     private Preferences preferences;
 
     @Column(name = "is_set")
-    private boolean isSet;
+    private Boolean isSet;
 
     @Column(name = "content")
     private String content;
 
     @Column(name = "value")
-    private int value;
+    private Double value;
 
-    @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
+    public AccountPreferences(String content, Double value, Accounts accounts, Preferences preferences) {
+        this.content = content;
+        this.value = value;
+        this.accounts = accounts;
+        this.preferences = preferences;
+    }
 
-    @Column(name = "created_at", updatable = false, nullable = false)
-    private Timestamp createdAt;
-
-    @Column(name = "updated_at")
-    private Timestamp updatedAt;
-
-    @Column(name = "deleted_at", updatable = false)
-    private Timestamp deletedAt;
+    public AccountPreferences(String content, Double value) {
+        this.content = content;
+        this.value = value;
+    }
 
     public AccountPreferences(Accounts accounts, Preferences preferences) {
         this.accounts = accounts;
@@ -63,22 +62,6 @@ public class AccountPreferences implements Serializable {
     }
 
     public AccountPreferences(Preferences preferences) {
-        this.preferences = preferences;
-    }
-
-    public AccountPreferences(boolean isSet, String content, int value, Boolean isDeleted) {
-        this.isSet = isSet;
-        this.content = content;
-        this.value = value;
-        this.isDeleted = isDeleted;
-    }
-
-    public AccountPreferences(boolean isSet, String content, int value, Boolean isDeleted, Accounts accounts, Preferences preferences) {
-        this.isSet = isSet;
-        this.content = content;
-        this.value = value;
-        this.isDeleted = isDeleted;
-        this.accounts = accounts;
         this.preferences = preferences;
     }
 
@@ -109,12 +92,12 @@ public class AccountPreferences implements Serializable {
         this.preferences = preferences;
     }
 
-    public boolean isSet() {
+    public Boolean getIsSet() {
         return this.isSet;
     }
 
-    public void setSet(boolean set) {
-        this.isSet = set;
+    public void setIsSet(Boolean isSet) {
+        this.isSet = isSet;
     }
 
     public String getContent() {
@@ -125,54 +108,11 @@ public class AccountPreferences implements Serializable {
         this.content = content;
     }
 
-    public int getValue() {
+    public Double getValue() {
         return this.value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Double value) {
         this.value = value;
-    }
-
-    public Boolean getDeleted() {
-        return this.isDeleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.isDeleted = deleted;
-    }
-
-    public Timestamp getCreatedAt() {
-        return this.createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return this.updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Timestamp getDeletedAt() {
-        return this.deletedAt;
-    }
-
-    public void setDeletedAt(Timestamp deletedAt) {
-        this.deletedAt = deletedAt;
-    }
-
-    @PrePersist
-    protected void prePersist() {
-        this.isDeleted = false;
-        this.createdAt = new Timestamp(System.currentTimeMillis());
-    }
-
-    @PreUpdate
-    protected void preUpdate() {
-        this.updatedAt = new Timestamp(System.currentTimeMillis());
     }
 }

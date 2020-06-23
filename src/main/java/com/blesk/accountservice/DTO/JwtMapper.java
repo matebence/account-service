@@ -1,7 +1,5 @@
 package com.blesk.accountservice.DTO;
 
-import java.util.Collection;
-
 public class JwtMapper {
 
     private Integer login_id;
@@ -18,13 +16,7 @@ public class JwtMapper {
 
     private Boolean activated;
 
-    private Collection<String> grantedPrivileges;
-
     public JwtMapper() {
-    }
-
-    public JwtMapper(Collection<String> grantedPrivileges) {
-        this.grantedPrivileges = grantedPrivileges;
     }
 
     public Integer getLogin_id() {
@@ -81,27 +73,5 @@ public class JwtMapper {
 
     public void setActivated(Boolean activated) {
         this.activated = activated;
-    }
-
-    public Collection<String> getGrantedPrivileges() {
-        return grantedPrivileges;
-    }
-
-    public void setGrantedPrivileges(Collection<String> grantedPrivileges) {
-        this.grantedPrivileges = grantedPrivileges;
-    }
-
-    @Override
-    public String toString() {
-        return "JwtMapper{" +
-                "login_id=" + login_id +
-                ", account_id=" + account_id +
-                ", user_name='" + user_name + '\'' +
-                ", exp=" + exp +
-                ", jti='" + jti + '\'' +
-                ", client_id='" + client_id + '\'' +
-                ", activated=" + activated +
-                ", grantedPrivileges=" + grantedPrivileges +
-                '}';
     }
 }

@@ -30,9 +30,6 @@ public class AccountRoles implements Serializable {
     @JoinColumn(name = "role_id")
     private Roles roles;
 
-    @Transient
-    private Boolean isDeleted;
-
     public AccountRoles(Accounts accounts, Roles roles) {
         this.accounts = accounts;
         this.roles = roles;
@@ -71,13 +68,5 @@ public class AccountRoles implements Serializable {
 
     public void setRoles(Roles roles) {
         this.roles = roles;
-    }
-
-    public Boolean getDeleted() {
-        return this.isDeleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.isDeleted = deleted;
     }
 }

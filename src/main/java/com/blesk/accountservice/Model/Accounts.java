@@ -40,22 +40,22 @@ public class Accounts implements Serializable {
     private Long accountId;
 
     @Valid
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "accounts")
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY, mappedBy = "accounts")
     private Logins login;
 
     @Valid
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "accounts")
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY, mappedBy = "accounts")
     private Passwords passwords;
 
     @Valid
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, mappedBy = "accounts")
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY, mappedBy = "accounts")
     private Activations activations;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "accounts")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<AccountRoles> accountRoles = new HashSet<AccountRoles>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "accounts")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "accounts")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<AccountPreferences> accountPreferences = new HashSet<AccountPreferences>();
 
@@ -82,7 +82,7 @@ public class Accounts implements Serializable {
     private Boolean isActivated;
 
     @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     @Column(name = "created_at", updatable = false, nullable = false)
     private Timestamp createdAt;
@@ -168,6 +168,22 @@ public class Accounts implements Serializable {
         accountRoles.setRoles(null);
     }
 
+    public void removeAllRoles(Set<AccountRoles> accountRoles){
+        for(AccountRoles accountRole : accountRoles){
+            accountRole.getRoles().getAccountRoles().remove(accountRole);
+            this.accountRoles.remove(accountRole);
+            accountRole.setAccounts(null);
+            accountRole.setRoles(null);
+        }
+    }
+
+    public void addAllRoles(Set<AccountRoles> accountRoles){
+        for(AccountRoles accountRole : accountRoles){
+            this.accountRoles.add(accountRole);
+            accountRole.setAccounts(this);
+        }
+    }
+
     public Set<AccountRoles> getAccountRoles() {
         return this.accountRoles;
     }
@@ -182,6 +198,22 @@ public class Accounts implements Serializable {
         this.accountPreferences.remove(accountPreferences);
         accountPreferences.setAccounts(null);
         accountPreferences.setPreferences(null);
+    }
+
+    public void removeAllPreferences(Set<AccountPreferences> accountPreferences){
+        for(AccountPreferences accountPreference : accountPreferences){
+            accountPreference.getPreferences().getAccountPreferences().remove(accountPreference);
+            this.accountPreferences.remove(accountPreference);
+            accountPreference.setAccounts(null);
+            accountPreference.setPreferences(null);
+        }
+    }
+
+    public void addAllPreferences(Set<AccountPreferences> accountPreferences){
+        for(AccountPreferences accountPreference : accountPreferences){
+            this.accountPreferences.add(accountPreference);
+            accountPreference.setAccounts(this);
+        }
     }
 
     public Set<AccountPreferences> getAccountPreferences() {
@@ -271,7 +303,6 @@ public class Accounts implements Serializable {
     @PrePersist
     protected void prePersist() {
         this.isActivated = false;
-        this.isDeleted = false;
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 

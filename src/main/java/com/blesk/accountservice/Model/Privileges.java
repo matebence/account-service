@@ -79,6 +79,22 @@ public class Privileges implements Serializable {
         rolePrivileges.setRoles(null);
     }
 
+    public void removeAllRoles(Set<RolePrivileges> rolePrivileges){
+        for(RolePrivileges rolePrivilege : rolePrivileges){
+            rolePrivilege.getRoles().getRolePrivileges().remove(rolePrivilege);
+            this.rolePrivileges.remove(rolePrivilege);
+            rolePrivilege.setPrivileges(null);
+            rolePrivilege.setRoles(null);
+        }
+    }
+
+    public void addAllRoles(Set<RolePrivileges> rolePrivileges){
+        for(RolePrivileges rolePrivilege : rolePrivileges){
+            rolePrivilege.setPrivileges(this);
+            this.rolePrivileges.add(rolePrivilege);
+        }
+    }
+
     public Set<RolePrivileges> getRolePrivileges() {
         return this.rolePrivileges;
     }
@@ -125,7 +141,6 @@ public class Privileges implements Serializable {
 
     @PrePersist
     protected void prePersist() {
-        this.isDeleted = false;
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 

@@ -10,15 +10,17 @@ public interface PreferencesService {
 
     Preferences createPreference(Preferences preferences);
 
-    Boolean deletePreference(Preferences preferences, boolean su);
+    Boolean deletePreference(Preferences preferences);
 
     Boolean updatePreference(Preferences preference, Preferences preferences);
 
-    Preferences getPreference(Long preferenceId, boolean su);
+    Preferences getPreference(Long preferenceId);
 
-    Preferences findPreferenceByName(String name, boolean su);
+    Preferences findPreferenceByName(String name);
 
-    List<Preferences> getAllPreferences(int pageNumber, int pageSize, boolean su);
+    List<Preferences> getAllPreferences(int pageNumber, int pageSize);
 
-    Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criterias, boolean su);
+    List<Preferences> getPreferencesForJoin(List<Long> ids, String columName);
+
+    Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criterias);
 }

@@ -10,11 +10,11 @@ public interface ActivationService {
 
     Activations createActivationToken(Activations activations);
 
-    Boolean deleteActivationToken(Long activationTokenId);
+    Boolean deleteActivationToken(Activations activations);
 
     Boolean updateActivationToken(Activations activations);
 
-    Activations getActivationToken(Long activationTokenId);
+    Activations getActivationToken(Long accountActivationId);
 
     Activations findActivationToken(String token);
 

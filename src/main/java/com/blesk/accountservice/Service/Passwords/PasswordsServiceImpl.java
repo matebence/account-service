@@ -64,10 +64,8 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean deletePasswordToken(Long passwordTokenId) {
-        Passwords passwords = this.passwordsDAO.get(Passwords.class, passwordTokenId);
-        if (passwords == null) return false;
-        return this.passwordsDAO.delete("passwords", "password_id", passwordTokenId);
+    public Boolean deletePasswordToken(Passwords passwords) {
+        return this.passwordsDAO.delete("passwords", "password_id", passwords.getPasswordTokenId());
     }
 
     @Override
@@ -81,7 +79,7 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Transactional
     @Lock(value = LockModeType.READ)
     public Passwords getPasswordToken(Long passwordTokenId) {
-        return this.passwordsDAO.get(Passwords.class, passwordTokenId);
+        return this.passwordsDAO.get(Passwords.class, "passwordTokenId", passwordTokenId);
     }
 
     @Override
@@ -146,7 +144,7 @@ public class PasswordsServiceImpl implements PasswordsService {
         splCharRule.setNumberOfCharacters(1);
 
         String password = passwordGenerator.generatePassword(8, splCharRule, lowerCaseRule, upperCaseRule, digitRule);
-        Accounts accounts = this.accountsDAO.get(accountId);
+        Accounts accounts = this.accountsDAO.get(Accounts.class, "accountId", accountId);
         accounts.setPassword(this.passwordEncoder.encode(password));
         if (!this.accountsDAO.update(accounts)) return Boolean.FALSE;
 

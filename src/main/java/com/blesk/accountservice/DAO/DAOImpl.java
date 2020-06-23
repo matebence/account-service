@@ -49,6 +49,19 @@ public class DAOImpl<T> implements DAO<T> {
     }
 
     @Override
+    public Boolean softDelete(T t) {
+        Session session = this.entityManager.unwrap(Session.class);
+        try {
+            session.delete(t);
+        } catch (Exception e) {
+            session.clear();
+            session.close();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public Boolean delete(String entity, String IdColumn, Long id) {
         Session session = this.entityManager.unwrap(Session.class);
         try {
@@ -63,11 +76,15 @@ public class DAOImpl<T> implements DAO<T> {
     }
 
     @Override
-    public T get(Class c, Long id) {
+    public T get(Class<T> c, String column, Long id) {
         Session session = this.entityManager.unwrap(Session.class);
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(c);
+        Root<T> root = criteriaQuery.from(c);
+
         try {
-            return (T) session.get(c, id);
-        } catch (Exception e) {
+            return session.createQuery(criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(root.get(column), id), criteriaBuilder.equal(root.get("isDeleted"), false)))).getSingleResult();
+        } catch (Exception ex) {
             session.clear();
             session.close();
             return null;
@@ -75,7 +92,7 @@ public class DAOImpl<T> implements DAO<T> {
     }
 
     @Override
-    public List<T> getAll(Class c, int pageNumber, int pageSize) {
+    public List<T> getAll(Class<T> c, int pageNumber, int pageSize) {
         Session session = this.entityManager.unwrap(Session.class);
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -85,11 +102,11 @@ public class DAOImpl<T> implements DAO<T> {
             countCriteria.select(criteriaBuilder.count(countCriteria.from(c)));
             Long total = this.entityManager.createQuery(countCriteria).getSingleResult();
 
-            CriteriaQuery criteriaQuery = criteriaBuilder.createQuery(c);
+            CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(c);
             Root<T> select = criteriaQuery.from(c);
-            CriteriaQuery<T> entity = criteriaQuery.select(select).orderBy(criteriaBuilder.asc(select.get("createdAt")));
+            CriteriaQuery<T> entity = criteriaQuery.select(select).where(criteriaBuilder.equal(select.get("isDeleted"), false)).orderBy(criteriaBuilder.asc(select.get("createdAt")));
 
-            Query typedQuery = session.createQuery(entity);
+            TypedQuery<T> typedQuery = session.createQuery(entity);
             typedQuery.setFirstResult(pageNumber);
             typedQuery.setMaxResults(pageSize);
 
@@ -100,14 +117,14 @@ public class DAOImpl<T> implements DAO<T> {
     }
 
     @Override
-    public T getItemByColumn(Class c, String column, String value) {
+    public T getItemByColumn(Class<T> c, String column, String value) {
         Session session = this.entityManager.unwrap(Session.class);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(c);
         Root<T> root = criteriaQuery.from(c);
 
         try {
-            return session.createQuery(criteriaQuery.where(criteriaBuilder.equal(root.get(column), value))).getSingleResult();
+            return session.createQuery(criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(root.get(column), value), criteriaBuilder.equal(root.get("isDeleted"), false)))).getSingleResult();
         } catch (Exception ex) {
             session.clear();
             session.close();
@@ -116,7 +133,7 @@ public class DAOImpl<T> implements DAO<T> {
     }
 
     @Override
-    public List<T> getJoinValuesByColumn(Class c, List<Long> ids, String columName) {
+    public List<T> getJoinValuesByColumn(Class<T> c, List<Long> ids, String columName) {
         Session session = this.entityManager.unwrap(Session.class);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(c);
@@ -129,7 +146,7 @@ public class DAOImpl<T> implements DAO<T> {
             for (Long id : ids) {
                 predicates.add(criteriaBuilder.equal(root.get(columName), id));
             }
-            select.where(criteriaBuilder.or(predicates.toArray(new Predicate[]{})));
+            select.where(criteriaBuilder.or(predicates.toArray(new Predicate[]{})), criteriaBuilder.and(criteriaBuilder.equal(root.get("isDeleted"), false)));
         }
         try {
             return session.createQuery(select).getResultList();
@@ -141,7 +158,7 @@ public class DAOImpl<T> implements DAO<T> {
     }
 
     @Override
-    public Map<String, Object> searchBy(Class c, HashMap<String, HashMap<String, String>> criterias) {
+    public Map<String, Object> searchBy(Class<T> c, HashMap<String, HashMap<String, String>> criterias) {
         Session session = this.entityManager.unwrap(Session.class);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         HashMap<String, Object> map = new HashMap<>(); PageImpl page = null;
@@ -150,6 +167,7 @@ public class DAOImpl<T> implements DAO<T> {
             CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(c);
             Root<T> root = criteriaQuery.from(c);
             List<Predicate> predicates = new ArrayList<Predicate>();
+            predicates.add(criteriaBuilder.equal(root.get("isDeleted"), false));
             CriteriaQuery<T> select = criteriaQuery.select(root);
 
             if (criterias.get(Keys.SEARCH) != null) {
@@ -160,7 +178,7 @@ public class DAOImpl<T> implements DAO<T> {
                 select.where(predicates.toArray(new Predicate[]{}));
             }
             if (criterias.get(Keys.ORDER_BY) != null) {
-                List<Order> orderList = new ArrayList();
+                List<Order> orderList = new ArrayList<>();
 
                 for (Object o : criterias.get(Keys.ORDER_BY).entrySet()) {
                     Map.Entry pair = (Map.Entry) o;

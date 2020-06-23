@@ -82,6 +82,22 @@ public class Roles implements Serializable {
         rolePrivileges.setPrivileges(null);
     }
 
+    public void removeAllPrivileges(Set<RolePrivileges> rolePrivileges){
+        for(RolePrivileges rolePrivilege : rolePrivileges){
+            rolePrivilege.getPrivileges().getRolePrivileges().remove(rolePrivilege);
+            this.rolePrivileges.remove(rolePrivilege);
+            rolePrivilege.setRoles(null);
+            rolePrivilege.setPrivileges(null);
+        }
+    }
+
+    public void addAllPrivileges(Set<RolePrivileges> rolePrivileges){
+        for(RolePrivileges rolePrivilege : rolePrivileges){
+            rolePrivilege.setRoles(this);
+            this.rolePrivileges.add(rolePrivilege);
+        }
+    }
+
     public Set<RolePrivileges> getRolePrivileges() {
         return this.rolePrivileges;
     }
@@ -96,6 +112,22 @@ public class Roles implements Serializable {
         this.accountRoles.remove(accountRoles);
         accountRoles.setRoles(null);
         accountRoles.setAccounts(null);
+    }
+
+    public void removeAllAccounts(Set<AccountRoles> accountRoles){
+        for(AccountRoles accountRole : accountRoles){
+            accountRole.getAccounts().getAccountRoles().remove(accountRole);
+            this.accountRoles.remove(accountRole);
+            accountRole.setRoles(null);
+            accountRole.setAccounts(null);
+        }
+    }
+
+    public void addAllAccounts(Set<AccountRoles> accountRoles){
+        for(AccountRoles accountRole : accountRoles){
+            accountRole.setRoles(this);
+            this.accountRoles.add(accountRole);
+        }
     }
 
     public Set<AccountRoles> getAccountRoles() {
@@ -144,7 +176,6 @@ public class Roles implements Serializable {
 
     @PrePersist
     protected void prePersist() {
-        this.isDeleted = false;
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 

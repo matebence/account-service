@@ -32,8 +32,8 @@ public class LoginsServiceImpl implements LoginsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean deleteLogin(Long loginId) {
-        return this.loginsDAO.delete("logins", "login_id", loginId);
+    public Boolean deleteLogin(Logins logins) {
+        return this.loginsDAO.delete("logins", "login_id", logins.getLoginId());
     }
 
     @Override
@@ -68,6 +68,6 @@ public class LoginsServiceImpl implements LoginsService {
     @Transactional
     @Lock(value = LockModeType.READ)
     public Logins getLogin(Long loginId) {
-        return this.loginsDAO.get(Logins.class, loginId);
+        return this.loginsDAO.get(Logins.class, "loginId", loginId);
     }
 }

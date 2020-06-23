@@ -10,7 +10,7 @@ public interface PasswordsService {
 
     Passwords createPasswordToken(Passwords passwords);
 
-    Boolean deletePasswordToken(Long passwordTokenId);
+    Boolean deletePasswordToken(Passwords passwords);
 
     Boolean updatePasswordToken(Passwords passwords);
 

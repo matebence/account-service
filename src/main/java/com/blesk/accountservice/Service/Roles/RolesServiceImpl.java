@@ -35,8 +35,8 @@ public class RolesServiceImpl implements RolesService {
     @Override
     @Transactional
     @Lock(value = LockModeType.WRITE)
-    public Boolean deleteRole(Long roleId) {
-        return this.roleDAO.delete("roles", "role_id", roleId);
+    public Boolean deleteRole(Roles roles) {
+        return this.roleDAO.softDelete(roles);
     }
 
     @Override
@@ -44,17 +44,8 @@ public class RolesServiceImpl implements RolesService {
     @Lock(value = LockModeType.WRITE)
     public Boolean updateRole(Roles role, Roles roles) {
         role.setName(roles.getName());
-        for (RolePrivileges rolePrivilege : role.getRolePrivileges()) {
-            for (RolePrivileges rolePrivileges : roles.getRolePrivileges()) {
-                if (rolePrivileges.getDeleted() == null) {
-                    role.addPrivilege(rolePrivileges);
-                } else if (rolePrivileges.getDeleted()) {
-                    role.removePrivilege(rolePrivilege);
-                } else {
-                    rolePrivilege.setPrivileges(rolePrivileges.getPrivileges());
-                }
-            }
-        }
+        role.removeAllPrivileges(new HashSet<>(role.getRolePrivileges()));
+        role.addAllPrivileges(roles.getRolePrivileges());
 
         return this.roleDAO.update(role);
     }
@@ -63,7 +54,7 @@ public class RolesServiceImpl implements RolesService {
     @Transactional
     @Lock(value = LockModeType.READ)
     public Roles getRole(Long roleId) {
-        return this.roleDAO.get(Roles.class, roleId);
+        return this.roleDAO.get(Roles.class, "roleId", roleId);
     }
 
     @Override
@@ -85,6 +76,13 @@ public class RolesServiceImpl implements RolesService {
     @Lock(value = LockModeType.READ)
     public List<Roles> getAllRoles(int pageNumber, int pageSize) {
         return this.roleDAO.getAll(Roles.class, pageNumber, pageSize);
+    }
+
+    @Override
+    @Transactional
+    @Lock(value = LockModeType.READ)
+    public List<Roles> getRolesForJoin(List<Long> ids, String columName) {
+        return this.roleDAO.getJoinValuesByColumn(Roles.class, ids, columName);
     }
 
     @Override

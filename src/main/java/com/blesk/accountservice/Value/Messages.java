@@ -67,7 +67,7 @@ public class Messages {
     public static final String DELETE_PREFERENCE = "Odstránenie preferencie sa nepodarilo, skúste znova";
     public static final String UPDATE_PREFERENCE = "Preferenciu sa nepodarilo aktualizovať, skúste znova";
     public static final String GET_PREFERENCE = "Ľutujeme, preferencia neexistuje";
-    public static final String GET_ALL_PREFERENCES = "Nenašiel sa žiadné preferencie";
+    public static final String GET_ALL_PREFERENCES = "Nenašli sa žiadné preferencie";
 
     public static final String CREATE_PRIVILEGE = "Vytvorenie práva sa nepodarilo, skúste znova";
     public static final String DELETE_PRIVILEGE = "Odstránenie práva sa nepodarilo, skúste znova";
