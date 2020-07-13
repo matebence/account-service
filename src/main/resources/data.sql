@@ -8,7 +8,8 @@ INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_d
 VALUES ('michalvelky', 'michal.velky@gmail.com', '$2a$10$Wi7MdTNoKKK7Iaf262bWLuVdzOViFXHRgR7siBaq8YRWkTpJtd5J.', TRUE, CURRENT_TIMESTAMP, FALSE);
 INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_deleted)
 VALUES ('lukastrnka','lukas.trnka@gmail.com', '$2a$10$1oyamJIm8aSLaXnm/xhaRe6yxAWEKZeFjsMQ/wWXoINsGeuHd.c2S', TRUE, CURRENT_TIMESTAMP, FALSE);
-
+INSERT INTO accounts (user_name, email, password, is_activated, created_at, is_deleted)
+VALUES ('denismaly', 'denis.maly@gmail.com', '$2a$10$Wi7MdTNoKKK7Iaf262bWLuVdzOViFXHRgR7siBaq8YRWkTpJtd5J.', TRUE, CURRENT_TIMESTAMP, FALSE);
 
 INSERT INTO logins (account_id, last_login, ip_address, created_at, is_deleted)
 VALUES (1, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP, FALSE);
@@ -18,7 +19,10 @@ INSERT INTO logins (account_id, last_login, ip_address, created_at, is_deleted)
 VALUES (3, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP, FALSE);
 INSERT INTO logins (account_id, last_login, ip_address, created_at, is_deleted)
 VALUES (4, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP, FALSE);
-
+INSERT INTO logins (account_id, last_login, ip_address, created_at, is_deleted)
+VALUES (5, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP, FALSE);
+INSERT INTO logins (account_id, last_login, ip_address, created_at, is_deleted)
+VALUES (6, CURRENT_TIMESTAMP, '0:0:0:0:0:0:0:0', CURRENT_TIMESTAMP, FALSE);
 
 INSERT INTO roles (name,  created_at, is_deleted)
 VALUES ('ROLE_ADMIN',  CURRENT_TIMESTAMP, FALSE);
@@ -268,7 +272,8 @@ INSERT INTO account_role_items (account_id, role_id)
 VALUES (4, 4);
 INSERT INTO account_role_items (account_id, role_id)
 VALUES (5, 3);
-
+INSERT INTO account_role_items (account_id, role_id)
+VALUES (6, 4);
 
 INSERT INTO preferences (name, created_at, is_deleted)
 VALUES ('Cena prepravy (eur/1km)', CURRENT_TIMESTAMP, FALSE);
