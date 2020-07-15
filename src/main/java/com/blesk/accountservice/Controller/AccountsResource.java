@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,6 +122,7 @@ public class AccountsResource {
     @PostMapping("/accounts/join/{columName}")
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<List<AccountJoinValuesByColumn>> joinAccounts(@PathVariable String columName, @RequestBody JoinAccountCritirias joinAccountCritirias, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        if (joinAccountCritirias.getRoles() == null || joinAccountCritirias.getRoles().isEmpty()) joinAccountCritirias.setRoles(new ArrayList<String>(){{add("ROLE_SYSTEM"); add("ROLE_ADMIN"); add("ROLE_MANAGER"); add("ROLE_CLIENT"); add("ROLE_COURIER");}});
         List<AccountJoinValuesByColumn> accounts = this.accountsJpaRepository.getJoinValuesByColumn(joinAccountCritirias.getIds(), joinAccountCritirias.getRoles(), columName);
         if (accounts == null || accounts.isEmpty()) throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS, HttpStatus.BAD_REQUEST);
         return new CollectionModel(accounts);
