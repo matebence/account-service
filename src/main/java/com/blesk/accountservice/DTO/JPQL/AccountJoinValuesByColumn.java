@@ -2,14 +2,24 @@ package com.blesk.accountservice.DTO.JPQL;
 
 public class AccountJoinValuesByColumn {
 
+    private Long accountId;
     private String userName;
     private String email;
     private String name;
 
-    public AccountJoinValuesByColumn(String userName, String email, String name){
+    public AccountJoinValuesByColumn(Long accountId, String userName, String email, String name){
+        this.accountId = accountId;
         this.userName = userName;
         this.email = email;
         this.name = name;
+    }
+
+    public Long getAccountId() {
+        return this.accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
     }
 
     public String getUserName() {
