@@ -11,9 +11,11 @@ import java.util.List;
 @Repository
 public interface AccountsJpaRepository extends JpaRepository<Accounts, Long> {
 
-    @Query("SELECT new com.blesk.accountservice.DTO.AccountJoinValuesByColumn(a.userName, a.email, c.name) FROM Accounts a " +
+    @Query("SELECT new com.blesk.accountservice.DTO.JPQL.AccountJoinValuesByColumn(a.userName, a.email, c.name) " +
+           "FROM Accounts a " +
            "INNER JOIN a.accountRoles b " +
            "INNER JOIN b.roles c " +
-           "WHERE c.name = ?1")
-    List<AccountJoinValuesByColumn> getJoinValuesByColumn(String name);
+           "WHERE a.accountId IN ?1 " +
+           "AND c.name IN ?2")
+    List<AccountJoinValuesByColumn> getJoinValuesByColumn(List<Long> ids, List<String> name, String columnName);
 }

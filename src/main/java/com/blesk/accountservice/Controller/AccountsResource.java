@@ -1,5 +1,6 @@
 package com.blesk.accountservice.Controller;
 
+import com.blesk.accountservice.DTO.Http.JoinAccountCritirias;
 import com.blesk.accountservice.DTO.JPQL.AccountJoinValuesByColumn;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Accounts;
@@ -119,11 +120,9 @@ public class AccountsResource {
     @PreAuthorize("hasRole('SYSTEM')")
     @PostMapping("/accounts/join/{columName}")
     @ResponseStatus(HttpStatus.OK)
-    public CollectionModel<List<AccountJoinValuesByColumn>> joinAccounts(@PathVariable String columName, @RequestBody List<Long> ids, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-//        List<Accounts> accounts = this.accountsService.getAccountsForJoin(ids, columName);
-//        if (accounts == null || accounts.isEmpty()) throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS, HttpStatus.BAD_REQUEST);
-//        return new CollectionModel(accounts);
-        List<AccountJoinValuesByColumn> accounts = this.accountsJpaRepository.getJoinValuesByColumn("ROLE_CLIENT");
+    public CollectionModel<List<AccountJoinValuesByColumn>> joinAccounts(@PathVariable String columName, @RequestBody JoinAccountCritirias joinAccountCritirias, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        List<AccountJoinValuesByColumn> accounts = this.accountsJpaRepository.getJoinValuesByColumn(joinAccountCritirias.getIds(), joinAccountCritirias.getRoles(), columName);
+        if (accounts == null || accounts.isEmpty()) throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS, HttpStatus.BAD_REQUEST);
         return new CollectionModel(accounts);
     }
 }
