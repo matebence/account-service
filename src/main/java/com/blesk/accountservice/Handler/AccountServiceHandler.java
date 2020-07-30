@@ -1,6 +1,6 @@
 package com.blesk.accountservice.Handler;
 
-import com.blesk.accountservice.DTO.Http.Response;
+import com.blesk.accountservice.DTO.Response;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Value.Messages;
 import org.hibernate.exception.ConstraintViolationException;

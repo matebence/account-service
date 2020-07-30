@@ -1,6 +1,7 @@
 package com.blesk.accountservice.Service.Accounts;
 
 import com.blesk.accountservice.DAO.Accounts.AccountsDAOImpl;
+import com.blesk.accountservice.DTO.AccountsJoin;
 import com.blesk.accountservice.Model.AccountRoles;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Model.Activations;
@@ -113,8 +114,8 @@ public class AccountsServiceImpl implements AccountsService {
     @Override
     @Transactional
     @Lock(value = LockModeType.READ)
-    public List<Accounts> getAccountsForJoin(List<Long> ids, String columName) {
-        return this.accountDAO.getJoinValuesByColumn(Accounts.class, ids, columName);
+    public List<AccountsJoin> getAccountsForJoin(List<Long> ids, List<String> listedRoles, String columName) {
+        return this.accountDAO.getJoinValuesByColumn(ids, listedRoles, columName);
     }
 
     @Override

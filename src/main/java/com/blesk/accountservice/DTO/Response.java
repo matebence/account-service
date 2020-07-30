@@ -1,4 +1,4 @@
-package com.blesk.accountservice.DTO.Http;
+package com.blesk.accountservice.DTO;
 
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
