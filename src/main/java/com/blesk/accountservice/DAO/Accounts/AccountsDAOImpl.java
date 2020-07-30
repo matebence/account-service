@@ -39,21 +39,18 @@ public class AccountsDAOImpl extends DAOImpl<Accounts> implements AccountsDAO {
         Join<AccountRoles, Roles> roles = accountRoles.join("roles");
         CompoundSelection<AccountsJoin> selection = criteriaBuilder.construct(AccountsJoin.class, root.get("accountId"), root.get("userName"), root.get("email"), roles.get("name"));
 
-        List<Predicate> Idpredicates = new ArrayList<Predicate>();
-        List<Predicate> Rolepredicates = new ArrayList<Predicate>();
+        Predicate rolePredicate = null, idPredicate = null;
         CriteriaQuery<AccountsJoin> select = criteriaQuery.select(selection);
 
         if (ids != null) {
-            for (Long id : ids) {
-                Idpredicates.add(criteriaBuilder.equal(root.get(columName), id));
-            }
+            Expression<String> parentExpression = root.get(columName);
+            idPredicate = parentExpression.in(ids);
         }
         if (listedRoles != null) {
-            for (String listedRole : listedRoles) {
-                Rolepredicates.add(criteriaBuilder.equal(roles.get("name"), listedRole));
-            }
+            Expression<String> parentExpression = roles.get("name");
+            rolePredicate = parentExpression.in(listedRoles);
         }
-        select.where(criteriaBuilder.or(Idpredicates.toArray(new Predicate[]{})), criteriaBuilder.and(Rolepredicates.toArray(new Predicate[]{})), criteriaBuilder.and(criteriaBuilder.equal(root.get("isDeleted"), false)));
+        select.where(criteriaBuilder.or(idPredicate), criteriaBuilder.and(rolePredicate), criteriaBuilder.and(criteriaBuilder.equal(root.get("isDeleted"), false)));
         try {
             return session.createQuery(select).getResultList();
         } catch (Exception ex) {
