@@ -1,4 +1,4 @@
-package com.blesk.accountservice.DTO.JPQL;
+package com.blesk.accountservice.DTO;
 
 public class AccountsJoin {
 

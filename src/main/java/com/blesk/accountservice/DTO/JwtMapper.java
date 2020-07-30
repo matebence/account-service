@@ -1,4 +1,4 @@
-package com.blesk.accountservice.DTO.Mapper;
+package com.blesk.accountservice.DTO;
 
 public class JwtMapper {
 

@@ -1,5 +1,6 @@
 package com.blesk.accountservice.Service.Accounts;
 
+import com.blesk.accountservice.DTO.AccountsJoin;
 import com.blesk.accountservice.Model.Accounts;
 
 import java.util.HashMap;
@@ -22,7 +23,7 @@ public interface AccountsService {
 
     List<Accounts> getAllAccounts(int pageNumber, int pageSize);
 
-    List<Accounts> getAccountsForJoin(List<Long> ids, String columName);
+    List<AccountsJoin> getAccountsForJoin(List<Long> ids, List<String> listedRoles, String columName);
 
     Map<String, Object> searchForAccount(HashMap<String, HashMap<String, String>> criterias);
 }

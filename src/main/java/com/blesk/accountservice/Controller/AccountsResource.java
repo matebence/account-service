@@ -1,10 +1,9 @@
 package com.blesk.accountservice.Controller;
 
-import com.blesk.accountservice.DTO.Http.JoinAccountCritirias;
-import com.blesk.accountservice.DTO.JPQL.AccountJoinValuesByColumn;
+import com.blesk.accountservice.DTO.JoinAccountCritirias;
+import com.blesk.accountservice.DTO.AccountsJoin;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Accounts;
-import com.blesk.accountservice.Repository.Accounts.AccountsJpaRepository;
 import com.blesk.accountservice.Service.Accounts.AccountsServiceImpl;
 import com.blesk.accountservice.Value.Keys;
 import com.blesk.accountservice.Value.Messages;
@@ -35,12 +34,10 @@ public class AccountsResource {
     private final static int DEFAULT_NUMBER = 0;
 
     private AccountsServiceImpl accountsService;
-    private AccountsJpaRepository accountsJpaRepository;
 
     @Autowired
-    public AccountsResource(AccountsServiceImpl accountsService, AccountsJpaRepository accountsJpaRepository) {
+    public AccountsResource(AccountsServiceImpl accountsService) {
         this.accountsService = accountsService;
-        this.accountsJpaRepository = accountsJpaRepository;
     }
 
     @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
@@ -121,9 +118,9 @@ public class AccountsResource {
     @PreAuthorize("hasRole('SYSTEM')")
     @PostMapping("/accounts/join/{columName}")
     @ResponseStatus(HttpStatus.OK)
-    public CollectionModel<List<AccountJoinValuesByColumn>> joinAccounts(@PathVariable String columName, @RequestBody JoinAccountCritirias joinAccountCritirias, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    public CollectionModel<List<AccountsJoin>> joinAccounts(@PathVariable String columName, @RequestBody JoinAccountCritirias joinAccountCritirias, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         if (joinAccountCritirias.getRoles() == null || joinAccountCritirias.getRoles().isEmpty()) joinAccountCritirias.setRoles(new ArrayList<String>(){{add("ROLE_SYSTEM"); add("ROLE_ADMIN"); add("ROLE_MANAGER"); add("ROLE_CLIENT"); add("ROLE_COURIER");}});
-        List<AccountJoinValuesByColumn> accounts = this.accountsJpaRepository.getJoinValuesByColumn(joinAccountCritirias.getIds(), joinAccountCritirias.getRoles(), columName);
+        List<AccountsJoin> accounts = this.accountsService.getAccountsForJoin(joinAccountCritirias.getIds(), joinAccountCritirias.getRoles(), columName);
         if (accounts == null || accounts.isEmpty()) throw new AccountServiceException(Messages.GET_ALL_ACCOUNTS, HttpStatus.BAD_REQUEST);
         return new CollectionModel(accounts);
     }

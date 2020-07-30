@@ -86,6 +86,6 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Transactional
     @Lock(value = LockModeType.READ)
     public Map<String, Object> searchForPreference(HashMap<String, HashMap<String, String>> criterias) {
-        return this.preferencesDAO.searchBy(Preferences.class, criterias);
+        return this.preferencesDAO.searchBy(criterias);
     }
 }
