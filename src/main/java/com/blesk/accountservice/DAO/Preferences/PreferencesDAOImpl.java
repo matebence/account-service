@@ -47,7 +47,7 @@ public class PreferencesDAOImpl extends DAOImpl<Preferences> implements Preferen
             Root<Preferences> root = criteriaQuery.from(Preferences.class);
             Join<Preferences, AccountPreferences> accountPreferences = root.join("accountPreferences");
             Join<AccountPreferences, Accounts> accounts = accountPreferences.join("accounts");
-            CompoundSelection<PreferencesSearch> selection = criteriaBuilder.construct(PreferencesSearch.class, root.get("preferenceId"), root.get("name"), accounts.get("accountId"));
+            CompoundSelection<PreferencesSearch> selection = criteriaBuilder.construct(PreferencesSearch.class, root.get("preferenceId"), root.get("name"), accountPreferences.get("content"), accountPreferences.get("isSet"), accountPreferences.get("value"), accounts.get("accountId"));
 
             List<Predicate> predicates = new ArrayList<Predicate>();
             predicates.add(criteriaBuilder.equal(root.get("isDeleted"), false));
