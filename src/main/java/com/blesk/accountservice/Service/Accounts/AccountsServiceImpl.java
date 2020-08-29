@@ -73,8 +73,11 @@ public class AccountsServiceImpl implements AccountsService {
     public Boolean updateAccount(Accounts account, @Validated(Accounts.basicValidation.class) Accounts accounts, String[] allowedRoles) {
         account.setUserName(accounts.getUserName());
         account.setEmail(accounts.getEmail());
-        account.removeAllRoles(new HashSet<>(account.getAccountRoles()));
-        account.addAllRoles(accounts.getAccountRoles());
+
+        if (!accounts.getAccountRoles().isEmpty()) {
+            account.removeAllRoles(new HashSet<>(account.getAccountRoles()));
+            account.addAllRoles(accounts.getAccountRoles());
+        }
 
         if (accounts.getPassword().length() <= 30 && !accounts.getPassword().substring(0, "$2a$10$".length()).contains("$2a$10$")){
             account.setPassword(this.passwordEncoder.encode(accounts.getPassword()));
