@@ -2,6 +2,7 @@ package com.blesk.accountservice.Controller;
 
 import com.blesk.accountservice.DTO.JoinAccountCritirias;
 import com.blesk.accountservice.DTO.AccountsJoin;
+import com.blesk.accountservice.DTO.JwtMapper;
 import com.blesk.accountservice.Exception.AccountServiceException;
 import com.blesk.accountservice.Model.Accounts;
 import com.blesk.accountservice.Service.Accounts.AccountsServiceImpl;
@@ -13,6 +14,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,15 +65,27 @@ public class AccountsResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
     @PutMapping("/accounts/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updateAccounts(@Validated(Accounts.advancedValidation.class) @RequestBody Accounts accounts, @PathVariable long accountId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         Accounts account = this.accountsService.getAccount(accountId);
         if (account == null) throw new AccountServiceException(Messages.GET_ACCOUNT, HttpStatus.BAD_REQUEST);
 
-        if (!this.accountsService.updateAccount(account, accounts, new String[]{"ROLE_SYSTEM", "ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CLIENT", "ROLE_COURIER"})) throw new AccountServiceException(Messages.UPDATE_ACCOUNT, HttpStatus.BAD_REQUEST);
-        return ResponseEntity.noContent().build();
+        if (httpServletRequest.isUserInRole("ROLE_SYSTEM") || httpServletRequest.isUserInRole("ROLE_ADMIN") || httpServletRequest.isUserInRole("ROLE_MANAGER")) {
+            if (!this.accountsService.updateAccount(account, accounts, new String[]{"ROLE_SYSTEM", "ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CLIENT", "ROLE_COURIER"})) throw new AccountServiceException(Messages.UPDATE_ACCOUNT, HttpStatus.BAD_REQUEST);
+
+            return ResponseEntity.noContent().build();
+        }
+
+        if (httpServletRequest.isUserInRole("ROLE_CLIENT") || httpServletRequest.isUserInRole("ROLE_COURIER")) {
+            JwtMapper jwtMapper = (JwtMapper) ((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getDecodedDetails();
+            if (!new Long(jwtMapper.getAccount_id()).equals(accountId)) throw new AccountServiceException(Messages.UPDATE_ACCOUNT, HttpStatus.BAD_REQUEST);
+            if (!accounts.getUserName().equals(account.getUserName()) || !accounts.getEmail().equals(account.getEmail()) || !accounts.getAccountRoles().isEmpty()) throw new AccountServiceException(Messages.UPDATE_ACCOUNT, HttpStatus.BAD_REQUEST);
+            if (!this.accountsService.updateAccount(account, accounts, new String[]{"ROLE_CLIENT", "ROLE_COURIER"})) throw new AccountServiceException(Messages.UPDATE_ACCOUNT, HttpStatus.BAD_REQUEST);
+
+            return ResponseEntity.noContent().build();
+        }
+        throw new AccountServiceException(Messages.UPDATE_ACCOUNT, HttpStatus.BAD_REQUEST);
     }
 
     @PreAuthorize("hasRole('SYSTEM') || hasRole('ADMIN') || hasRole('MANAGER')")
