@@ -30,8 +30,14 @@ public class PasswordsServiceImpl implements PasswordsService {
     @Value("${blesk.javamailer.url.forget-password}")
     private String resetPasswordUrl;
 
+    @Value("${blesk.javamailer.url.management.forget-password}")
+    private String managementResetPasswordUrl;
+
     @Value("${blesk.javamailer.url.application-login}")
     private String applicationLoginUrl;
+
+    @Value("${blesk.javamailer.url.management.application-login}")
+    private String managementLoginUrl;
 
     private PasswordsDAOImpl passwordsDAO;
 
@@ -56,7 +62,10 @@ public class PasswordsServiceImpl implements PasswordsService {
         Passwords password = this.passwordsDAO.save(passwords);
 
         Map<String, Object> variables = new HashMap<>();
-        variables.put("resetPasswordUrl", String.format(this.resetPasswordUrl, passwords.getAccounts().getAccountId(), passwords.getToken()));
+        boolean result = passwords.getAccounts().getAccountRoles().stream().anyMatch(e -> e.getRoles().getName().equals("ROLE_ADMIN") || e.getRoles().getName().equals("ROLE_MANAGER"));
+        String resetUrl = result ? this.managementResetPasswordUrl : this.resetPasswordUrl;
+
+        variables.put("resetPasswordUrl", String.format(resetUrl, passwords.getAccounts().getAccountId(), passwords.getToken()));
         this.emailsService.sendHtmlMesseage("Zabudnuté heslo", "forgetpassword", variables, passwords.getAccounts());
         return password;
     }
@@ -146,11 +155,14 @@ public class PasswordsServiceImpl implements PasswordsService {
         String password = passwordGenerator.generatePassword(8, splCharRule, lowerCaseRule, upperCaseRule, digitRule);
         Accounts accounts = this.accountsDAO.get(Accounts.class, "accountId", accountId);
         accounts.setPassword(this.passwordEncoder.encode(password));
+
         if (!this.accountsDAO.update(accounts)) return Boolean.FALSE;
+        boolean result = accounts.getAccountRoles().stream().anyMatch(e -> e.getRoles().getName().equals("ROLE_ADMIN") || e.getRoles().getName().equals("ROLE_MANAGER"));
+        String loginUrl = result ? this.managementLoginUrl : this.applicationLoginUrl;
 
         Map<String, Object> variables = new HashMap<>();
         variables.put("newPassword", password);
-        variables.put("applicationUrl", this.applicationLoginUrl);
+        variables.put("applicationUrl", loginUrl);
         this.emailsService.sendHtmlMesseage("Nové heslo", "verifiedpassword", variables, accounts);
         return Boolean.TRUE;
     }
