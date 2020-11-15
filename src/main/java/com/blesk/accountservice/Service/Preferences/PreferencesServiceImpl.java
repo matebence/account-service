@@ -1,7 +1,6 @@
 package com.blesk.accountservice.Service.Preferences;
 
 import com.blesk.accountservice.DAO.Preferences.PreferencesDAOImpl;
-import com.blesk.accountservice.Model.AccountPreferences;
 import com.blesk.accountservice.Model.Preferences;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Lock;
@@ -28,11 +27,6 @@ public class PreferencesServiceImpl implements PreferencesService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Preferences createPreference(Preferences preferences) {
-        for (AccountPreferences accountPreferences : preferences.getAccountPreferences()) {
-            preferences.getAccountPreferences().remove(accountPreferences);
-            preferences.addAccount(accountPreferences);
-        }
-
         return this.preferencesDAO.save(preferences);
     }
 

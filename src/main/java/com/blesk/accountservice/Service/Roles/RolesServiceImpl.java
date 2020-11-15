@@ -25,10 +25,6 @@ public class RolesServiceImpl implements RolesService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Roles createRole(Roles roles) {
-        for (RolePrivileges privileges : roles.getRolePrivileges()) {
-            roles.getRolePrivileges().remove(privileges);
-            roles.addPrivilege(privileges);
-        }
         return this.roleDAO.save(roles);
     }
 
