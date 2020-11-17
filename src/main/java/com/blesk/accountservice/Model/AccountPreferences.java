@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Entity(name = "AccountPreferencesItems")
 @Table(name = "account_preference_items", uniqueConstraints = {@UniqueConstraint(name = "account_preference_id", columnNames = "account_preference_id")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, scope = AccountPreferences.class)
-@JsonIgnoreProperties(value = {"accountPreferenceId", "accounts"})
+@JsonIgnoreProperties(value = {"accountPreferenceId"})
 public class AccountPreferences implements Serializable {
 
     @Id
