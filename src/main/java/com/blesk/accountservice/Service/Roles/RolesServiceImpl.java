@@ -25,7 +25,16 @@ public class RolesServiceImpl implements RolesService {
     @Transactional
     @Lock(value = LockModeType.WRITE)
     public Roles createRole(Roles roles) {
-        return this.roleDAO.save(roles);
+        Roles role = null;
+        for (RolePrivileges rolePrivileges: roles.getRolePrivileges()) {
+            if (role == null) {
+                role = this.roleDAO.save(roles);
+                rolePrivileges.setRoles(role);
+            } else {
+                rolePrivileges.setRoles(role);
+            }
+        }
+        return role;
     }
 
     @Override
